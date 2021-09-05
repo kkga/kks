@@ -1,7 +1,9 @@
 package cmd
 
 import (
-	"fmt"
+	"os"
+	"os/exec"
+	"syscall"
 
 	"github.com/spf13/cobra"
 )
@@ -9,8 +11,18 @@ import (
 var editCmd = &cobra.Command{
 	Use:   "edit [file]",
 	Short: "Edit file",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("edit called")
+		session := Session
+		binary, lookErr := exec.LookPath("kak")
+		if lookErr != nil {
+			panic(lookErr)
+		}
+		execArgs := []string{"kak", "-c", session, args[0]}
+		execErr := syscall.Exec(binary, execArgs, os.Environ())
+		if execErr != nil {
+			panic(execErr)
+		}
 	},
 }
 
