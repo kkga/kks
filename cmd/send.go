@@ -25,29 +25,4 @@ func Send(kakCommand, session, client string) {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-
-	// stdin, err := cmd.StdinPipe()
-	// if err != nil {
-	// 	log.Fatalf("Error obtaining stdin: %s", err.Error())
-	// }
-
-	// stdin.Write([]byte("edit main.go"))
-	// if err := cmd.Start(); err != nil {
-	// 	log.Fatalf("Error starting program: %s, %s", cmd.Path, err.Error())
-	// }
-	// cmd.Wait()
-
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// kakBinary, lookErr := exec.LookPath("kak")
-	// if lookErr != nil {
-	// 	panic(lookErr)
-	// }
-
-	// kakExecArgs := []string{"kak", "-s", session, filename}
-	// execErr := syscall.Exec(kakBinary, kakExecArgs, os.Environ())
-	// if execErr != nil {
-	// 	panic(execErr)
-	// }
 }

@@ -14,7 +14,7 @@ type KakContext struct {
 }
 
 func main() {
-	// TODO: how to generalize this?
+	// TODO: generalize this?
 	editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
 	editSessionPtr := editCmd.String("s", "", "kakoune session")
 	editClientPtr := editCmd.String("c", "", "kakoune client")
