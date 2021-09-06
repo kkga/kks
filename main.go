@@ -105,8 +105,8 @@ func main() {
 
 func getContext() *KakContext {
 	c := KakContext{
-		session: os.Getenv("KAKS_SESSION"),
-		client:  os.Getenv("KAKS_CLIENT"),
+		session: os.Getenv("KKS_SESSION"),
+		client:  os.Getenv("KKS_CLIENT"),
 	}
 	return &c
 }

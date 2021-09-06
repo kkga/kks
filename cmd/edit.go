@@ -10,6 +10,7 @@ import (
 )
 
 func Edit(filename, session, client string) {
+	fmt.Println(session, client)
 	if session != "" && client != "" {
 		kakCommand := fmt.Sprintf("edit %s", filename)
 		Send(kakCommand, session, client)
