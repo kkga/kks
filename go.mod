@@ -1,3 +1,3 @@
-module kaks
+module kks
 
 go 1.17

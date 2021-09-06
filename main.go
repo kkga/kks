@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"kaks/cmd"
+	"kks/cmd"
 	"os"
 	"strings"
 )
