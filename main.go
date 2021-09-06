@@ -69,6 +69,7 @@ func main() {
 
 		cmd.Edit(filename, context.session, context.client)
 	}
+
 	if sendCmd.Parsed() {
 		args := sendCmd.Args()
 		kakCommand := strings.Join(args, " ")
@@ -84,6 +85,7 @@ func main() {
 
 		cmd.Send(kakCommand, context.session, context.client)
 	}
+
 	if getCmd.Parsed() {
 		args := getCmd.Args()
 		kakVal := strings.Join(args, " ")
