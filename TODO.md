@@ -1,4 +1,5 @@
 - [x] kill cmd
 - [ ] detach newly started sessions from shell (setsid?)
 - [ ] edit cmd neds line:col support
+- [ ] find solution to remove the timeout in Get
 - grep cmd?
