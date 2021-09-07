@@ -90,6 +90,16 @@ func main() {
 		cmd.Edit(filename, context.session, context.client)
 	}
 
+	if attachCmd.Parsed() {
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := cmd.Edit("", context.session, context.client); err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	if sendCmd.Parsed() {
 		args := sendCmd.Args()
 		kakCommand := strings.Join(args, " ")

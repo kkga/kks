@@ -2,16 +2,14 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
 	"syscall"
 )
 
-func Edit(filename, session, client string) {
-	fmt.Println(session, client)
-	if session != "" && client != "" {
+func Edit(filename, session, client string) error {
+	if filename != "" && session != "" && client != "" && client != "-" {
 		kakCommand := fmt.Sprintf("edit %s", filename)
 		Send(kakCommand, session, client)
 		os.Exit(0)
@@ -19,16 +17,15 @@ func Edit(filename, session, client string) {
 
 	kakBinary, err := exec.LookPath("kak")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-
-	kakExecArgs := []string{"kak"}
 
 	sessions, err := exec.Command("kak", "-l").Output()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
+	kakExecArgs := []string{"kak"}
 	if session != "" && strings.Contains(string(sessions), session) {
 		kakExecArgs = append(kakExecArgs, "-c", session)
 	} else if session != "" {
@@ -36,12 +33,15 @@ func Edit(filename, session, client string) {
 		kakExecArgs = append(kakExecArgs, "-s", session)
 	}
 
-	kakExecArgs = append(kakExecArgs, filename)
+	if filename != "" {
+		kakExecArgs = append(kakExecArgs, filename)
+	}
 
-	fmt.Print(kakExecArgs)
+	fmt.Println("edit", kakExecArgs)
 
 	execErr := syscall.Exec(kakBinary, kakExecArgs, os.Environ())
 	if execErr != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }
