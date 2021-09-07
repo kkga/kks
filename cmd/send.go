@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func Send(kakCommand, session, client string) {
+func Send(kakCommand, session, client string) error {
 	cmd := exec.Command("kak", "-p", session)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -23,6 +23,7 @@ func Send(kakCommand, session, client string) {
 
 	err := cmd.Run()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		return err
 	}
+	return nil
 }

@@ -26,12 +26,14 @@ func main() {
 	editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
 	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
 	attachCmd := flag.NewFlagSet("attach", flag.ExitOnError)
+	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
 	getValCmd := flag.NewFlagSet("get-val", flag.ExitOnError)
 	getOptCmd := flag.NewFlagSet("get-opt", flag.ExitOnError)
 	getRegCmd := flag.NewFlagSet("get-opt", flag.ExitOnError)
+	getShCmd := flag.NewFlagSet("get-sh", flag.ExitOnError)
 	// killCmd := flag.NewFlagSet("kill", flag.ExitOnError)
 
-	sessionCmds := []*flag.FlagSet{editCmd, sendCmd, getValCmd, getOptCmd, getRegCmd}
+	sessionCmds := []*flag.FlagSet{editCmd, sendCmd, getCmd, getValCmd, getOptCmd, getRegCmd, getShCmd}
 	for _, cmd := range sessionCmds {
 		cmd.StringVar(&session, "s", "", "Kakoune session")
 		cmd.StringVar(&client, "c", "", "Kakoune client")
@@ -49,12 +51,16 @@ func main() {
 		sendCmd.Parse(os.Args[2:])
 	case "attach", "a":
 		attachCmd.Parse(os.Args[2:])
-	case "get-val", "gv":
+	case "get":
+		getCmd.Parse(os.Args[2:])
+	case "get-val":
 		getValCmd.Parse(os.Args[2:])
-	case "get-opt", "go":
+	case "get-opt":
 		getOptCmd.Parse(os.Args[2:])
-	case "get-reg", "gr":
-		getOptCmd.Parse(os.Args[2:])
+	case "get-reg":
+		getRegCmd.Parse(os.Args[2:])
+	case "get-sh":
+		getShCmd.Parse(os.Args[2:])
 	case "list", "l", "ls":
 		cmd.List()
 	case "env":
@@ -81,7 +87,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		cmd.Edit(filename, context.session, context.client)
 	}
 
@@ -96,17 +101,75 @@ func main() {
 		cmd.Send(kakCommand, context.session, context.client)
 	}
 
-	if getValCmd.Parsed() {
-		arg := getValCmd.Arg(0)
-		kakVal := fmt.Sprintf("%%val{%s}", arg)
-		// fmt.Println(kakVal)
+	if getCmd.Parsed() {
+		arg := getCmd.Arg(0)
+		// kakQuery := fmt.Sprintf("%%val{%s}", arg)
 
 		context, err := getContext()
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		cmd.Get(kakVal, context.session, context.client)
+		out, err := cmd.Get(arg, context.session, context.client)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(strings.Join(out, "\n"))
+	}
+
+	if getValCmd.Parsed() {
+		arg := getValCmd.Arg(0)
+		kakVal := fmt.Sprintf("%%val{%s}", arg)
+
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		out, err := cmd.Get(kakVal, context.session, context.client)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(strings.Join(out, "\n"))
+	}
+
+	if getOptCmd.Parsed() {
+		arg := getOptCmd.Arg(0)
+		kakOpt := fmt.Sprintf("%%opt{%s}", arg)
+
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+		cmd.Get(kakOpt, context.session, context.client)
+	}
+
+	if getRegCmd.Parsed() {
+		arg := getRegCmd.Arg(0)
+		kakReg := fmt.Sprintf("%%reg{%s}", arg)
+
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+		cmd.Get(kakReg, context.session, context.client)
+	}
+
+	if getShCmd.Parsed() {
+		args := getShCmd.Args()
+		kakSh := fmt.Sprintf("%%sh{%s}", strings.Join(args, " "))
+
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+		out, err := cmd.Get(kakSh, context.session, context.client)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(strings.Join(out, "\n"))
 	}
 }
 

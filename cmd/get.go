@@ -2,39 +2,36 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
 	"os"
 	"strings"
+	"time"
 )
 
-func check(e error) {
-	if e != nil {
-		log.Fatal(e)
+func Get(getStr, session, client string) ([]string, error) {
+	f, err := os.CreateTemp("", "kks-tmp")
+	if err != nil {
+		return nil, err
 	}
-}
+	defer os.Remove(f.Name())
+	defer f.Close()
 
-func Get(getStr, session, client string) {
-	tmpfile, err := ioutil.TempFile("", "kaks-tmp")
-	check(err)
+	sendCmd := fmt.Sprintf("echo -quoting shell -to-file %s %%{ %s }", f.Name(), getStr)
 
-	defer os.Remove(tmpfile.Name())
+	if err := Send(sendCmd, session, client); err != nil {
+		return nil, err
+	}
+	// TODO: need to wait for Send to finish
+	time.Sleep(10 * time.Millisecond)
 
-	Send(fmt.Sprintf("echo -quoting shell -to-file %s %%{ %s }", tmpfile.Name(), getStr), session, client)
-
-	out, err := os.ReadFile(tmpfile.Name())
-	fmt.Println(string(out))
-	check(err)
-
-	buffers := strings.Split(string(out), " ")
-	for i, val := range buffers {
-		buffers[i] = strings.Trim(val, "''")
+	out, err := os.ReadFile(f.Name())
+	if err != nil {
+		return nil, err
 	}
 
-	fmt.Print(strings.Join(buffers, "\n"))
-
-	if err := tmpfile.Close(); err != nil {
-		log.Fatal(err)
+	outStrs := strings.Split(string(out), " ")
+	for i, val := range outStrs {
+		outStrs[i] = strings.Trim(val, "''")
 	}
 
+	return outStrs, nil
 }
