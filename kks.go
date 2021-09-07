@@ -5,7 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"kks/cmd"
+	"github.com/kkga/kks/cmd"
 	"log"
 	"os"
 	"strings"
@@ -27,13 +27,9 @@ func main() {
 	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
 	attachCmd := flag.NewFlagSet("attach", flag.ExitOnError)
 	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
-	// getValCmd := flag.NewFlagSet("get-val", flag.ExitOnError)
-	// getOptCmd := flag.NewFlagSet("get-opt", flag.ExitOnError)
-	// getRegCmd := flag.NewFlagSet("get-opt", flag.ExitOnError)
-	// getShCmd := flag.NewFlagSet("get-sh", flag.ExitOnError)
 	killCmd := flag.NewFlagSet("kill", flag.ExitOnError)
 
-	sessionCmds := []*flag.FlagSet{editCmd, sendCmd, getCmd, killCmd}
+	sessionCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd, killCmd}
 	for _, cmd := range sessionCmds {
 		cmd.StringVar(&session, "s", "", "Kakoune session")
 		cmd.StringVar(&client, "c", "", "Kakoune client")
@@ -155,17 +151,15 @@ func printHelp() {
 	fmt.Println("Handy Kakoune companion.")
 	fmt.Println()
 	fmt.Println("USAGE")
-	fmt.Println("  kks <command> [args]")
+	fmt.Println("  kks <command> [-s <session>] [-c <client>] [<args>]")
 	fmt.Println()
 	fmt.Println("COMMANDS")
 	fmt.Println("  edit, e         edit file")
-	fmt.Println("  list, l         list sessions and clients")
 	fmt.Println("  send, s         send command")
 	fmt.Println("  attach, a       attach to session")
+	fmt.Println("  list, l         list sessions and clients")
 	fmt.Println("  kill, k         kill session")
-	fmt.Println("  get-val         get value from client")
-	fmt.Println("  get-opt         get option from client")
-	fmt.Println("  get-reg         get register from client")
+	fmt.Println("  get             get %{val}, %{opt} and friends")
 	fmt.Println("  env             print env")
 	fmt.Println("  init            print Kakoune definitions")
 	fmt.Println()
