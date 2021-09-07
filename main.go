@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
 	"fmt"
 	"kks/cmd"
 	"os"
 	"strings"
 )
+
+//go:embed init.kak
+var initStr string
 
 type KakContext struct {
 	session string
@@ -46,6 +50,8 @@ func main() {
 	case "env":
 		context := getContext()
 		cmd.Env(context.session, context.client)
+	case "init":
+		fmt.Print(initStr)
 	default:
 		printHelp()
 		os.Exit(2)
@@ -109,6 +115,10 @@ func getContext() *KakContext {
 		client:  os.Getenv("KKS_CLIENT"),
 	}
 	return &c
+}
+
+func printInit() {
+
 }
 
 func printHelp() {
