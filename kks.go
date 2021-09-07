@@ -5,19 +5,21 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/kkga/kks/cmd"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
-)
 
-//go:embed init.kak
-var initStr string
+	"github.com/kkga/kks/cmd"
+)
 
 type KakContext struct {
 	session string
 	client  string
 }
+
+//go:embed init.kak
+var initStr string
 
 var session string
 var client string
@@ -31,7 +33,9 @@ func main() {
 	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 	envCmd := flag.NewFlagSet("env", flag.ExitOnError)
 
-	sessionCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd, killCmd}
+	sessionCmds := []*flag.FlagSet{
+		editCmd, sendCmd, attachCmd, getCmd, killCmd,
+	}
 	for _, cmd := range sessionCmds {
 		cmd.StringVar(&session, "s", "", "Kakoune session")
 		cmd.StringVar(&client, "c", "", "Kakoune client")
@@ -112,16 +116,26 @@ func main() {
 			log.Fatal(err)
 		}
 
-		// cwd, err := os.Getwd()
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// fmt.Println(cwd)
-		// kakwd, err := cmd.Get("%sh{pwd}", context.session, context.client)
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// fmt.Println(kakwd)
+		if strings.Contains(arg, "buflist") {
+			cwd, err := os.Getwd()
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println("cwd:", cwd)
+
+			kakwd, err := cmd.Get("%sh{pwd}", context.session, context.client)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println("kakwd:", kakwd)
+
+			relPath, _ := filepath.Rel(cwd, kakwd[0])
+			fmt.Println("rel path:", relPath)
+
+			for i, buf := range out {
+				out[i] = fmt.Sprintf("%s/%s", relPath, buf)
+			}
+		}
 
 		fmt.Println(strings.Join(out, "\n"))
 	}
