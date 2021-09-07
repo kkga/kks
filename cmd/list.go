@@ -43,7 +43,9 @@ func List() {
 
 	for _, session := range sessions {
 		for _, client := range session.clients {
-			fmt.Printf("%s\t\t%s\t\t%s\n", session.name, client, session.dir)
+			if client != "" {
+				fmt.Printf("%s\t%s\t%s\n", session.name, client, session.dir)
+			}
 		}
 	}
 
