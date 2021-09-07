@@ -2,9 +2,11 @@ package main
 
 import (
 	_ "embed"
+	"errors"
 	"flag"
 	"fmt"
 	"kks/cmd"
+	"log"
 	"os"
 	"strings"
 )
@@ -17,25 +19,27 @@ type KakContext struct {
 	client  string
 }
 
+var session string
+var client string
+
 func main() {
-	// TODO: generalize this?
 	editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
-	editSessionPtr := editCmd.String("s", "", "kakoune session")
-	editClientPtr := editCmd.String("c", "", "kakoune client")
-
 	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
-	sendSessionPtr := sendCmd.String("s", "", "kakoune session")
-	sendClientPtr := sendCmd.String("c", "", "kakoune client")
-
-	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
-	getSessionPtr := getCmd.String("s", "", "kakoune session")
-	getClientPtr := getCmd.String("c", "", "kakoune client")
-
+	attachCmd := flag.NewFlagSet("attach", flag.ExitOnError)
+	getValCmd := flag.NewFlagSet("get-val", flag.ExitOnError)
+	getOptCmd := flag.NewFlagSet("get-opt", flag.ExitOnError)
+	getRegCmd := flag.NewFlagSet("get-opt", flag.ExitOnError)
 	// killCmd := flag.NewFlagSet("kill", flag.ExitOnError)
+
+	sessionCmds := []*flag.FlagSet{editCmd, sendCmd, getValCmd, getOptCmd, getRegCmd}
+	for _, cmd := range sessionCmds {
+		cmd.StringVar(&session, "s", "", "Kakoune session")
+		cmd.StringVar(&client, "c", "", "Kakoune client")
+	}
 
 	if len(os.Args) < 2 {
 		printHelp()
-		os.Exit(1)
+		os.Exit(0)
 	}
 
 	switch os.Args[1] {
@@ -43,12 +47,21 @@ func main() {
 		editCmd.Parse(os.Args[2:])
 	case "send", "s":
 		sendCmd.Parse(os.Args[2:])
-	case "get", "g":
-		getCmd.Parse(os.Args[2:])
+	case "attach", "a":
+		attachCmd.Parse(os.Args[2:])
+	case "get-val", "gv":
+		getValCmd.Parse(os.Args[2:])
+	case "get-opt", "go":
+		getOptCmd.Parse(os.Args[2:])
+	case "get-reg", "gr":
+		getOptCmd.Parse(os.Args[2:])
 	case "list", "l", "ls":
 		cmd.List()
 	case "env":
-		context := getContext()
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
+		}
 		cmd.Env(context.session, context.client)
 	case "init":
 		fmt.Print(initStr)
@@ -64,13 +77,9 @@ func main() {
 			os.Exit(2)
 		}
 
-		context := getContext()
-
-		if *editSessionPtr != "" {
-			context.session = *editSessionPtr
-		}
-		if *editClientPtr != "" {
-			context.client = *editClientPtr
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
 		}
 
 		cmd.Edit(filename, context.session, context.client)
@@ -80,61 +89,63 @@ func main() {
 		args := sendCmd.Args()
 		kakCommand := strings.Join(args, " ")
 
-		context := getContext()
-
-		if *sendSessionPtr != "" {
-			context.session = *sendSessionPtr
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
 		}
-		if *sendClientPtr != "" {
-			context.client = *sendClientPtr
-		}
-
 		cmd.Send(kakCommand, context.session, context.client)
 	}
 
-	if getCmd.Parsed() {
-		args := getCmd.Args()
-		kakVal := strings.Join(args, " ")
+	if getValCmd.Parsed() {
+		arg := getValCmd.Arg(0)
+		kakVal := fmt.Sprintf("%%val{%s}", arg)
+		// fmt.Println(kakVal)
 
-		context := getContext()
-
-		if *getSessionPtr != "" {
-			context.session = *getSessionPtr
-		}
-		if *getClientPtr != "" {
-			context.client = *getClientPtr
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
 		}
 
 		cmd.Get(kakVal, context.session, context.client)
 	}
 }
 
-func getContext() *KakContext {
+func getContext() (*KakContext, error) {
 	c := KakContext{
 		session: os.Getenv("KKS_SESSION"),
 		client:  os.Getenv("KKS_CLIENT"),
 	}
-	return &c
-}
-
-func printInit() {
-
+	if session != "" {
+		c.session = session
+	}
+	if client != "" {
+		c.client = client
+	}
+	if c.session == "" {
+		return nil, errors.New("No session in context")
+	}
+	return &c, nil
 }
 
 func printHelp() {
 	fmt.Println("Handy Kakoune companion.")
 	fmt.Println()
 	fmt.Println("USAGE")
-	fmt.Println("  kaks <command> [<args>]")
+	fmt.Println("  kks <command> [args]")
 	fmt.Println()
 	fmt.Println("COMMANDS")
 	fmt.Println("  edit, e         edit file")
-	fmt.Println("  list, l         list sessions")
+	fmt.Println("  list, l         list sessions and clients")
 	fmt.Println("  send, s         send command")
+	fmt.Println("  attach, a       attach to session")
 	fmt.Println("  kill, k         kill session")
+	fmt.Println("  get-val         get value from client")
+	fmt.Println("  get-opt         get option from client")
+	fmt.Println("  get-reg         get register from client")
 	fmt.Println("  env             print env")
+	fmt.Println("  init            print Kakoune definitions")
 	fmt.Println()
 	fmt.Println("ENVIRONMENT VARIABLES")
-	fmt.Println("  KAKS_SESSION    Kakoune session")
-	fmt.Println("  KAKS_CLIENT     Kakoune client")
+	fmt.Println("  KKS_SESSION     Kakoune session")
+	fmt.Println("  KKS_CLIENT      Kakoune client")
 }

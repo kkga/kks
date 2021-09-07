@@ -13,9 +13,9 @@ func Send(kakCommand, session, client string) {
 	cmd.Stderr = os.Stderr
 
 	var kakStdin strings.Builder
-	kakStdin.WriteString("eval")
+	kakStdin.WriteString("evaluate-commands")
 	if client != "" {
-		kakStdin.WriteString(fmt.Sprintf(" -client %s", client))
+		kakStdin.WriteString(fmt.Sprintf(" -try-client %s", client))
 	}
 	kakStdin.WriteString(fmt.Sprintf(" %s", kakCommand))
 
