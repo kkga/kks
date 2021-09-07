@@ -1,1 +1,4 @@
 - [ ] kill cmd
+- [ ] detach newly started sessions from shell (setsid?)
+- [ ] edit cmd neds line:col support
+- grep cmd?
