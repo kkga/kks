@@ -1,5 +1,6 @@
 - [ ] kill cmd
 - [ ] detach newly started sessions from shell (setsid?)
 - [ ] edit cmd needs line:col support
-- [ ] find solution to remove the timeout in Get
+- [x] find solution to remove the timeout in Get
+- buflist should return relative to cwd
 - grep cmd?

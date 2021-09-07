@@ -28,6 +28,8 @@ func main() {
 	attachCmd := flag.NewFlagSet("attach", flag.ExitOnError)
 	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
 	killCmd := flag.NewFlagSet("kill", flag.ExitOnError)
+	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
+	envCmd := flag.NewFlagSet("env", flag.ExitOnError)
 
 	sessionCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd, killCmd}
 	for _, cmd := range sessionCmds {
@@ -52,18 +54,14 @@ func main() {
 	case "kill":
 		killCmd.Parse(os.Args[2:])
 	case "list", "l", "ls":
-		cmd.List()
+		listCmd.Parse(os.Args[2:])
 	case "env":
-		context, err := getContext()
-		if err != nil {
-			log.Fatal(err)
-		}
-		cmd.Env(context.session, context.client)
+		envCmd.Parse(os.Args[2:])
 	case "init":
 		fmt.Print(initStr)
 	default:
-		printHelp()
-		os.Exit(2)
+		fmt.Println("unknown command:", os.Args[1])
+		os.Exit(1)
 	}
 
 	if editCmd.Parsed() {
@@ -103,7 +101,6 @@ func main() {
 
 	if getCmd.Parsed() {
 		arg := getCmd.Arg(0)
-		// kakQuery := fmt.Sprintf("%%val{%s}", arg)
 
 		context, err := getContext()
 		if err != nil {
@@ -114,6 +111,17 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		// cwd, err := os.Getwd()
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		// fmt.Println(cwd)
+		// kakwd, err := cmd.Get("%sh{pwd}", context.session, context.client)
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		// fmt.Println(kakwd)
 
 		fmt.Println(strings.Join(out, "\n"))
 	}
@@ -126,6 +134,19 @@ func main() {
 		}
 
 		cmd.Send(kakCommand, context.session, context.client)
+	}
+
+	if listCmd.Parsed() {
+		cmd.List()
+	}
+
+	if envCmd.Parsed() {
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("session: %s\n", context.session)
+		fmt.Printf("client: %s\n", context.client)
 	}
 
 }
