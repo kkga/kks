@@ -11,15 +11,15 @@ import (
 func Edit(line int, col int, filename, session, client string) error {
 	if filename != "" && session != "" && client != "" && client != "-" {
 		kakEditCmd := fmt.Sprintf("edit %s", filename)
-		Send(kakEditCmd, session, client)
+		Send(kakEditCmd, "", session, client)
 
 		if line != 0 {
-			cmd := fmt.Sprintf("exec %dg", line)
-			Send(cmd, session, client)
+			c := fmt.Sprintf("exec %dg", line)
+			Send(c, "", session, client)
 		}
 		if col != 0 && col > 1 {
-			cmd := fmt.Sprintf("exec %dl", col-1)
-			Send(cmd, session, client)
+			c := fmt.Sprintf("exec %dl", col-1)
+			Send(c, "", session, client)
 		}
 
 		os.Exit(0)

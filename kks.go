@@ -10,6 +10,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kkga/kks/kak"
 )
@@ -28,12 +29,15 @@ var client string
 func main() {
 	editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
 	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
+	sendBuffer := sendCmd.String("b", "", "send to specified buffer")
 	attachCmd := flag.NewFlagSet("attach", flag.ExitOnError)
 	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
 	killCmd := flag.NewFlagSet("kill", flag.ExitOnError)
 	envCmd := flag.NewFlagSet("env", flag.ExitOnError)
 	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 	listRaw := listCmd.Bool("r", false, "raw output")
+	catCmd := flag.NewFlagSet("cat", flag.ExitOnError)
+	catBuffer := catCmd.String("b", "", "print specified buffer")
 
 	sessionCmds := []*flag.FlagSet{
 		editCmd, sendCmd, attachCmd, getCmd, killCmd,
@@ -63,6 +67,8 @@ func main() {
 		listCmd.Parse(os.Args[2:])
 	case "env":
 		envCmd.Parse(os.Args[2:])
+	case "cat":
+		catCmd.Parse(os.Args[2:])
 	case "init":
 		fmt.Print(initStr)
 	default:
@@ -133,7 +139,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if err := kak.Send(kakCommand, context.session, context.client); err != nil {
+		if err := kak.Send(kakCommand, *sendBuffer, context.session, context.client); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -158,7 +164,7 @@ func main() {
 		// 	}
 		// 	fmt.Println("CWD:", cwd)
 
-		// 	kakwd, err := kak.Get("%sh{pwd}", context.session, context.client)
+		// kakwd, err := kak.Get("%sh{pwd}", context.session, context.client)
 		// 	if err != nil {
 		// 		log.Fatal(err)
 		// 	}
@@ -192,7 +198,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		if err := kak.Send(kakCommand, context.session, context.client); err != nil {
+		if err := kak.Send(kakCommand, "", context.session, context.client); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -231,6 +237,44 @@ func main() {
 		}
 		fmt.Printf("session: %s\n", context.session)
 		fmt.Printf("client: %s\n", context.client)
+	}
+
+	if catCmd.Parsed() {
+		context, err := getContext()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		buffer := *catBuffer
+		if buffer == "" {
+			buffile, err := kak.Get("%val{buffile}", context.session, context.client)
+			if err != nil {
+				log.Fatal(err)
+			}
+			buffer = buffile[0]
+		}
+
+		f, err := os.CreateTemp("/home/kkga/tmp/", "kks-tmp")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer os.Remove(f.Name())
+		defer f.Close()
+		// fmt.Println(*catBuffer)
+
+		sendCmd := fmt.Sprintf("write -force %s", f.Name())
+
+		if err := kak.Send(sendCmd, buffer, context.session, context.client); err != nil {
+			log.Fatal(err)
+		}
+		// // TODO: need to wait for Send to finish
+		time.Sleep(20 * time.Millisecond)
+
+		out, err := os.ReadFile(f.Name())
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(string(out))
 	}
 
 }

@@ -17,7 +17,7 @@ func Get(getStr, session, client string) ([]string, error) {
 
 	sendCmd := fmt.Sprintf("echo -quoting kakoune -to-file %s %%{ %s }", f.Name(), getStr)
 
-	if err := Send(sendCmd, session, client); err != nil {
+	if err := Send(sendCmd, "", session, client); err != nil {
 		return nil, err
 	}
 	// TODO: need to wait for Send to finish

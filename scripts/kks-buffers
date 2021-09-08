@@ -3,7 +3,9 @@
 
 kks get %val[buflist] |
 	grep -F "$*" |
-	fzf --height 100% --prompt 'buf> ' --preview 'kks get %val[buffile] | highlight --line-range=1-100 --force -O ansi {}' |
+	fzf --height 100% --prompt 'buf> ' --preview 'kks cat -b {} | highlight --line-range=1-100 --force -O ansi' |
 	while read -r name; do
 		kks send buffer "$name"
 	done
+
+# fzf --height 100% --prompt 'buf> ' --preview 'kks get %val[buffile] | highlight --line-range=1-100 --force -O ansi {}' |

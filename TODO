@@ -1,6 +1,7 @@
 - [x] kill cmd
 - [x] edit cmd needs line:col support
 - [x] grep cmd
+- [ ] cat cmd, needs -b flag for specific buffer
 - [ ] ??? buflist should return relative to cwd
 - [ ] kks-files from non-workdir doesn't work (need to resolve path before cmd.Edit()?)
 - [ ] detach newly started sessions from shell (setsid?)
