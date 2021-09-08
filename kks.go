@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -152,30 +151,36 @@ func main() {
 			log.Fatal(err)
 		}
 
-		if strings.Contains(arg, "buflist") {
-			cwd, err := os.Getwd()
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Println("CWD:", cwd)
+		// if strings.Contains(arg, "buflist") {
+		// 	cwd, err := os.Getwd()
+		// 	if err != nil {
+		// 		log.Fatal(err)
+		// 	}
+		// 	fmt.Println("CWD:", cwd)
 
-			kakwd, err := kak.Get("%sh{pwd}", context.session, context.client)
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Println("KAKWD:", kakwd[0])
+		// 	kakwd, err := kak.Get("%sh{pwd}", context.session, context.client)
+		// 	if err != nil {
+		// 		log.Fatal(err)
+		// 	}
+		// 	fmt.Println("KAKWD:", kakwd[0])
 
-			relPath, _ := filepath.Rel(cwd, kakwd[0])
-			fmt.Println("rel path:", relPath)
-			fmt.Println()
+		// 	relPath, _ := filepath.Rel(cwd, kakwd[0])
+		// 	if strings.HasPrefix(relPath, "home/") {
+		// 		relPath = strings.Replace(relPath, "home/", "~/", 1)
+		// 	}
+		// 	fmt.Println("rel path:", relPath)
+		// 	fmt.Println()
 
-			for i, buf := range out {
-				if !strings.HasPrefix(buf, "~") && !strings.HasPrefix(buf, "*") {
-					out[i] = filepath.Join(relPath, buf)
-				}
-				// out[i] = fmt.Sprintf("%s/%s", relPath, buf)
-			}
-		}
+		// 	for i, buf := range out {
+		// 		// if !strings.HasPrefix(buf, "~") && !strings.HasPrefix(buf, "*") {
+		// 		// }
+		// 		if !filepath.IsAbs(buf) && !strings.HasPrefix(buf, "*") {
+		// 			out[i] = filepath.Join(relPath, buf)
+		// 		} else {
+		// 			out[i] = buf
+		// 		}
+		// 	}
+		// }
 
 		fmt.Println(strings.Join(out, "\n"))
 	}
