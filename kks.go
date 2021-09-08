@@ -215,7 +215,7 @@ func printHelp() {
 	fmt.Println("  edit, e         edit file")
 	fmt.Println("  send, s         send command")
 	fmt.Println("  attach, a       attach to session")
-	fmt.Println("  list, l [-r]    list sessions and clients")
+	fmt.Println("  ls [-r]         list sessions and clients")
 	fmt.Println("  kill, k         kill session")
 	fmt.Println("  get             get %{val}, %{opt} and friends")
 	fmt.Println("  env             print env")
