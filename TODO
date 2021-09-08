@@ -1,6 +1,7 @@
 - [x] kill cmd
+- [x] edit cmd needs line:col support
+- [x] grep cmd?
+- [ ] ??? buflist should return relative to cwd
+- [ ] kks-files from non-workdir doesn't work (need to resolve path before cmd.Edit()?)
 - [ ] detach newly started sessions from shell (setsid?)
-- [ ] edit cmd needs line:col support
 - [ ] find solution to remove the timeout in Get
-- [ ] buflist should return relative to cwd
-- grep cmd?
