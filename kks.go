@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -163,7 +164,14 @@ func main() {
 			log.Fatal(err)
 		}
 
-		if *listRaw {
+		if !*listRaw {
+			j, err := json.Marshal(sessions)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(string(j)
+
+		} else {
 			for _, session := range sessions {
 				for _, client := range session.Clients {
 					if client != "" {
