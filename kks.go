@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/kkga/kks/kak"
@@ -71,7 +72,36 @@ func main() {
 	}
 
 	if editCmd.Parsed() {
-		filename := editCmd.Arg(0)
+		args := editCmd.Args()
+		fmt.Println(args)
+
+		filename := ""
+		line := 0
+		col := 0
+
+		if len(args) > 1 && strings.HasPrefix(args[0], "+") {
+			if strings.Contains(args[0], ":") {
+				lineStr := strings.ReplaceAll(strings.Split(args[0], ":")[0], "+", "")
+				lineInt, err := strconv.Atoi(lineStr)
+				if err != nil {
+					log.Fatal(err)
+				}
+				line = lineInt
+
+				colStr := strings.Split(args[0], ":")[1]
+				colInt, err := strconv.Atoi(colStr)
+				if err != nil {
+					log.Fatal(err)
+				}
+				col = colInt
+			}
+			// fmt.Println(line, col)
+			filename = args[1]
+		} else if len(args) == 1 && !strings.HasPrefix(args[0], "+") {
+			filename = args[0]
+		}
+		// fmt.Println(line, col, filename)
+
 		if filename == "" {
 			printHelp()
 			os.Exit(2)
@@ -81,7 +111,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if err := kak.Edit(filename, context.session, context.client); err != nil {
+		if err := kak.Edit(line, col, filename, context.session, context.client); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -91,7 +121,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if err := kak.Edit("", context.session, context.client); err != nil {
+		if err := kak.Edit(-1, -1, "", context.session, context.client); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -169,7 +199,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println(string(j)
+			fmt.Println(string(j))
 
 		} else {
 			for _, session := range sessions {

@@ -8,10 +8,20 @@ import (
 	"syscall"
 )
 
-func Edit(filename, session, client string) error {
+func Edit(line int, col int, filename, session, client string) error {
 	if filename != "" && session != "" && client != "" && client != "-" {
-		kakCommand := fmt.Sprintf("edit %s", filename)
-		Send(kakCommand, session, client)
+		kakEditCmd := fmt.Sprintf("edit %s", filename)
+		Send(kakEditCmd, session, client)
+
+		if line != 0 {
+			cmd := fmt.Sprintf("exec %dg", line)
+			Send(cmd, session, client)
+		}
+		if col != 0 && col > 1 {
+			cmd := fmt.Sprintf("exec %dl", col-1)
+			Send(cmd, session, client)
+		}
+
 		os.Exit(0)
 	}
 
@@ -31,6 +41,14 @@ func Edit(filename, session, client string) error {
 	} else if session != "" {
 		// TODO: this gets killed if parent shell closes, use setsid?
 		kakExecArgs = append(kakExecArgs, "-s", session)
+	}
+
+	// TODO: this probably doesn't work for creating new sessions
+	if line != -1 {
+		kakExecArgs = append(kakExecArgs, fmt.Sprintf("+%d", line))
+	}
+	if col != -1 {
+		kakExecArgs = append(kakExecArgs, fmt.Sprintf("+%d", col))
 	}
 
 	if filename != "" {
