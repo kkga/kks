@@ -1,0 +1,10 @@
+#!/bin/sh
+# select kak session and client for setting environment
+# use as `eval (kak-select)`
+
+command kak -clear
+
+kks list -r |
+	column --table |
+	fzf --preview="KKS_SESSION={1} KKS_CLIENT={2} kks get %val[buffile] | xargs highlight --force -O ansi" |
+	awk '{print "export KKS_SESSION=" $1 "; export KKS_CLIENT=" $2}'

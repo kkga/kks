@@ -1,0 +1,6 @@
+#!/bin/sh
+# pick recent file
+
+cat ~/.cache/kak-mru |
+	fzf --height 100% --prompt 'mru> ' --preview 'highlight --line-range=1-100 --force -O ansi {}' |
+	xargs -r kks edit

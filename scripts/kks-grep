@@ -1,0 +1,7 @@
+#!/bin/sh
+# search for pattern in workdir
+
+rg --column --with-filename '.+' "$@" |
+	fzf --height 100% --prompt 'grep> ' |
+	awk -F':' '{print "+" $2 ":" $3 " " $1}' |
+	xargs -r kks edit

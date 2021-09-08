@@ -1,0 +1,8 @@
+#!/bin/sh
+# pick files
+
+fd --type file . "$@" |
+	fzf --multi --height 100% --prompt 'files> ' --preview 'highlight --line-range=1-100 --force -O ansi {}' |
+	while read -r file; do
+		kks edit "$file"
+	done

@@ -1,0 +1,7 @@
+#!/bin/sh
+# jump to line in buffer
+
+rg --line-number '.+' "$@" |
+	fzf --height 100% --prompt 'lines> ' |
+	cut -d':' -f1 |
+	xargs -I % kks send execute-keys '%gx'

@@ -15,7 +15,7 @@ func Get(getStr, session, client string) ([]string, error) {
 	defer os.Remove(f.Name())
 	defer f.Close()
 
-	sendCmd := fmt.Sprintf("echo -quoting shell -to-file %s %%{ %s }", f.Name(), getStr)
+	sendCmd := fmt.Sprintf("echo -quoting kakoune -to-file %s %%{ %s }", f.Name(), getStr)
 
 	if err := Send(sendCmd, session, client); err != nil {
 		return nil, err

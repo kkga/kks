@@ -1,7 +1,10 @@
 - [x] kill cmd
 - [x] edit cmd needs line:col support
-- [x] grep cmd?
+- [x] grep cmd
 - [ ] ??? buflist should return relative to cwd
 - [ ] kks-files from non-workdir doesn't work (need to resolve path before cmd.Edit()?)
 - [ ] detach newly started sessions from shell (setsid?)
 - [ ] find solution to remove the timeout in Get
+
+- add kks send commands in kks-select script to indicate highlighted client
+- add '-a' flag to kill cmd for killing all sessions
