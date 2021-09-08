@@ -157,19 +157,23 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println("cwd:", cwd)
+			fmt.Println("CWD:", cwd)
 
 			kakwd, err := kak.Get("%sh{pwd}", context.session, context.client)
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println("kakwd:", kakwd)
+			fmt.Println("KAKWD:", kakwd[0])
 
 			relPath, _ := filepath.Rel(cwd, kakwd[0])
 			fmt.Println("rel path:", relPath)
+			fmt.Println()
 
 			for i, buf := range out {
-				out[i] = fmt.Sprintf("%s/%s", relPath, buf)
+				if !strings.HasPrefix(buf, "~") && !strings.HasPrefix(buf, "*") {
+					out[i] = filepath.Join(relPath, buf)
+				}
+				// out[i] = fmt.Sprintf("%s/%s", relPath, buf)
 			}
 		}
 
