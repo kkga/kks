@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kkga/kks/cmd"
+	"github.com/kkga/kks/kak"
 )
 
 type KakContext struct {
@@ -30,8 +30,9 @@ func main() {
 	attachCmd := flag.NewFlagSet("attach", flag.ExitOnError)
 	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
 	killCmd := flag.NewFlagSet("kill", flag.ExitOnError)
-	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 	envCmd := flag.NewFlagSet("env", flag.ExitOnError)
+	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
+	listRaw := listCmd.Bool("r", false, "raw output")
 
 	sessionCmds := []*flag.FlagSet{
 		editCmd, sendCmd, attachCmd, getCmd, killCmd,
@@ -79,7 +80,9 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		cmd.Edit(filename, context.session, context.client)
+		if err := kak.Edit(filename, context.session, context.client); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if attachCmd.Parsed() {
@@ -87,7 +90,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if err := cmd.Edit("", context.session, context.client); err != nil {
+		if err := kak.Edit("", context.session, context.client); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -100,7 +103,9 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		cmd.Send(kakCommand, context.session, context.client)
+		if err := kak.Send(kakCommand, context.session, context.client); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if getCmd.Parsed() {
@@ -111,7 +116,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		out, err := cmd.Get(arg, context.session, context.client)
+		out, err := kak.Get(arg, context.session, context.client)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -123,7 +128,7 @@ func main() {
 			}
 			fmt.Println("cwd:", cwd)
 
-			kakwd, err := cmd.Get("%sh{pwd}", context.session, context.client)
+			kakwd, err := kak.Get("%sh{pwd}", context.session, context.client)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -147,11 +152,29 @@ func main() {
 			log.Fatal(err)
 		}
 
-		cmd.Send(kakCommand, context.session, context.client)
+		if err := kak.Send(kakCommand, context.session, context.client); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if listCmd.Parsed() {
-		cmd.List()
+		sessions, err := kak.List()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if *listRaw {
+			for _, session := range sessions {
+				for _, client := range session.Clients {
+					if client != "" {
+						fmt.Printf("%s\t%s\t%s\n", session.Name, client, session.Dir)
+					} else {
+						fmt.Printf("%s\t%s\t%s\n", session.Name, "-", session.Dir)
+					}
+				}
+			}
+		}
+
 	}
 
 	if envCmd.Parsed() {
@@ -192,7 +215,7 @@ func printHelp() {
 	fmt.Println("  edit, e         edit file")
 	fmt.Println("  send, s         send command")
 	fmt.Println("  attach, a       attach to session")
-	fmt.Println("  list, l         list sessions and clients")
+	fmt.Println("  list, l [-r]    list sessions and clients")
 	fmt.Println("  kill, k         kill session")
 	fmt.Println("  get             get %{val}, %{opt} and friends")
 	fmt.Println("  env             print env")
