@@ -63,6 +63,7 @@ func main() {
 
 	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
 	sendBufferFlag := sendCmd.String("b", "", "send to specified buffer")
+	sendAllFlag := sendCmd.Bool("a", false, "send to all sessions and clients")
 
 	attachCmd := flag.NewFlagSet("attach", flag.ExitOnError)
 
@@ -178,13 +179,31 @@ func main() {
 		args := sendCmd.Args()
 		kakCommand := strings.Join(args, " ")
 
-		context, err := NewContext()
-		if err != nil {
-			log.Fatal(err)
+		switch *sendAllFlag {
+		case true:
+			sessions, err := kak.List()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			for _, session := range sessions {
+				for _, client := range session.Clients {
+					if err := kak.Send(kakCommand, "", session.Name, client); err != nil {
+						log.Fatal(err)
+					}
+				}
+
+			}
+		case false:
+			context, err := NewContext()
+			if err != nil {
+				log.Fatal(err)
+			}
+			if err := kak.Send(kakCommand, *sendBufferFlag, context.Session, context.Client); err != nil {
+				log.Fatal(err)
+			}
 		}
-		if err := kak.Send(kakCommand, *sendBufferFlag, context.Session, context.Client); err != nil {
-			log.Fatal(err)
-		}
+
 	}
 
 	if getCmd.Parsed() {
