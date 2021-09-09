@@ -5,6 +5,7 @@
 	- [x] learned how channels work while doing this, implemented fsnotify
 - [x] cat cmd, needs -b flag for specific buffer
 - [ ] refactor cat cmd to use readTmp from Get
+- [ ] need to be able to create new sessions easily
 - [ ] ??? buflist should return relative to cwd
 - [ ] kks-files from non-workdir doesn't work (need to resolve path before cmd.Edit()?)
 - [ ] detach newly started sessions from shell (setsid?)

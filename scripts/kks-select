@@ -4,7 +4,7 @@
 
 command kak -clear
 
-kks list -r |
+kks list |
 	column --table |
-	fzf --preview="KKS_SESSION={1} KKS_CLIENT={2} kks get %val[buffile] | xargs highlight --force -O ansi" |
+	fzf --preview="KKS_SESSION={1} KKS_CLIENT={2} kks cat" |
 	awk '{print "export KKS_SESSION=" $1 "; export KKS_CLIENT=" $2}'

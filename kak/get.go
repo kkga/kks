@@ -19,7 +19,7 @@ func Get(getStr, buf, session, client string) ([]string, error) {
 
 	// kak will output to file, so we create a chan for reading
 	ch := make(chan string)
-	go readTmp(f, ch)
+	go ReadTmp(f, ch)
 
 	// tell kak to echo the requested state
 	sendCmd := fmt.Sprintf("echo -quoting kakoune -to-file %s %%{ %s }", f.Name(), getStr)
@@ -39,7 +39,7 @@ func Get(getStr, buf, session, client string) ([]string, error) {
 	return outStrs, nil
 }
 
-func readTmp(f *os.File, c chan string) {
+func ReadTmp(f *os.File, c chan string) {
 	// create a watcher
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
