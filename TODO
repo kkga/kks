@@ -11,3 +11,5 @@
 
 - add kks send commands in kks-select script to indicate highlighted client
 - add '-a' flag to kill cmd for killing all sessions
+
+- https://www.digitalocean.com/community/tutorials/how-to-use-the-flag-package-in-go

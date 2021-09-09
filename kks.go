@@ -32,6 +32,7 @@ func main() {
 	sendBuffer := sendCmd.String("b", "", "send to specified buffer")
 	attachCmd := flag.NewFlagSet("attach", flag.ExitOnError)
 	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
+	getBuffer := getCmd.String("b", "", "get from specified buffer")
 	killCmd := flag.NewFlagSet("kill", flag.ExitOnError)
 	envCmd := flag.NewFlagSet("env", flag.ExitOnError)
 	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
@@ -152,7 +153,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		out, err := kak.Get(arg, context.session, context.client)
+		out, err := kak.Get(arg, *getBuffer, context.session, context.client)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -247,7 +248,7 @@ func main() {
 
 		buffer := *catBuffer
 		if buffer == "" {
-			buffile, err := kak.Get("%val{buffile}", context.session, context.client)
+			buffile, err := kak.Get("%val{buffile}", "", context.session, context.client)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -315,4 +316,6 @@ func printHelp() {
 	fmt.Println("ENVIRONMENT VARIABLES")
 	fmt.Println("  KKS_SESSION     Kakoune session")
 	fmt.Println("  KKS_CLIENT      Kakoune client")
+	fmt.Println()
+	fmt.Println("Use \"kks <command> -h\" for command usage.")
 }
