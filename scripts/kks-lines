@@ -1,5 +1,10 @@
 #!/bin/sh
+#
 # jump to line in buffer
+#
+# requires:
+# - ripgrep (https://github.com/BurntSushi/ripgrep)
+# - fzf (https://github.com/junegunn/fzf)
 
 rg --line-number '.+' "$@" |
 	fzf --height 100% --prompt 'lines> ' |

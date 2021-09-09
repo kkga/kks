@@ -1,5 +1,10 @@
 #!/bin/sh
+#
 # search for pattern in workdir
+#
+# requires:
+# - ripgrep (https://github.com/BurntSushi/ripgrep)
+# - fzf (https://github.com/junegunn/fzf)
 
 rg --column --with-filename '.+' "$@" |
 	fzf --height 100% --prompt 'grep> ' |

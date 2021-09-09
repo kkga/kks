@@ -1,6 +1,19 @@
 #!/bin/sh
+#
 # pick recent file
+#
+# requires:
+# - fzf (https://github.com/junegunn/fzf)
+# - highlight (faster than bat) (https://gitlab.com/saalen/highlight)
+#
+# for this to work, add the following in kakrc:
+# (requires sponge from moreutils: https://joeyh.name/code/moreutils/)
+# hook global BufCreate [^*].* %{
+#     nop %sh{
+#         mru=~/.cache/kak-mru
+#         echo "$kak_buffile" | awk '!seen[$0]++' - "$mru" | sponge "$mru"
+#     }
+# }
 
-cat ~/.cache/kak-mru |
-	fzf --height 100% --prompt 'mru> ' --preview 'highlight --line-range=1-100 --force -O ansi {}' |
-	xargs -r kks edit
+(fzf --height 100% --prompt 'mru> ' --preview 'highlight --line-range=1-100 --force -O ansi {}' |
+	xargs -r kks edit) < ~/.cache/kak-mru

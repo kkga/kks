@@ -1,5 +1,11 @@
 #!/bin/sh
+#
 # pick files
+#
+# requires:
+# - fd (https://github.com/sharkdp/fd)
+# - fzf (https://github.com/junegunn/fzf)
+# - highlight (faster than bat) (https://gitlab.com/saalen/highlight)
 
 fd --type file . "$@" |
 	fzf --multi --height 100% --prompt 'files> ' --preview 'highlight --line-range=1-100 --force -O ansi {}' |

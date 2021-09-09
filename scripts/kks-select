@@ -1,6 +1,10 @@
 #!/bin/sh
-# select kak session and client for setting environment
-# use as `eval (kak-select)`
+#
+# select kak session and client to set environment
+# use as `eval (kak-select)`, eg: `alias ks="eval (kak-select)"` in shell config
+#
+# requires:
+# - fzf (https://github.com/junegunn/fzf)
 
 command kak -clear
 
