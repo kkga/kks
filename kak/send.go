@@ -12,18 +12,16 @@ func Send(kakCommand, buffer, session, client string) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	var kakStdin strings.Builder
-	kakStdin.WriteString("evaluate-commands")
+	var in strings.Builder
+	in.WriteString("evaluate-commands")
 	if buffer != "" {
-		kakStdin.WriteString(fmt.Sprintf(" -buffer %s", buffer))
+		in.WriteString(fmt.Sprintf(" -buffer %s", buffer))
+	} else if client != "" {
+		in.WriteString(fmt.Sprintf(" -try-client %s", client))
 	}
-	if buffer == "" && client != "" {
-		kakStdin.WriteString(fmt.Sprintf(" -try-client %s", client))
-	}
-	kakStdin.WriteString(fmt.Sprintf(" %s", kakCommand))
-	// fmt.Println(kakStdin.String())
+	in.WriteString(fmt.Sprintf(" %s", kakCommand))
 
-	cmd.Stdin = strings.NewReader(kakStdin.String())
+	cmd.Stdin = strings.NewReader(in.String())
 
 	err := cmd.Run()
 	if err != nil {

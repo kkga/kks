@@ -1,7 +1,6 @@
 package kak
 
 import (
-	// "encoding/json"
 	"os/exec"
 	"strings"
 )

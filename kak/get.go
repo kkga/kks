@@ -10,12 +10,11 @@ import (
 )
 
 func Get(getStr, session, client string) ([]string, error) {
-	// create a tmp file where kak echo the value
+	// create a tmp file for kak to echo the value
 	f, err := os.CreateTemp("", "kks-tmp")
 	if err != nil {
 		return nil, err
 	}
-	defer os.Remove(f.Name())
 	defer f.Close()
 
 	// kak will output to file, so we create a chan for reading
@@ -65,9 +64,10 @@ func readTmp(f *os.File, c chan string) {
 			if event.Op&fsnotify.Write == fsnotify.Write {
 				dat, err := os.ReadFile(f.Name())
 				if err != nil {
+					fmt.Println("errrrrr")
 					log.Fatal(err)
 				}
-
+				defer os.Remove(f.Name())
 				c <- string(dat)
 			}
 		case err, ok := <-watcher.Errors:

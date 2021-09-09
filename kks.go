@@ -254,7 +254,7 @@ func main() {
 			buffer = buffile[0]
 		}
 
-		f, err := os.CreateTemp("/home/kkga/tmp/", "kks-tmp")
+		f, err := os.CreateTemp("", "kks-tmp")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -267,7 +267,7 @@ func main() {
 		if err := kak.Send(sendCmd, buffer, context.session, context.client); err != nil {
 			log.Fatal(err)
 		}
-		// // TODO: need to wait for Send to finish
+		// // TODO: refactor for fsnotify, generalize the Get for this
 		time.Sleep(20 * time.Millisecond)
 
 		out, err := os.ReadFile(f.Name())
