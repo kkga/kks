@@ -10,7 +10,7 @@ import (
 
 func Edit(line int, col int, filename, session, client string) error {
 	if filename != "" && session != "" && client != "" && client != "-" {
-		kakEditCmd := fmt.Sprintf("edit %s", filename)
+		kakEditCmd := fmt.Sprintf("edit -existing %s", filename)
 		Send(kakEditCmd, "", session, client)
 
 		if line != 0 {
@@ -55,7 +55,7 @@ func Edit(line int, col int, filename, session, client string) error {
 		kakExecArgs = append(kakExecArgs, filename)
 	}
 
-	fmt.Println("edit", kakExecArgs)
+	fmt.Println("edit -existing", kakExecArgs)
 
 	execErr := syscall.Exec(kakBinary, kakExecArgs, os.Environ())
 	if execErr != nil {
