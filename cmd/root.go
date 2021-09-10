@@ -24,6 +24,7 @@ func Root(args []string) error {
 
 	cmds := []Runner{
 		NewAttachCmd(),
+		NewCatCmd(),
 		NewEnvCmd(),
 		NewGetCmd(),
 		NewInitCmd(),

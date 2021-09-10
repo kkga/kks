@@ -50,32 +50,6 @@ func main() {
 
 	// cmdArgs := os.Args[2:]
 
-	// switch os.Args[1] {
-	// case "new", "n":
-	// 	newCmd.Parse(cmdArgs)
-	// case "edit", "e":
-	// 	editCmd.Parse(cmdArgs)
-	// case "send", "s":
-	// 	sendCmd.Parse(cmdArgs)
-	// case "attach", "a":
-	// 	attachCmd.Parse(cmdArgs)
-	// case "get":
-	// 	getCmd.Parse(cmdArgs)
-	// case "kill":
-	// 	killCmd.Parse(cmdArgs)
-	// case "list", "l", "ls":
-	// 	listCmd.Parse(cmdArgs)
-	// case "cat":
-	// 	catCmd.Parse(cmdArgs)
-	// // case "env":
-	// // 	envCmd.Parse(cmdArgs)
-	// case "init":
-	// 	fmt.Print(initStr)
-	// default:
-	// 	fmt.Println("unknown command:", os.Args[1])
-	// 	os.Exit(1)
-	// }
-
 	// // create new session
 	// if newCmd.Parsed() {
 	// 	name := newCmd.Arg(0)
@@ -170,38 +144,4 @@ func main() {
 	// 	sessions, err := kak.List()
 	// 	check(err)
 
-	// // cat buffer
-	// if catCmd.Parsed() {
-	// 	kc, err := kak.NewContext(sessArg, clArg)
-	// 	check(err)
-
-	// 	buffer := *catCmdBuf
-	// 	if buffer == "" {
-	// 		if contextErr := kc.Exists(); contextErr != nil {
-	// 			log.Fatal(contextErr)
-	// 		}
-	// 		buffile, err := kak.Get("%val{buffile}", "", *kc)
-	// 		if err != nil {
-	// 			log.Fatal(err)
-	// 		}
-	// 		buffer = buffile[0]
-	// 	}
-
-	// 	f, err := os.CreateTemp("", "kks-tmp")
-	// 	check(err)
-
-	// 	defer os.Remove(f.Name())
-	// 	defer f.Close()
-
-	// 	ch := make(chan string)
-	// 	go kak.ReadTmp(f, ch)
-
-	// 	sendCmd := fmt.Sprintf("write -force %s", f.Name())
-	// 	err = kak.Send(sendCmd, buffer, kc.Session, kc.Client)
-	// 	check(err)
-
-	// 	output := <-ch
-
-	// 	fmt.Println(output)
-	// }
 }
