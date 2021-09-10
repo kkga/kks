@@ -1,3 +1,9 @@
+- refactor Edit into smaller parts
+	- move session creation into separate command that handles `setsid`
+	- in edit without context, create new session and attach
+	- resolve relative path before sending to kak
+
+
 - [x] kill cmd
 - [x] edit cmd needs line:col support
 - [x] grep cmd
@@ -5,13 +11,13 @@
 	- [x] learned how channels work while doing this, implemented fsnotify
 - [x] cat cmd, needs -b flag for specific buffer
 - [x] refactor cat cmd to use readTmp from Get
-- [ ] refactor Edit into smaller parts
-	- [ ] resolve relative path before sending to kak
 - [ ] make default cmd run edit, like kak
 - [ ] need to be able to create new sessions easily
 - [ ] ??? buflist should return relative to cwd
 - [ ] kks-files from non-workdir doesn't work (need to resolve path before cmd.Edit()?)
-- [ ] detach newly started sessions from shell (setsid?)
+- [ ] need separate kak connect command for gui programs (wofi/rofi/etc)
+
+
 
 - add kks send commands in kks-select script to indicate highlighted client
 - add '-a' flag to kill cmd for killing all sessions

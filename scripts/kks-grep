@@ -6,7 +6,7 @@
 # - ripgrep (https://github.com/BurntSushi/ripgrep)
 # - fzf (https://github.com/junegunn/fzf)
 
-rg --column --with-filename '.+' "$@" |
+rg --vimgrep '.+' "$@" |
 	fzf --height 100% --prompt 'grep> ' |
 	awk -F':' '{print "+" $2 ":" $3 " " $1}' |
 	xargs -r kks edit

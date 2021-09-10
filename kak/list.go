@@ -6,9 +6,9 @@ import (
 )
 
 type KakSession struct {
-	Name    string
-	Clients []string
-	Dir     string
+	Name    string   `json:"name"`
+	Clients []string `json:"clients"`
+	Dir     string   `json:"dir"`
 }
 
 func List() ([]KakSession, error) {

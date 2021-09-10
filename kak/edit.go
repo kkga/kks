@@ -58,8 +58,9 @@ func Edit(line int, col int, filename, session, client string) error {
 	fmt.Println("edit -existing", kakExecArgs)
 
 	execErr := syscall.Exec(kakBinary, kakExecArgs, os.Environ())
+	syscall.Setsid()
 	if execErr != nil {
-		return err
+		return execErr
 	}
 	return nil
 }
