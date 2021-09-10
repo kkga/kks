@@ -107,7 +107,7 @@ func main() {
 	// edit file
 	if editCmd.Parsed() {
 		args := editCmd.Args()
-		// fmt.Println(args)
+		fmt.Println(args)
 
 		fp, err := kak.NewFilepath(args)
 		check(err)

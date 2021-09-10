@@ -8,5 +8,5 @@
 
 rg --vimgrep '.+' "$@" |
 	fzf --height 100% --prompt 'grep> ' |
-	awk -F':' '{print "+" $2 ":" $3 " " $1}' |
+	awk -F':' '{print $1 " " "+" $2 ":" $3 }' |
 	xargs -r kks edit
