@@ -9,7 +9,7 @@ type Runner interface {
 	Init([]string, CmdContext) error
 	Run() error
 	Name() string
-	Aliases() []string
+	Alias() []string
 }
 
 func Root(args []string) error {
@@ -19,9 +19,10 @@ func Root(args []string) error {
 	}
 
 	cmds := []Runner{
-		NewEnvCmd(),
-		NewAttachCmd(),
 		NewSendCmd(),
+		NewAttachCmd(),
+		NewKillCmd(),
+		NewEnvCmd(),
 	}
 
 	subcommand := os.Args[1]
@@ -31,7 +32,7 @@ func Root(args []string) error {
 	}
 
 	for _, cmd := range cmds {
-		if cmd.Name() == subcommand || containsString(cmd.Aliases(), subcommand) {
+		if cmd.Name() == subcommand || containsString(cmd.Alias(), subcommand) {
 			cmd.Init(os.Args[2:], *cmdCtx)
 			return cmd.Run()
 		}

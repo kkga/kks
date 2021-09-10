@@ -46,6 +46,6 @@ func (ac *AttachCmd) Name() string {
 	return ac.fs.Name()
 }
 
-func (ac *AttachCmd) Aliases() []string {
+func (ac *AttachCmd) Alias() []string {
 	return ac.alias
 }

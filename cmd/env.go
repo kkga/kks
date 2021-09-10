@@ -39,6 +39,6 @@ func (ec *EnvCmd) Name() string {
 	return ec.fs.Name()
 }
 
-func (ec *EnvCmd) Aliases() []string {
+func (ec *EnvCmd) Alias() []string {
 	return ec.alias
 }

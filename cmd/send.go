@@ -34,15 +34,14 @@ func (c *SendCmd) Run() error {
 	kakCmd := strings.Join(c.fs.Args(), " ")
 
 	buf := ""
-	sess := c.cc.Session
-	cl := c.cc.Client
-
 	if c.buffer != "" {
 		buf = c.buffer
 	}
+	sess := c.cc.Session
 	if c.session != "" {
 		sess = c.session
 	}
+	cl := c.cc.Client
 	if c.client != "" {
 		cl = c.client
 	}
@@ -81,6 +80,6 @@ func (c *SendCmd) Name() string {
 	return c.fs.Name()
 }
 
-func (c *SendCmd) Aliases() []string {
+func (c *SendCmd) Alias() []string {
 	return c.alias
 }
