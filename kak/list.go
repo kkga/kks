@@ -22,9 +22,8 @@ func List() ([]KakSession, error) {
 
 	for _, session := range kakSessions {
 		s := KakSession{Name: session}
-		kc := KakContext{Session: s.Name}
 
-		clients, err := Get("%val{client_list}", "", kc)
+		clients, err := Get("%val{client_list}", "", s.Name, "")
 		if err != nil {
 			return nil, err
 		}
@@ -32,7 +31,7 @@ func List() ([]KakSession, error) {
 			s.Clients = clients
 		}
 
-		dir, err := Get("%sh{pwd}", "", kc)
+		dir, err := Get("%sh{pwd}", "", s.Name, "")
 		if err != nil {
 			return nil, err
 		}

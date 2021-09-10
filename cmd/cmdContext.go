@@ -1,53 +1,47 @@
-package kak
+package cmd
 
 import (
 	"encoding/json"
 	"errors"
-	// "errors"
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/kkga/kks/kak"
 )
 
-type KakContext struct {
+type CmdContext struct {
 	Session string `json:"session"`
 	Client  string `json:"client"`
-	WorkDir string `json:"workdir"`
 	Buffer  string `json:"buffer"`
+	WorkDir string `json:"workdir"`
 }
 
-func NewContext(sess, cl string) (*KakContext, error) {
-	kc := KakContext{
+func NewCmdContext() (*CmdContext, error) {
+	cc := CmdContext{
 		Session: os.Getenv("KKS_SESSION"),
 		Client:  os.Getenv("KKS_CLIENT"),
 	}
 
-	if sess != "" {
-		kc.Session = sess
-	}
-	if cl != "" {
-		kc.Client = cl
-	}
-
-	dir, _ := Get("%sh{pwd}", "", kc)
+	dir, _ := kak.Get("%sh{pwd}", "", cc.Session, cc.Client)
 	if dir != nil {
-		kc.WorkDir = dir[0]
+		cc.WorkDir = dir[0]
 	}
 
-	buf, _ := Get("%val{bufname}", "", kc)
+	buf, _ := kak.Get("%val{bufname}", "", cc.Session, cc.Client)
 	if buf != nil {
-		kc.Buffer = buf[0]
+		cc.Buffer = buf[0]
 	}
 
-	return &kc, nil
+	return &cc, nil
 }
 
-func (k *KakContext) Exists() error {
+func (k *CmdContext) Exists() error {
 	if k.Session == "" {
 		return errors.New("No session in context")
 	}
 
-	kakSessions, _ := List()
+	kakSessions, _ := kak.List()
 	for _, sess := range kakSessions {
 		if sess.Name != k.Session {
 			return nil
@@ -57,7 +51,7 @@ func (k *KakContext) Exists() error {
 	return errors.New(fmt.Sprintf("Session doesn't exist: %s", k.Session))
 }
 
-func (k *KakContext) Print(jsonOutput bool) {
+func (k *CmdContext) Print(jsonOutput bool) {
 	switch jsonOutput {
 	case true:
 		j, err := json.Marshal(k)
