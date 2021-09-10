@@ -23,7 +23,6 @@ type ListCmd struct {
 	fs    *flag.FlagSet
 	json  bool
 	alias []string
-	cc    CmdContext
 }
 
 func (c *ListCmd) Run() error {
@@ -61,7 +60,6 @@ func (c *ListCmd) Run() error {
 }
 
 func (c *ListCmd) Init(args []string, cc CmdContext) error {
-	c.cc = cc
 	if err := c.fs.Parse(args); err != nil {
 		return err
 	}

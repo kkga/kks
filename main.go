@@ -175,54 +175,10 @@ func main() {
 	// 	fmt.Println(strings.Join(out, "\n"))
 	// }
 
-	// // kill session/all
-	// if killCmd.Parsed() {
-	// 	kakCommand := "kill"
-
-	// 	switch *killCmdAll {
-	// 	case true:
-	// 		sessions, err := kak.List()
-	// 		check(err)
-
-	// 		for _, session := range sessions {
-	// 			err = kak.Send(kakCommand, "", session.Name, "")
-	// 			check(err)
-	// 		}
-	// 	case false:
-	// 		context, err := kak.NewContext(sessArg, clArg)
-	// 		check(err)
-
-	// 		err = kak.Send(kakCommand, "", context.Session, context.Client)
-	// 		check(err)
-	// 	}
-	// }
-
 	// // list sessions
 	// if listCmd.Parsed() {
 	// 	sessions, err := kak.List()
 	// 	check(err)
-
-	// 	switch *listCmdJson {
-	// 	case true:
-	// 		j, err := json.Marshal(sessions)
-	// 		check(err)
-	// 		fmt.Println(string(j))
-	// 	case false:
-	// 		for _, session := range sessions {
-	// 			if len(session.Clients) == 0 {
-	// 				fmt.Printf("%s\t%s\t%s\n", session.Name, "null", session.Dir)
-	// 			} else {
-	// 				for _, client := range session.Clients {
-	// 					if client != "" {
-	// 						fmt.Printf("%s\t%s\t%s\n", session.Name, client, session.Dir)
-	// 					} else {
-	// 						fmt.Printf("%s\t%s\t%s\n", session.Name, "null", session.Dir)
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	// // cat buffer
 	// if catCmd.Parsed() {
