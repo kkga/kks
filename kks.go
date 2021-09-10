@@ -31,7 +31,7 @@ func check(e error) {
 func main() {
 	// log.SetFlags(0)
 
-	createCmd := flag.NewFlagSet("create", flag.ExitOnError)
+	newCmd := flag.NewFlagSet("new", flag.ExitOnError)
 
 	editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
 
@@ -71,8 +71,8 @@ func main() {
 	}
 
 	switch os.Args[1] {
-	case "create", "c":
-		createCmd.Parse(os.Args[2:])
+	case "new", "n":
+		newCmd.Parse(os.Args[2:])
 	case "edit", "e":
 		editCmd.Parse(os.Args[2:])
 	case "send", "s":
@@ -96,8 +96,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	if createCmd.Parsed() {
-		name := createCmd.Arg(0)
+	if newCmd.Parsed() {
+		name := newCmd.Arg(0)
 
 		if name == "" {
 			s, err := exec.Command("kak", "-l").Output()
@@ -335,6 +335,7 @@ USAGE
   kks <command> [-s <session>] [-c <client>] [<args>]
 
 COMMANDS
+  new, n         create new session
   edit, e        edit file
   send, s        send command
   attach, a      attach to session
