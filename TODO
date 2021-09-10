@@ -13,6 +13,7 @@
 - [x] need to be able to create new sessions
 - [x] ??? buflist should return relative to cwd
 - [ ] make default cmd run edit, like kak
+- [ ] don't create session for default edit cmd, simply run `kak file ...`
 - [ ] kks-files from non-workdir doesn't work (need to resolve path before cmd.Edit()?)
 - [ ] need separate kak connect command for gui programs (wofi/rofi/etc)
 

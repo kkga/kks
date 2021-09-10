@@ -3,14 +3,10 @@ package main
 import (
 	_ "embed"
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
-	"os/exec"
-	"strconv"
 	"strings"
 
 	"github.com/kkga/kks/kak"
@@ -18,9 +14,6 @@ import (
 
 //go:embed init.kak
 var initStr string
-
-var session string
-var client string
 
 func check(e error) {
 	if e != nil {
@@ -36,33 +29,38 @@ func main() {
 	editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
 
 	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
-	sendBufferFlag := sendCmd.String("b", "", "send to specified buffer")
-	sendAllFlag := sendCmd.Bool("a", false, "send to all sessions and clients")
+	sendCmdBuf := sendCmd.String("b", "", "send to specified buffer")
+	sendCmdAll := sendCmd.Bool("a", false, "send to all sessions and clients")
 
 	attachCmd := flag.NewFlagSet("attach", flag.ExitOnError)
 
 	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
-	getBufferFlag := getCmd.String("b", "", "get from specified buffer")
+	getCmdBuf := getCmd.String("b", "", "get from specified buffer")
 
 	killCmd := flag.NewFlagSet("kill", flag.ExitOnError)
-	killAllFlag := killCmd.Bool("A", false, "kill all sessions")
+	killCmdAll := killCmd.Bool("A", false, "kill all sessions")
 
 	envCmd := flag.NewFlagSet("env", flag.ExitOnError)
-	envJsonflag := envCmd.Bool("json", false, "json output")
+	envCmdJson := envCmd.Bool("json", false, "json output")
 
 	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
-	listJsonFlag := listCmd.Bool("json", false, "json output")
+	listCmdJson := listCmd.Bool("json", false, "json output")
 
 	catCmd := flag.NewFlagSet("cat", flag.ExitOnError)
-	catBufferFlag := catCmd.String("b", "", "print specified buffer")
+	catCmdBuf := catCmd.String("b", "", "print specified buffer")
 
-	sessionCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd, killCmd}
-	clientCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd}
-	for _, cmd := range sessionCmds {
-		cmd.StringVar(&session, "s", "", "Kakoune session")
+	sCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd, killCmd}
+	cCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd}
+
+	var sessArg string
+	var clArg string
+
+	for _, cmd := range sCmds {
+		cmd.StringVar(&sessArg, "s", "", "Kakoune session")
 	}
-	for _, cmd := range clientCmds {
-		cmd.StringVar(&client, "c", "", "Kakoune client")
+
+	for _, cmd := range cCmds {
+		cmd.StringVar(&clArg, "c", "", "Kakoune client")
 	}
 
 	if len(os.Args) < 2 {
@@ -70,25 +68,27 @@ func main() {
 		os.Exit(0)
 	}
 
+	cmdArgs := os.Args[2:]
+
 	switch os.Args[1] {
 	case "new", "n":
-		newCmd.Parse(os.Args[2:])
+		newCmd.Parse(cmdArgs)
 	case "edit", "e":
-		editCmd.Parse(os.Args[2:])
+		editCmd.Parse(cmdArgs)
 	case "send", "s":
-		sendCmd.Parse(os.Args[2:])
+		sendCmd.Parse(cmdArgs)
 	case "attach", "a":
-		attachCmd.Parse(os.Args[2:])
+		attachCmd.Parse(cmdArgs)
 	case "get":
-		getCmd.Parse(os.Args[2:])
+		getCmd.Parse(cmdArgs)
 	case "kill":
-		killCmd.Parse(os.Args[2:])
+		killCmd.Parse(cmdArgs)
 	case "list", "l", "ls":
-		listCmd.Parse(os.Args[2:])
-	case "env":
-		envCmd.Parse(os.Args[2:])
+		listCmd.Parse(cmdArgs)
 	case "cat":
-		catCmd.Parse(os.Args[2:])
+		catCmd.Parse(cmdArgs)
+	case "env":
+		envCmd.Parse(cmdArgs)
 	case "init":
 		fmt.Print(initStr)
 	default:
@@ -96,114 +96,96 @@ func main() {
 		os.Exit(1)
 	}
 
+	// create new session
 	if newCmd.Parsed() {
 		name := newCmd.Arg(0)
 
-		if name == "" {
-			s, err := exec.Command("kak", "-l").Output()
-			check(err)
-
-			sessions := strings.Split(strings.TrimSpace(string(s)), "\n")
-			check(err)
-
-		out:
-			for {
-				rand := fmt.Sprintf("kks-%d", rand.Intn(999-000)+000)
-				for i, s := range sessions {
-					if s == rand {
-						break
-					} else if i == len(sessions)-1 {
-						name = rand
-						break out
-					}
-				}
-			}
-		}
-
-		pid, err := kak.Create(name)
+		_, err := kak.Create(name)
 		check(err)
-
-		fmt.Println(pid)
 	}
 
+	// edit file
 	if editCmd.Parsed() {
 		args := editCmd.Args()
-		fmt.Println(args)
+		// fmt.Println(args)
 
-		filename := ""
-		line := 0
-		col := 0
+		fp, err := kak.NewFilepath(args)
+		check(err)
 
-		// parse line and col
-		if len(args) > 1 && strings.HasPrefix(args[0], "+") {
-			if strings.Contains(args[0], ":") {
-				lineStr := strings.ReplaceAll(strings.Split(args[0], ":")[0], "+", "")
-				lineInt, err := strconv.Atoi(lineStr)
-				check(err)
-				line = lineInt
+		kc, err := kak.NewContext(sessArg, clArg)
+		check(err)
 
-				colStr := strings.Split(args[0], ":")[1]
-				colInt, err := strconv.Atoi(colStr)
-				check(err)
-				col = colInt
+		if err := kc.Exists(); err != nil {
+			// TODO: don't create a session, just run `kak file ...`
+			newSess, err := kak.Create("")
+			check(err)
+			kc.Session = newSess
+			kak.Connect(*fp, *kc)
+		} else {
+			kCmd := fmt.Sprintf("edit -existing %s", fp.Name)
+
+			if fp.Line != 0 {
+				kCmd = fmt.Sprintf("%s %d", kCmd, fp.Line)
 			}
-			filename = args[1]
-		} else if len(args) == 1 && !strings.HasPrefix(args[0], "+") {
-			filename = args[0]
+			if fp.Column != 0 {
+				kCmd = fmt.Sprintf("%s %d", kCmd, fp.Column)
+			}
+
+			kak.Send(kCmd, "", kc.Session, kc.Client)
 		}
-
-		if filename == "" {
-			printHelp()
-			os.Exit(2)
-		}
-
-		context, err := NewContext()
-		check(err)
-
-		err = kak.Edit(line, col, filename, context.Session, context.Client)
-		check(err)
 	}
 
+	// attach to session
 	if attachCmd.Parsed() {
-		context, err := NewContext()
+		kc, err := kak.NewContext(sessArg, clArg)
 		check(err)
 
-		err = kak.Edit(-1, -1, "", context.Session, context.Client)
+		contextErr := kc.Exists()
+		if contextErr != nil {
+			log.Fatal(contextErr)
+		}
+		err = kak.Connect(kak.Filepath{}, *kc)
 		check(err)
 	}
 
+	// send to buffer/all
 	if sendCmd.Parsed() {
 		args := sendCmd.Args()
 		kakCommand := strings.Join(args, " ")
 
-		switch *sendAllFlag {
+		switch *sendCmdAll {
 		case true:
 			sessions, err := kak.List()
 			check(err)
 
-			for _, session := range sessions {
-				for _, client := range session.Clients {
-					err := kak.Send(kakCommand, "", session.Name, client)
+			for _, s := range sessions {
+				for _, cl := range s.Clients {
+					err := kak.Send(kakCommand, "", s.Name, cl)
 					check(err)
 				}
 
 			}
 		case false:
-			context, err := NewContext()
+			kc, err := kak.NewContext(sessArg, clArg)
 			check(err)
-			err = kak.Send(kakCommand, *sendBufferFlag, context.Session, context.Client)
+			err = kak.Send(kakCommand, *sendCmdBuf, kc.Session, kc.Client)
 			check(err)
 		}
 
 	}
 
+	// get val/opt/reg/sh from session
 	if getCmd.Parsed() {
 		arg := getCmd.Arg(0)
 
-		context, err := NewContext()
+		kc, err := kak.NewContext(sessArg, clArg)
 		check(err)
 
-		out, err := kak.Get(arg, *getBufferFlag, context.Session, context.Client)
+		if kcErr := kc.Exists(); kcErr != nil {
+			log.Fatal(kcErr)
+		}
+
+		out, err := kak.Get(arg, *getCmdBuf, *kc)
 		check(err)
 
 		// TODO: this path resolution needs to happen in Edit
@@ -242,10 +224,11 @@ func main() {
 		fmt.Println(strings.Join(out, "\n"))
 	}
 
+	// kill session/all
 	if killCmd.Parsed() {
 		kakCommand := "kill"
 
-		switch *killAllFlag {
+		switch *killCmdAll {
 		case true:
 			sessions, err := kak.List()
 			check(err)
@@ -255,7 +238,7 @@ func main() {
 				check(err)
 			}
 		case false:
-			context, err := NewContext()
+			context, err := kak.NewContext(sessArg, clArg)
 			check(err)
 
 			err = kak.Send(kakCommand, "", context.Session, context.Client)
@@ -263,45 +246,44 @@ func main() {
 		}
 	}
 
+	// list sessions
 	if listCmd.Parsed() {
 		sessions, err := kak.List()
 		check(err)
 
-		switch *listJsonFlag {
+		switch *listCmdJson {
 		case true:
 			j, err := json.Marshal(sessions)
 			check(err)
 			fmt.Println(string(j))
 		case false:
 			for _, session := range sessions {
-				for _, client := range session.Clients {
-					if client != "" {
-						fmt.Printf("%s\t%s\t%s\n", session.Name, client, session.Dir)
-					} else {
-						fmt.Printf("%s\t%s\t%s\n", session.Name, "-", session.Dir)
+				if len(session.Clients) == 0 {
+					fmt.Printf("%s\t%s\t%s\n", session.Name, "null", session.Dir)
+				} else {
+					for _, client := range session.Clients {
+						if client != "" {
+							fmt.Printf("%s\t%s\t%s\n", session.Name, client, session.Dir)
+						} else {
+							fmt.Printf("%s\t%s\t%s\n", session.Name, "null", session.Dir)
+						}
 					}
 				}
 			}
 		}
 	}
 
-	if envCmd.Parsed() {
-		context, err := NewContext()
-		check(err)
-
-		context.print(*envJsonflag)
-	}
-
+	// cat buffer
 	if catCmd.Parsed() {
-		context, err := NewContext()
+		kc, err := kak.NewContext(sessArg, clArg)
 		check(err)
 
-		buffer := *catBufferFlag
+		buffer := *catCmdBuf
 		if buffer == "" {
-			if context.Client == "" || context.Client == "-" {
-				log.Fatal(errors.New("kks cat: no client or buffer in context"))
+			if contextErr := kc.Exists(); contextErr != nil {
+				log.Fatal(contextErr)
 			}
-			buffile, err := kak.Get("%val{buffile}", "", context.Session, context.Client)
+			buffile, err := kak.Get("%val{buffile}", "", *kc)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -318,12 +300,24 @@ func main() {
 		go kak.ReadTmp(f, ch)
 
 		sendCmd := fmt.Sprintf("write -force %s", f.Name())
-		err = kak.Send(sendCmd, buffer, context.Session, context.Client)
+		err = kak.Send(sendCmd, buffer, kc.Session, kc.Client)
 		check(err)
 
 		output := <-ch
 
 		fmt.Println(output)
+	}
+
+	// print context
+	if envCmd.Parsed() {
+		kc, err := kak.NewContext(sessArg, clArg)
+		check(err)
+
+		err = kc.Exists()
+		if err != nil {
+			log.Fatal(err)
+		}
+		kc.Print(*envCmdJson)
 	}
 
 }
