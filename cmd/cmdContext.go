@@ -23,15 +23,15 @@ func NewCmdContext() (*CmdContext, error) {
 		Client:  os.Getenv("KKS_CLIENT"),
 	}
 
-	dir, _ := kak.Get("%sh{pwd}", "", cc.Session, cc.Client)
-	if dir != nil {
-		cc.WorkDir = dir[0]
-	}
+	// dir, _ := kak.Get("%sh{pwd}", "", cc.Session, cc.Client)
+	// if dir != nil {
+	// 	cc.WorkDir = dir[0]
+	// }
 
-	buf, _ := kak.Get("%val{bufname}", "", cc.Session, cc.Client)
-	if buf != nil {
-		cc.Buffer = buf[0]
-	}
+	// buf, _ := kak.Get("%val{bufname}", "", cc.Session, cc.Client)
+	// if buf != nil {
+	// 	cc.Buffer = buf[0]
+	// }
 
 	return &cc, nil
 }

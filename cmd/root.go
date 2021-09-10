@@ -1,9 +1,13 @@
 package cmd
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
 )
+
+//go:embed embed/init.kak
+var initStr string
 
 type Runner interface {
 	Init([]string, CmdContext) error
@@ -19,11 +23,13 @@ func Root(args []string) error {
 	}
 
 	cmds := []Runner{
-		NewSendCmd(),
 		NewAttachCmd(),
-		NewKillCmd(),
 		NewEnvCmd(),
+		NewGetCmd(),
+		NewInitCmd(),
 		NewListCmd(),
+		NewSendCmd(),
+		NewInitCmd(),
 	}
 
 	subcommand := os.Args[1]

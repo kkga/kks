@@ -1,15 +1,11 @@
 package main
 
 import (
-	_ "embed"
 	"log"
 	"os"
 
 	"github.com/kkga/kks/cmd"
 )
-
-//go:embed init.kak
-var initStr string
 
 func check(e error) {
 	if e != nil {
@@ -29,12 +25,6 @@ func main() {
 	// newCmd := flag.NewFlagSet("new", flag.ExitOnError)
 
 	// editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
-
-	// getCmd := flag.NewFlagSet("get", flag.ExitOnError)
-	// getCmdBuf := getCmd.String("b", "", "get from specified buffer")
-
-	// listCmd := flag.NewFlagSet("list", flag.ExitOnError)
-	// listCmdJson := listCmd.Bool("json", false, "json output")
 
 	// catCmd := flag.NewFlagSet("cat", flag.ExitOnError)
 	// catCmdBuf := catCmd.String("b", "", "print specified buffer")
