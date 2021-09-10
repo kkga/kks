@@ -33,9 +33,6 @@ func main() {
 	// getCmd := flag.NewFlagSet("get", flag.ExitOnError)
 	// getCmdBuf := getCmd.String("b", "", "get from specified buffer")
 
-	// killCmd := flag.NewFlagSet("kill", flag.ExitOnError)
-	// killCmdAll := killCmd.Bool("A", false, "kill all sessions")
-
 	// listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 	// listCmdJson := listCmd.Bool("json", false, "json output")
 

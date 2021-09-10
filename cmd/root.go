@@ -23,6 +23,7 @@ func Root(args []string) error {
 		NewAttachCmd(),
 		NewKillCmd(),
 		NewEnvCmd(),
+		NewListCmd(),
 	}
 
 	subcommand := os.Args[1]
