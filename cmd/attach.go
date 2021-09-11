@@ -9,19 +9,19 @@ import (
 
 func NewAttachCmd() *AttachCmd {
 	c := &AttachCmd{
-		fs:    flag.NewFlagSet("attach", flag.ExitOnError),
-		alias: []string{"a"},
+		Cmd: Cmd{
+			fs:       flag.NewFlagSet("attach", flag.ExitOnError),
+			alias:    []string{"a"},
+			usageStr: "[options] [file] [+<line>[:<col]]",
+		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
-
 	return c
 }
 
 type AttachCmd struct {
-	fs      *flag.FlagSet
+	Cmd
 	session string
-	alias   []string
-	cc      CmdContext
 }
 
 func (c *AttachCmd) Run() error {
@@ -53,20 +53,4 @@ func (c *AttachCmd) Run() error {
 	}
 
 	return nil
-}
-
-func (c *AttachCmd) Init(args []string, cc CmdContext) error {
-	c.cc = cc
-	if err := c.fs.Parse(args); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *AttachCmd) Name() string {
-	return c.fs.Name()
-}
-
-func (c *AttachCmd) Alias() []string {
-	return c.alias
 }

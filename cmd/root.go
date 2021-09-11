@@ -9,13 +9,6 @@ import (
 //go:embed embed/help
 var helpTxt string
 
-type Runner interface {
-	Init([]string, CmdContext) error
-	Run() error
-	Name() string
-	Alias() []string
-}
-
 func Root(args []string) error {
 	if len(args) < 1 {
 		printHelp()
@@ -31,6 +24,7 @@ func Root(args []string) error {
 		NewListCmd(),
 		NewInitCmd(),
 		NewEnvCmd(),
+		NewKillCmd(),
 	}
 
 	subcommand := os.Args[1]

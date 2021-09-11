@@ -10,30 +10,21 @@ import (
 
 func NewEditCmd() *EditCmd {
 	c := &EditCmd{
-		fs:    flag.NewFlagSet("edit", flag.ExitOnError),
-		alias: []string{"e"},
+		Cmd: Cmd{
+			fs:       flag.NewFlagSet("edit", flag.ExitOnError),
+			alias:    []string{"e"},
+			usageStr: "[options] [file] [+<line>[:<col]]",
+		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
-	c.fs.Usage = c.usage
-	c.usageText = "[options] [file] [+<line>[:<col]]"
-
 	return c
 }
 
 type EditCmd struct {
-	fs        *flag.FlagSet
-	cc        CmdContext
-	session   string
-	client    string
-	alias     []string
-	usageText string
-}
-
-func (c *EditCmd) usage() {
-	fmt.Printf("usage: kks %s %s\n\n", c.fs.Name(), c.usageText)
-	fmt.Println("OPTIONS")
-	c.fs.PrintDefaults()
+	Cmd
+	session string
+	client  string
 }
 
 func (c *EditCmd) Run() error {
@@ -79,20 +70,4 @@ func (c *EditCmd) Run() error {
 	}
 
 	return nil
-}
-
-func (c *EditCmd) Init(args []string, cc CmdContext) error {
-	c.cc = cc
-	if err := c.fs.Parse(args); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *EditCmd) Name() string {
-	return c.fs.Name()
-}
-
-func (c *EditCmd) Alias() []string {
-	return c.alias
 }

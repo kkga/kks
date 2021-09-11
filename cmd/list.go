@@ -11,18 +11,19 @@ import (
 
 func NewListCmd() *ListCmd {
 	c := &ListCmd{
-		fs:    flag.NewFlagSet("list", flag.ExitOnError),
-		alias: []string{"ls", "l"},
+		Cmd: Cmd{
+			fs:       flag.NewFlagSet("list", flag.ExitOnError),
+			alias:    []string{"ls", "l"},
+			usageStr: "[options]",
+		},
 	}
 	c.fs.BoolVar(&c.json, "json", false, "json output")
-
 	return c
 }
 
 type ListCmd struct {
-	fs    *flag.FlagSet
-	json  bool
-	alias []string
+	Cmd
+	json bool
 }
 
 func (c *ListCmd) Run() error {
@@ -57,19 +58,4 @@ func (c *ListCmd) Run() error {
 	}
 
 	return nil
-}
-
-func (c *ListCmd) Init(args []string, cc CmdContext) error {
-	if err := c.fs.Parse(args); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *ListCmd) Name() string {
-	return c.fs.Name()
-}
-
-func (c *ListCmd) Alias() []string {
-	return c.alias
 }

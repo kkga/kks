@@ -8,21 +8,21 @@ import (
 
 func NewKillCmd() *KillCmd {
 	c := &KillCmd{
-		fs:    flag.NewFlagSet("kill", flag.ExitOnError),
-		alias: []string{""},
+		Cmd: Cmd{
+			fs:       flag.NewFlagSet("kill", flag.ExitOnError),
+			alias:    []string{""},
+			usageStr: "[options]",
+		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.BoolVar(&c.all, "a", false, "all sessions")
-
 	return c
 }
 
 type KillCmd struct {
-	fs      *flag.FlagSet
+	Cmd
 	session string
 	all     bool
-	alias   []string
-	cc      CmdContext
 }
 
 func (c *KillCmd) Run() error {
@@ -51,20 +51,4 @@ func (c *KillCmd) Run() error {
 	}
 
 	return nil
-}
-
-func (c *KillCmd) Init(args []string, cc CmdContext) error {
-	c.cc = cc
-	if err := c.fs.Parse(args); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *KillCmd) Name() string {
-	return c.fs.Name()
-}
-
-func (c *KillCmd) Alias() []string {
-	return c.alias
 }

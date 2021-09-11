@@ -11,8 +11,13 @@ import (
 
 func NewGetCmd() *GetCmd {
 	c := &GetCmd{
-		fs:    flag.NewFlagSet("get", flag.ExitOnError),
-		alias: []string{""},
+		Cmd: Cmd{
+			fs:       flag.NewFlagSet("get", flag.ExitOnError),
+			alias:    []string{""},
+			usageStr: "[options] (<%val{}> | <%opt{}> | <%reg{}> | <%sh{}>)",
+			// TODO maybe actually just use flags for these
+			// or maybe create separate subcommands get-val, etc
+		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
@@ -22,18 +27,16 @@ func NewGetCmd() *GetCmd {
 }
 
 type GetCmd struct {
-	fs      *flag.FlagSet
+	Cmd
 	session string
 	client  string
 	buffer  string
-	alias   []string
-	cc      CmdContext
 }
 
 func (c *GetCmd) Run() error {
 	query := c.fs.Arg(0)
 	if query == "" {
-		err := errors.New("get: expected %val{...}|%opt{...}|%reg{...}|%sh{...}")
+		err := errors.New("get: expected ")
 		return err
 	}
 
@@ -62,20 +65,4 @@ func (c *GetCmd) Run() error {
 	fmt.Println(strings.Join(resp, "\n"))
 
 	return nil
-}
-
-func (c *GetCmd) Init(args []string, cc CmdContext) error {
-	c.cc = cc
-	if err := c.fs.Parse(args); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *GetCmd) Name() string {
-	return c.fs.Name()
-}
-
-func (c *GetCmd) Alias() []string {
-	return c.alias
 }

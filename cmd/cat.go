@@ -10,23 +10,23 @@ import (
 
 func NewCatCmd() *CatCmd {
 	c := &CatCmd{
-		fs:    flag.NewFlagSet("cat", flag.ExitOnError),
-		alias: []string{""},
+		Cmd: Cmd{
+			fs:       flag.NewFlagSet("cat", flag.ExitOnError),
+			alias:    []string{""},
+			usageStr: "[options]",
+		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	c.fs.StringVar(&c.buffer, "b", "", "buffer")
-
 	return c
 }
 
 type CatCmd struct {
-	fs      *flag.FlagSet
+	Cmd
 	session string
 	client  string
 	buffer  string
-	alias   []string
-	cc      CmdContext
 }
 
 func (c *CatCmd) Run() error {
@@ -75,20 +75,4 @@ func (c *CatCmd) Run() error {
 	fmt.Print(output)
 
 	return nil
-}
-
-func (c *CatCmd) Init(args []string, cc CmdContext) error {
-	c.cc = cc
-	if err := c.fs.Parse(args); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *CatCmd) Name() string {
-	return c.fs.Name()
-}
-
-func (c *CatCmd) Alias() []string {
-	return c.alias
 }

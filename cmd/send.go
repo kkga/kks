@@ -9,25 +9,25 @@ import (
 
 func NewSendCmd() *SendCmd {
 	c := &SendCmd{
-		fs:    flag.NewFlagSet("send", flag.ExitOnError),
-		alias: []string{"s"},
+		Cmd: Cmd{
+			fs:       flag.NewFlagSet("send", flag.ExitOnError),
+			alias:    []string{"s"},
+			usageStr: "[options] <command>",
+		},
 	}
+	c.fs.BoolVar(&c.all, "a", false, "send to all clients")
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	c.fs.StringVar(&c.buffer, "b", "", "buffer")
-	c.fs.BoolVar(&c.all, "a", false, "send to all clients")
-
 	return c
 }
 
 type SendCmd struct {
-	fs      *flag.FlagSet
+	Cmd
 	session string
 	client  string
 	buffer  string
 	all     bool
-	alias   []string
-	cc      CmdContext
 }
 
 func (c *SendCmd) Run() error {
@@ -66,20 +66,4 @@ func (c *SendCmd) Run() error {
 	}
 
 	return nil
-}
-
-func (c *SendCmd) Init(args []string, cc CmdContext) error {
-	c.cc = cc
-	if err := c.fs.Parse(args); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *SendCmd) Name() string {
-	return c.fs.Name()
-}
-
-func (c *SendCmd) Alias() []string {
-	return c.alias
 }

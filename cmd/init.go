@@ -11,16 +11,17 @@ var initKak string
 
 func NewInitCmd() *InitCmd {
 	c := &InitCmd{
-		fs:    flag.NewFlagSet("init", flag.ExitOnError),
-		alias: []string{""},
+		Cmd: Cmd{
+			fs:       flag.NewFlagSet("init", flag.ExitOnError),
+			alias:    []string{""},
+			usageStr: "",
+		},
 	}
-
 	return c
 }
 
 type InitCmd struct {
-	fs    *flag.FlagSet
-	alias []string
+	Cmd
 }
 
 func (c *InitCmd) Run() error {
@@ -28,19 +29,4 @@ func (c *InitCmd) Run() error {
 		return err
 	}
 	return nil
-}
-
-func (c *InitCmd) Init(args []string, cc CmdContext) error {
-	if err := c.fs.Parse(args); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *InitCmd) Name() string {
-	return c.fs.Name()
-}
-
-func (c *InitCmd) Alias() []string {
-	return c.alias
 }
