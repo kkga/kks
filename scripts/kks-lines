@@ -9,6 +9,4 @@ kks cat |
 	nl -ba -w4 -s' │ ' |
 	fzf --height 100% --prompt 'lines> ' |
 	awk '{print $1}' |
-	while read -r line; do
-		kks send execute-keys "$line"gx
-	done
+	xargs -r -I % kks send execute-keys %gx

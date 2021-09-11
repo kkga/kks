@@ -58,3 +58,36 @@ func (fp *Filepath) parse() (name string, line int, col int, err error) {
 	}
 	return name, line, col, nil
 }
+
+// 	// TODO: this path resolution needs to happen in Edit
+
+// 	// if strings.Contains(arg, "buflist") {
+// 	// 	cwd, err := os.Getwd()
+// 	// 	if err != nil {
+// 	// 		log.Fatal(err)
+// 	// 	}
+// 	// 	fmt.Println("CWD:", cwd)
+
+// 	// kakwd, err := kak.Get("%sh{pwd}", context.session, context.client)
+// 	// 	if err != nil {
+// 	// 		log.Fatal(err)
+// 	// 	}
+// 	// 	fmt.Println("KAKWD:", kakwd[0])
+
+// 	// 	relPath, _ := filepath.Rel(cwd, kakwd[0])
+// 	// 	if strings.HasPrefix(relPath, "home/") {
+// 	// 		relPath = strings.Replace(relPath, "home/", "~/", 1)
+// 	// 	}
+// 	// 	fmt.Println("rel path:", relPath)
+// 	// 	fmt.Println()
+
+// 	// 	for i, buf := range out {
+// 	// 		// if !strings.HasPrefix(buf, "~") && !strings.HasPrefix(buf, "*") {
+// 	// 		// }
+// 	// 		if !filepath.IsAbs(buf) && !strings.HasPrefix(buf, "*") {
+// 	// 			out[i] = filepath.Join(relPath, buf)
+// 	// 		} else {
+// 	// 			out[i] = buf
+// 	// 		}
+// 	// 	}
+// 	// }

@@ -62,27 +62,3 @@ func containsString(s []string, e string) bool {
 func printHelp() {
 	fmt.Print(helpTxt)
 }
-
-// func printHelp() {
-// 	fmt.Println(`Handy Kakoune companion.
-
-// USAGE
-//   kks <command> [-s <session>] [-c <client>] [<args>]
-
-// COMMANDS
-//   new, n         create new session
-//   edit, e        edit file
-//   send, s        send command
-//   attach, a      attach to session
-//   kill, k        kill session
-//   ls             list sessions and clients
-//   get            get %{val}, %{opt} and friends
-//   env            print env
-//   init           print Kakoune definitions
-
-// ENVIRONMENT VARIABLES
-//   KKS_SESSION    Kakoune session
-//   KKS_CLIENT     Kakoune client
-
-// Use "kks <command> -h" for command usage.`)
-// }

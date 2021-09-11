@@ -25,7 +25,7 @@ type AttachCmd struct {
 }
 
 func (c *AttachCmd) Run() error {
-	// TODO initialize the contenxt with arguments instead of this
+	// TODO initialize the context with arguments instead of this
 	sess := c.cc.Session
 	if c.session != "" {
 		sess = c.session

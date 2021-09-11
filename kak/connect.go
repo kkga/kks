@@ -21,6 +21,8 @@ func Connect(file string, line int, col int, sess string) error {
 		kakExecArgs = append(kakExecArgs, fmt.Sprintf("+%d:%d", line, col))
 	}
 
+	fmt.Println(kakExecArgs)
+
 	execErr := syscall.Exec(kakBinary, kakExecArgs, os.Environ())
 	if execErr != nil {
 		return execErr
