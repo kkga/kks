@@ -29,6 +29,7 @@ type SendCmd struct {
 }
 
 func (c *SendCmd) Run() error {
+	// TODO probably need to do some shell escaping here
 	kakCmd := strings.Join(c.fs.Args(), " ")
 
 	switch c.allClients {

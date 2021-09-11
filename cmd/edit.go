@@ -33,20 +33,17 @@ func (c *EditCmd) Run() error {
 		if err != nil {
 			return err
 		}
-		if err := c.cc.Exists(); err != nil {
-			// TODO: run `kak filename`
-		} else {
-			sb := strings.Builder{}
-			sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
-			if fp.Line != 0 {
-				sb.WriteString(fmt.Sprintf(" %d", fp.Line))
-			}
-			if fp.Column != 0 {
-				sb.WriteString(fmt.Sprintf(" %d", fp.Column))
-			}
-
-			kak.Send(sb.String(), "", c.session, c.client)
+		// TODO: create new session if not exists
+		sb := strings.Builder{}
+		sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
+		if fp.Line != 0 {
+			sb.WriteString(fmt.Sprintf(" %d", fp.Line))
 		}
+		if fp.Column != 0 {
+			sb.WriteString(fmt.Sprintf(" %d", fp.Column))
+		}
+
+		kak.Send(sb.String(), "", c.session, c.client)
 	}
 
 	return nil

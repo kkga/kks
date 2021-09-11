@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"strings"
 )
 
 type Runner interface {
@@ -14,13 +15,14 @@ type Runner interface {
 }
 
 type Cmd struct {
-	fs         *flag.FlagSet
-	alias      []string
-	usageStr   string
-	cc         CmdContext
-	session    string
-	client     string
-	buffer     string
+	fs       *flag.FlagSet
+	alias    []string
+	usageStr string
+
+	session string
+	client  string
+	buffer  string
+
 	sessionReq bool
 	clientReq  bool
 	bufferReq  bool
@@ -31,7 +33,6 @@ func (c *Cmd) Name() string    { return c.fs.Name() }
 func (c *Cmd) Alias() []string { return c.alias }
 
 func (c *Cmd) Init(args []string, cc CmdContext) error {
-	c.cc = cc
 	c.session, c.client = cc.Session, cc.Client
 
 	c.fs.Usage = c.usage
@@ -47,14 +48,13 @@ func (c *Cmd) Init(args []string, cc CmdContext) error {
 		return errors.New("no client in context")
 	}
 
-	// fmt.Println("init session:", c.session)
 	return nil
 }
 
 func (c *Cmd) usage() {
 	fmt.Printf("usage: kks %s %s\n\n", c.fs.Name(), c.usageStr)
 
-	if c.usageStr != "" {
+	if strings.Contains(c.usageStr, "[options]") {
 		fmt.Println("OPTIONS")
 		c.fs.PrintDefaults()
 	}

@@ -8,9 +8,9 @@ import (
 )
 
 func Create(name string) (sessionName string, err error) {
-	sessionName = ""
+	sessionName = name
 
-	if name == "" {
+	if sessionName == "" {
 		sessionName, err = uniqName()
 		if err != nil {
 			return "", err
@@ -18,14 +18,13 @@ func Create(name string) (sessionName string, err error) {
 	}
 
 	cmd := exec.Command("kak", "-s", sessionName, "-d")
-	// cmd.SysProcAttr = &syscall.SysProcAttr{}
 
 	err = cmd.Start()
 	if err != nil {
 		return "", err
 	}
 
-	return sessionName, nil
+	return
 }
 
 func uniqName() (name string, err error) {
@@ -40,7 +39,7 @@ func uniqName() (name string, err error) {
 	}
 out:
 	for {
-		rand := fmt.Sprintf("kks-%d", rand.Intn(999-000)+000)
+		rand := fmt.Sprintf("kks-%d", rand.Intn(999-100)+100)
 		for i, s := range sessions {
 			if s == rand {
 				break
