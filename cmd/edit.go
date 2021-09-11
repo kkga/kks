@@ -11,9 +11,10 @@ import (
 func NewEditCmd() *EditCmd {
 	c := &EditCmd{
 		Cmd: Cmd{
-			fs:       flag.NewFlagSet("edit", flag.ExitOnError),
-			alias:    []string{"e"},
-			usageStr: "[options] [file] [+<line>[:<col]]",
+			fs:         flag.NewFlagSet("edit", flag.ExitOnError),
+			alias:      []string{"e"},
+			usageStr:   "[options] [file] [+<line>[:<col]]",
+			sessionReq: true,
 		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
@@ -23,20 +24,9 @@ func NewEditCmd() *EditCmd {
 
 type EditCmd struct {
 	Cmd
-	session string
-	client  string
 }
 
 func (c *EditCmd) Run() error {
-	sess := c.cc.Session
-	if c.session != "" {
-		sess = c.session
-	}
-	cl := c.cc.Client
-	if c.client != "" {
-		cl = c.client
-	}
-
 	if len(c.fs.Args()) > 0 {
 		cwd, err := c.cc.WorkDir()
 		if err != nil {
@@ -65,7 +55,7 @@ func (c *EditCmd) Run() error {
 
 			fmt.Println(sb.String())
 
-			kak.Send(sb.String(), "", sess, cl)
+			kak.Send(sb.String(), "", c.session, c.client)
 		}
 	}
 

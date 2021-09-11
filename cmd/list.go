@@ -34,7 +34,7 @@ func (c *ListCmd) Run() error {
 
 	switch c.json {
 	case true:
-		j, err := json.Marshal(sessions)
+		j, err := json.MarshalIndent(sessions, "", "  ")
 		if err != nil {
 			return err
 		}

@@ -3,6 +3,10 @@
 	- in edit without context, create new session and attach
 	- resolve relative path before sending to kak
 
+- [ ] refactor context init
+	- construct context from env and args before running command
+	- if cmd requires context, check for context in root before run
+
 - [x] kill cmd
 - [x] edit cmd needs line:col support
 - [x] grep cmd
@@ -12,7 +16,6 @@
 - [x] refactor cat cmd to use readTmp from Get
 - [x] need to be able to create new sessions
 - [x] ??? buflist should return relative to cwd
-- [ ] add context.Exists checks to all relevant commands
 - [ ] make default cmd run edit, like kak
 - [ ] don't create session for default edit cmd, simply run `kak file ...`
 - [ ] kks-files from non-workdir doesn't work (need to resolve path before cmd.Edit()?)

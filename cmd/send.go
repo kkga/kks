@@ -13,9 +13,10 @@ func NewSendCmd() *SendCmd {
 			fs:       flag.NewFlagSet("send", flag.ExitOnError),
 			alias:    []string{"s"},
 			usageStr: "[options] <command>",
+			// sessionReq: true,
 		},
 	}
-	c.fs.BoolVar(&c.all, "a", false, "send to all clients")
+	c.fs.BoolVar(&c.allClients, "a", false, "send to all clients")
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	c.fs.StringVar(&c.buffer, "b", "", "buffer")
@@ -24,33 +25,13 @@ func NewSendCmd() *SendCmd {
 
 type SendCmd struct {
 	Cmd
-	session string
-	client  string
-	buffer  string
-	all     bool
+	allClients bool
 }
 
 func (c *SendCmd) Run() error {
 	kakCmd := strings.Join(c.fs.Args(), " ")
 
-	buf := ""
-	if c.buffer != "" {
-		buf = c.buffer
-	}
-	sess := c.cc.Session
-	if c.session != "" {
-		sess = c.session
-	}
-	cl := c.cc.Client
-	if c.client != "" {
-		cl = c.client
-	}
-
-	switch c.all {
-	case false:
-		if err := kak.Send(kakCmd, buf, sess, cl); err != nil {
-			return err
-		}
+	switch c.allClients {
 	case true:
 		sessions, err := kak.List()
 		if err != nil {
@@ -62,6 +43,11 @@ func (c *SendCmd) Run() error {
 					return err
 				}
 			}
+		}
+	case false:
+		// TODO: need to trigger "session not set" error
+		if err := kak.Send(kakCmd, c.buffer, c.session, c.client); err != nil {
+			return err
 		}
 	}
 

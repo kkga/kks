@@ -1,13 +1,18 @@
 package cmd
 
-import "flag"
+import (
+	"encoding/json"
+	"flag"
+	"fmt"
+)
 
 func NewEnvCmd() *EnvCmd {
 	c := &EnvCmd{
 		Cmd: Cmd{
-			fs:       flag.NewFlagSet("env", flag.ExitOnError),
-			alias:    []string{""},
-			usageStr: "[options]",
+			fs:         flag.NewFlagSet("env", flag.ExitOnError),
+			alias:      []string{""},
+			usageStr:   "[options]",
+			sessionReq: true,
 		},
 	}
 	c.fs.BoolVar(&c.json, "json", false, "json output")
@@ -20,9 +25,22 @@ type EnvCmd struct {
 }
 
 func (c *EnvCmd) Run() error {
-	if err := c.cc.Exists(); err != nil {
-		return err
+	switch c.json {
+	case true:
+		j, err := json.MarshalIndent(
+			map[string]string{
+				"session": c.session,
+				"client":  c.client,
+			}, "", "  ")
+		if err != nil {
+			return err
+		}
+		fmt.Println(string(j))
+	case false:
+		fmt.Printf("session: %s\n", c.session)
+		fmt.Printf("client: %s\n", c.client)
+		// fmt.Printf("workdir: %s\n", cc.WorkDir)
+		// fmt.Printf("buffer: %s\n", cc.Buffer)
 	}
-	c.cc.Print(c.json)
 	return nil
 }

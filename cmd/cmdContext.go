@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/kkga/kks/kak"
@@ -67,18 +65,18 @@ func (k *CmdContext) Exists() error {
 	return errors.New(fmt.Sprintf("Session doesn't exist: %s", k.Session))
 }
 
-func (cc *CmdContext) Print(jsonOutput bool) {
-	switch jsonOutput {
-	case true:
-		j, err := json.Marshal(cc)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(string(j))
-	case false:
-		fmt.Printf("session: %s\n", cc.Session)
-		fmt.Printf("client: %s\n", cc.Client)
-		// fmt.Printf("workdir: %s\n", cc.WorkDir)
-		// fmt.Printf("buffer: %s\n", cc.Buffer)
-	}
-}
+// func (cc *CmdContext) Print(jsonOutput bool) {
+// 	switch jsonOutput {
+// 	case true:
+// 		j, err := json.Marshal(cc)
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
+// 		fmt.Println(string(j))
+// 	case false:
+// 		fmt.Printf("session: %s\n", cc.Session)
+// 		fmt.Printf("client: %s\n", cc.Client)
+// 		// fmt.Printf("workdir: %s\n", cc.WorkDir)
+// 		// fmt.Printf("buffer: %s\n", cc.Buffer)
+// 	}
+// }

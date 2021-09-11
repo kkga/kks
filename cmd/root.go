@@ -36,7 +36,9 @@ func Root(args []string) error {
 
 	for _, cmd := range cmds {
 		if cmd.Name() == subcommand || containsString(cmd.Alias(), subcommand) {
-			cmd.Init(os.Args[2:], *cmdCtx)
+			if err := cmd.Init(os.Args[2:], *cmdCtx); err != nil {
+				return err
+			}
 			return cmd.Run()
 		}
 	}

@@ -15,27 +15,22 @@ func NewKillCmd() *KillCmd {
 		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
-	c.fs.BoolVar(&c.all, "a", false, "all sessions")
+	c.fs.BoolVar(&c.allSessions, "a", false, "all sessions")
 	return c
 }
 
 type KillCmd struct {
 	Cmd
-	session string
-	all     bool
+	allSessions bool
 }
 
 func (c *KillCmd) Run() error {
 	kakCmd := "kill"
 
-	sess := c.cc.Session
-	if c.session != "" {
-		sess = c.session
-	}
-
-	switch c.all {
+	switch c.allSessions {
 	case false:
-		if err := kak.Send(kakCmd, "", sess, ""); err != nil {
+		// TODO need to somehow trigger "no session" err
+		if err := kak.Send(kakCmd, "", c.session, ""); err != nil {
 			return err
 		}
 	case true:

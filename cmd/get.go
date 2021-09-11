@@ -12,52 +12,32 @@ import (
 func NewGetCmd() *GetCmd {
 	c := &GetCmd{
 		Cmd: Cmd{
-			fs:       flag.NewFlagSet("get", flag.ExitOnError),
-			alias:    []string{""},
-			usageStr: "[options] (<%val{}> | <%opt{}> | <%reg{}> | <%sh{}>)",
-			// TODO maybe actually just use flags for these
+			fs:         flag.NewFlagSet("get", flag.ExitOnError),
+			alias:      []string{""},
+			usageStr:   "[options] (<%val{}> | <%opt{}> | <%reg{}> | <%sh{}>)",
+			sessionReq: true,
+			// TODO maybe actually just use flags for args
 			// or maybe create separate subcommands get-val, etc
 		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	c.fs.StringVar(&c.buffer, "b", "", "buffer")
-
 	return c
 }
 
 type GetCmd struct {
 	Cmd
-	session string
-	client  string
-	buffer  string
 }
 
 func (c *GetCmd) Run() error {
 	query := c.fs.Arg(0)
 	if query == "" {
-		err := errors.New("get: expected ")
+		err := errors.New("argument required, see: kks get -h")
 		return err
 	}
 
-	buf := ""
-	if c.buffer != "" {
-		buf = c.buffer
-	}
-	sess := c.cc.Session
-	if c.session != "" {
-		sess = c.session
-	}
-	cl := c.cc.Client
-	if c.client != "" {
-		cl = c.client
-	}
-
-	if err := c.cc.Exists(); err != nil {
-		return err
-	}
-
-	resp, err := kak.Get(query, buf, sess, cl)
+	resp, err := kak.Get(query, c.buffer, c.session, c.client)
 	if err != nil {
 		return err
 	}
