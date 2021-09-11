@@ -7,12 +7,6 @@ import (
 	"github.com/kkga/kks/cmd"
 )
 
-func check(e error) {
-	if e != nil {
-		log.Fatal(e)
-	}
-}
-
 func main() {
 	if err := cmd.Root(os.Args[1:]); err != nil {
 		log.Fatal(err)
@@ -25,9 +19,6 @@ func main() {
 	// newCmd := flag.NewFlagSet("new", flag.ExitOnError)
 
 	// editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
-
-	// catCmd := flag.NewFlagSet("cat", flag.ExitOnError)
-	// catCmdBuf := catCmd.String("b", "", "print specified buffer")
 
 	// sCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd, killCmd}
 	// cCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd}

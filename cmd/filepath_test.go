@@ -1,4 +1,4 @@
-package kak
+package cmd
 
 import (
 	"testing"

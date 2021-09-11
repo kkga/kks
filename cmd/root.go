@@ -23,14 +23,14 @@ func Root(args []string) error {
 	}
 
 	cmds := []Runner{
+		NewEditCmd(),
 		NewAttachCmd(),
-		NewCatCmd(),
-		NewEnvCmd(),
-		NewGetCmd(),
-		NewInitCmd(),
-		NewListCmd(),
 		NewSendCmd(),
+		NewGetCmd(),
+		NewCatCmd(),
+		NewListCmd(),
 		NewInitCmd(),
+		NewEnvCmd(),
 	}
 
 	subcommand := os.Args[1]
