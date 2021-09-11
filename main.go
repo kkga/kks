@@ -20,27 +20,6 @@ func main() {
 
 	// editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
 
-	// sCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd, killCmd}
-	// cCmds := []*flag.FlagSet{editCmd, sendCmd, attachCmd, getCmd}
-
-	// var sessArg string
-	// var clArg string
-
-	// for _, cmd := range sCmds {
-	// 	cmd.StringVar(&sessArg, "s", "", "Kakoune session")
-	// }
-
-	// for _, cmd := range cCmds {
-	// 	cmd.StringVar(&clArg, "c", "", "Kakoune client")
-	// }
-
-	// if len(os.Args) < 2 {
-	// 	// printHelp()
-	// 	os.Exit(0)
-	// }
-
-	// cmdArgs := os.Args[2:]
-
 	// // create new session
 	// if newCmd.Parsed() {
 	// 	name := newCmd.Arg(0)

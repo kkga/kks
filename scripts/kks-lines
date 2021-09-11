@@ -6,7 +6,8 @@
 # - ripgrep (https://github.com/BurntSushi/ripgrep)
 # - fzf (https://github.com/junegunn/fzf)
 
-rg --line-number '.+' "$@" |
+kks cat |
+	nl -w4 -s'  ' |
 	fzf --height 100% --prompt 'lines> ' |
-	cut -d':' -f1 |
-	xargs -I % kks send execute-keys '%gx'
+	awk '{print $1}' |
+	xargs -I % 'kks send execute-keys %gx'

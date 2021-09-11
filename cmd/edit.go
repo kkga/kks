@@ -41,6 +41,7 @@ func (c *EditCmd) Run() error {
 	}
 
 	if len(c.fs.Args()) > 0 {
+		// TODO refactor FP to use same style as cmd (Name())
 		fp, err := NewFilepath(c.fs.Args())
 		if err != nil {
 			return err
@@ -51,17 +52,17 @@ func (c *EditCmd) Run() error {
 			b := strings.Builder{}
 			b.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
 			if fp.Line != 0 {
-				b.WriteString(fmt.Sprintf("%d", fp.Line))
+				b.WriteString(fmt.Sprintf(" %d", fp.Line))
 			}
 			if fp.Column != 0 {
-				b.WriteString(fmt.Sprintf("%d", fp.Column))
+				b.WriteString(fmt.Sprintf(" %d", fp.Column))
 			}
+
+			fmt.Println(b.String())
 
 			kak.Send(b.String(), "", sess, cl)
 		}
 	}
-
-	// TODO refactor FP to use same style as cmd (Name())
 
 	return nil
 }
