@@ -10,7 +10,7 @@ import (
 var helpTxt string
 
 func Root(args []string) error {
-	if len(args) < 1 {
+	if len(args) < 1 || args[0] == "-h" || args[0] == "--help" {
 		printHelp()
 		os.Exit(0)
 	}

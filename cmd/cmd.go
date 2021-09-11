@@ -13,10 +13,11 @@ type Runner interface {
 }
 
 type Cmd struct {
-	fs       *flag.FlagSet
-	alias    []string
-	usageStr string
-	cc       CmdContext
+	fs          *flag.FlagSet
+	alias       []string
+	usageStr    string
+	cc          CmdContext
+	sesRequired bool
 }
 
 func (c *Cmd) Run() error      { return nil }
