@@ -50,9 +50,9 @@ func (c *GetCmd) Run() error {
 		cl = c.client
 	}
 
-	// if err := c.cc.Exists(); err != nil {
-	// 	return err
-	// }
+	if err := c.cc.Exists(); err != nil {
+		return err
+	}
 
 	resp, err := kak.Get(query, buf, sess, cl)
 	if err != nil {

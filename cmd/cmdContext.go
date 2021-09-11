@@ -13,8 +13,6 @@ import (
 type CmdContext struct {
 	Session string `json:"session"`
 	Client  string `json:"client"`
-	// Buffer  string `json:"buffer"`
-	// WorkDir string `json:"workdir"`
 }
 
 func NewCmdContext() (*CmdContext, error) {
@@ -22,12 +20,6 @@ func NewCmdContext() (*CmdContext, error) {
 		Session: os.Getenv("KKS_SESSION"),
 		Client:  os.Getenv("KKS_CLIENT"),
 	}
-
-	// buf, _ := kak.Get("%val{bufname}", "", cc.Session, cc.Client)
-	// if buf != nil {
-	// 	cc.Buffer = buf[0]
-	// }
-
 	return &cc, nil
 }
 
