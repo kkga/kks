@@ -26,18 +26,10 @@ type EditCmd struct {
 	Cmd
 }
 
+// TODO add flag that allows creating new files (removes -existing)
 func (c *EditCmd) Run() error {
 	if len(c.fs.Args()) > 0 {
-		cwd, err := c.cc.WorkDir()
-		if err != nil {
-			return err
-		}
-		kakwd, err := c.cc.KakWorkDir()
-		if err != nil {
-			return err
-		}
-
-		fp, err := NewFilepath(c.fs.Args(), cwd, kakwd)
+		fp, err := NewFilepath(c.fs.Args())
 		if err != nil {
 			return err
 		}
@@ -52,8 +44,6 @@ func (c *EditCmd) Run() error {
 			if fp.Column != 0 {
 				sb.WriteString(fmt.Sprintf(" %d", fp.Column))
 			}
-
-			fmt.Println(sb.String())
 
 			kak.Send(sb.String(), "", c.session, c.client)
 		}

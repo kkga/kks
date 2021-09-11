@@ -9,23 +9,33 @@ import (
 // TODO: add tests for resolving paths
 func TestNewFilepath(t *testing.T) {
 	tests := []struct {
-		args []string
-		want Filepath
+		args  []string
+		cwd   string
+		kakwd string
+		want  Filepath
 	}{
 		{
 			[]string{"file"},
+			"/home/k/p/kks/",
+			"/home/k/p/kks/",
 			Filepath{Name: "file", Raw: []string{"file"}},
 		},
 		{
 			[]string{"file.kak", "+22"},
+			"/home/k/p/",
+			"/home/k/p/kks/",
 			Filepath{Name: "file.kak", Line: 22, Raw: []string{"file.kak", "+22"}},
 		},
 		{
 			[]string{"readme", "+10:2"},
+			"/home/k/p/kks/",
+			"/home/k/p/kks/",
 			Filepath{Name: "readme", Line: 10, Column: 2, Raw: []string{"readme", "+10:2"}},
 		},
 		{
 			[]string{"readme", ":2"},
+			"/home/k/p/kks/",
+			"/home/k/p/kks/",
 			Filepath{Name: "readme", Raw: []string{"readme", ":2"}},
 		},
 	}

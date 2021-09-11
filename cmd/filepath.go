@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"os"
+	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -12,8 +15,8 @@ type Filepath struct {
 	Raw    []string `json:"raw"`
 }
 
-func NewFilepath(args []string, cmdWd string, kakWd string) (*Filepath, error) {
-	fp := &Filepath{Raw: args}
+func NewFilepath(args []string) (fp *Filepath, err error) {
+	fp = &Filepath{Raw: args}
 
 	if len(args) > 0 {
 		name, line, col, err := fp.parse()
@@ -25,12 +28,20 @@ func NewFilepath(args []string, cmdWd string, kakWd string) (*Filepath, error) {
 		fp.Column = col
 	}
 
-	return fp, nil
+	return
 }
 
-func (fp *Filepath) parse() (name string, line int, col int, err error) {
+func (fp *Filepath) parse() (absName string, line int, col int, err error) {
 	r := fp.Raw
-	name = r[0]
+
+	rawName := r[0]
+
+	if filepath.IsAbs(rawName) {
+		absName = rawName
+	} else {
+		cwd, _ := os.Getwd()
+		absName = path.Join(cwd, rawName)
+	}
 
 	if len(r) > 1 && strings.HasPrefix(r[1], "+") {
 		if strings.Contains(r[1], ":") {
@@ -56,38 +67,6 @@ func (fp *Filepath) parse() (name string, line int, col int, err error) {
 			line = lineInt
 		}
 	}
-	return name, line, col, nil
+
+	return absName, line, col, err
 }
-
-// 	// TODO: this path resolution needs to happen in Edit
-
-// 	// if strings.Contains(arg, "buflist") {
-// 	// 	cwd, err := os.Getwd()
-// 	// 	if err != nil {
-// 	// 		log.Fatal(err)
-// 	// 	}
-// 	// 	fmt.Println("CWD:", cwd)
-
-// 	// kakwd, err := kak.Get("%sh{pwd}", context.session, context.client)
-// 	// 	if err != nil {
-// 	// 		log.Fatal(err)
-// 	// 	}
-// 	// 	fmt.Println("KAKWD:", kakwd[0])
-
-// 	// 	relPath, _ := filepath.Rel(cwd, kakwd[0])
-// 	// 	if strings.HasPrefix(relPath, "home/") {
-// 	// 		relPath = strings.Replace(relPath, "home/", "~/", 1)
-// 	// 	}
-// 	// 	fmt.Println("rel path:", relPath)
-// 	// 	fmt.Println()
-
-// 	// 	for i, buf := range out {
-// 	// 		// if !strings.HasPrefix(buf, "~") && !strings.HasPrefix(buf, "*") {
-// 	// 		// }
-// 	// 		if !filepath.IsAbs(buf) && !strings.HasPrefix(buf, "*") {
-// 	// 			out[i] = filepath.Join(relPath, buf)
-// 	// 		} else {
-// 	// 			out[i] = buf
-// 	// 		}
-// 	// 	}
-// 	// }
