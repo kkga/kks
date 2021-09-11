@@ -15,19 +15,25 @@ func NewEditCmd() *EditCmd {
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
-	c.fs.BoolVar(&c.all, "a", false, "send to all clients")
+	c.fs.Usage = c.usage
+	c.usageText = "[options] [file] [+<line>[:<col]]"
 
 	return c
 }
 
 type EditCmd struct {
-	fs      *flag.FlagSet
-	session string
-	client  string
-	buffer  string
-	all     bool
-	alias   []string
-	cc      CmdContext
+	fs        *flag.FlagSet
+	cc        CmdContext
+	session   string
+	client    string
+	alias     []string
+	usageText string
+}
+
+func (c *EditCmd) usage() {
+	fmt.Printf("usage: kks %s %s\n\n", c.fs.Name(), c.usageText)
+	fmt.Println("OPTIONS")
+	c.fs.PrintDefaults()
 }
 
 func (c *EditCmd) Run() error {
@@ -41,26 +47,34 @@ func (c *EditCmd) Run() error {
 	}
 
 	if len(c.fs.Args()) > 0 {
-		// TODO refactor FP to use same style as cmd (Name())
-		fp, err := NewFilepath(c.fs.Args())
+		cwd, err := c.cc.WorkDir()
+		if err != nil {
+			return err
+		}
+		kakwd, err := c.cc.KakWorkDir()
+		if err != nil {
+			return err
+		}
+
+		fp, err := NewFilepath(c.fs.Args(), cwd, kakwd)
 		if err != nil {
 			return err
 		}
 		if err := c.cc.Exists(); err != nil {
 			// TODO: run `kak filename`
 		} else {
-			b := strings.Builder{}
-			b.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
+			sb := strings.Builder{}
+			sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
 			if fp.Line != 0 {
-				b.WriteString(fmt.Sprintf(" %d", fp.Line))
+				sb.WriteString(fmt.Sprintf(" %d", fp.Line))
 			}
 			if fp.Column != 0 {
-				b.WriteString(fmt.Sprintf(" %d", fp.Column))
+				sb.WriteString(fmt.Sprintf(" %d", fp.Column))
 			}
 
-			fmt.Println(b.String())
+			fmt.Println(sb.String())
 
-			kak.Send(b.String(), "", sess, cl)
+			kak.Send(sb.String(), "", sess, cl)
 		}
 	}
 

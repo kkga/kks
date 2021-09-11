@@ -108,10 +108,4 @@ func main() {
 
 	// 	fmt.Println(strings.Join(out, "\n"))
 	// }
-
-	// // list sessions
-	// if listCmd.Parsed() {
-	// 	sessions, err := kak.List()
-	// 	check(err)
-
 }

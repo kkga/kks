@@ -25,6 +25,7 @@ type AttachCmd struct {
 }
 
 func (c *AttachCmd) Run() error {
+	// TODO initialize the contenxt with arguments instead of this
 	sess := c.cc.Session
 	if c.session != "" {
 		sess = c.session
@@ -33,23 +34,21 @@ func (c *AttachCmd) Run() error {
 		return errors.New("attach: no session in context")
 	}
 
-	file := ""
-	line := 0
-	col := 0
-
-	if len(c.fs.Args()) > 0 {
-		// TODO refactor FP to use same style as cmd (Name())
-		fp, err := NewFilepath(c.fs.Args())
-		if err != nil {
-			return err
-		}
-
-		file = fp.Name
-		line = fp.Line
-		col = fp.Column
-
+	cwd, err := c.cc.WorkDir()
+	if err != nil {
+		return err
 	}
-	if err := kak.Connect(file, line, col, sess); err != nil {
+	kakwd, err := c.cc.KakWorkDir()
+	if err != nil {
+		return err
+	}
+
+	fp, err := NewFilepath(c.fs.Args(), cwd, kakwd)
+	if err != nil {
+		return err
+	}
+
+	if err := kak.Connect(fp.Name, fp.Line, fp.Column, sess); err != nil {
 		return err
 	}
 

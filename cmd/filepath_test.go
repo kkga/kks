@@ -6,6 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
+// TODO: add tests for resolving paths
 func TestNewFilepath(t *testing.T) {
 	tests := []struct {
 		args []string
@@ -30,7 +31,7 @@ func TestNewFilepath(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
-			got, err := NewFilepath(tt.args)
+			got, err := NewFilepath(tt.args, "", "")
 			if err != nil {
 				t.Fatal("can't get Filepath: ", err)
 			}

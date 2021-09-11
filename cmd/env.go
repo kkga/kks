@@ -3,13 +3,13 @@ package cmd
 import "flag"
 
 func NewEnvCmd() *EnvCmd {
-	ec := &EnvCmd{
+	c := &EnvCmd{
 		fs:    flag.NewFlagSet("env", flag.ExitOnError),
 		alias: []string{""},
 	}
-	ec.fs.BoolVar(&ec.json, "json", false, "json output")
+	c.fs.BoolVar(&c.json, "json", false, "json output")
 
-	return ec
+	return c
 }
 
 type EnvCmd struct {
@@ -19,26 +19,26 @@ type EnvCmd struct {
 	cc    CmdContext
 }
 
-func (ec *EnvCmd) Run() error {
-	if err := ec.cc.Exists(); err != nil {
+func (c *EnvCmd) Run() error {
+	if err := c.cc.Exists(); err != nil {
 		return err
 	}
-	ec.cc.Print(ec.json)
+	c.cc.Print(c.json)
 	return nil
 }
 
-func (ec *EnvCmd) Init(args []string, cc CmdContext) error {
-	ec.cc = cc
-	if err := ec.fs.Parse(args); err != nil {
+func (c *EnvCmd) Init(args []string, cc CmdContext) error {
+	c.cc = cc
+	if err := c.fs.Parse(args); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ec *EnvCmd) Name() string {
-	return ec.fs.Name()
+func (c *EnvCmd) Name() string {
+	return c.fs.Name()
 }
 
-func (ec *EnvCmd) Alias() []string {
-	return ec.alias
+func (c *EnvCmd) Alias() []string {
+	return c.alias
 }

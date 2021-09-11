@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -13,19 +12,20 @@ type Filepath struct {
 	Raw    []string `json:"raw"`
 }
 
-func NewFilepath(args []string) (*Filepath, error) {
-	fp := Filepath{Raw: args}
+func NewFilepath(args []string, cmdWd string, kakWd string) (*Filepath, error) {
+	fp := &Filepath{Raw: args}
 
-	name, line, col, err := fp.parse()
-	if err != nil {
-		return new(Filepath), err
+	if len(args) > 0 {
+		name, line, col, err := fp.parse()
+		if err != nil {
+			return nil, err
+		}
+		fp.Name = name
+		fp.Line = line
+		fp.Column = col
 	}
 
-	fp.Name = name
-	fp.Line = line
-	fp.Column = col
-
-	return &fp, nil
+	return fp, nil
 }
 
 func (fp *Filepath) parse() (name string, line int, col int, err error) {
@@ -56,8 +56,5 @@ func (fp *Filepath) parse() (name string, line int, col int, err error) {
 			line = lineInt
 		}
 	}
-
-	fmt.Println(name, line, col)
-
 	return name, line, col, nil
 }
