@@ -1,11 +1,14 @@
 - [ ] refactor Edit into smaller parts
-	- [ ] move session creation into separate command that handles `setsid`
 	- [ ] in edit without context, create new session and attach
+	- [ ] move session creation into separate command that handles `setsid`
+	- [ ] make default cmd run edit, like kak
 	- [x] resolve relative path before sending to kak
 
 - [x] refactor context init
 	- [x] construct context from env and args before running command
 	- [x] if cmd requires context, check for context in root before run
+
+- [ ] need separate kak connect command for gui programs (wofi/rofi/etc)
 
 - [x] kill cmd
 - [x] edit cmd needs line:col support
@@ -16,11 +19,7 @@
 - [x] refactor cat cmd to use readTmp from Get
 - [x] need to be able to create new sessions
 - [x] ??? buflist should return relative to cwd
-- [ ] make default cmd run edit, like kak
-- [ ] don't create session for default edit cmd, simply run `kak file ...`
-- [ ] kks-files from non-workdir doesn't work (need to resolve path before cmd.Edit()?)
-- [ ] need separate kak connect command for gui programs (wofi/rofi/etc)
-
+- [x] kks-files from non-workdir doesn't work (need to resolve path before cmd.Edit()?)
 - [x] add kks send commands in kks-select script to indicate highlighted client
 - [x] add '-a' flag to kill cmd for killing all sessions
 
