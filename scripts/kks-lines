@@ -3,11 +3,12 @@
 # jump to line in buffer
 #
 # requires:
-# - ripgrep (https://github.com/BurntSushi/ripgrep)
 # - fzf (https://github.com/junegunn/fzf)
 
 kks cat |
-	nl -w4 -s'  ' |
+	nl -ba -w4 -s' │ ' |
 	fzf --height 100% --prompt 'lines> ' |
 	awk '{print $1}' |
-	xargs -I % 'kks send execute-keys %gx'
+	while read -r line; do
+		kks send execute-keys "$line"gx
+	done

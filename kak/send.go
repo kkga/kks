@@ -24,7 +24,7 @@ func Send(kakCommand, buf, ses, cl string) error {
 		io.WriteString(stdin, fmt.Sprintf(" %s", kakCommand))
 	}()
 
-	err = cmd.Start()
+	_, err = cmd.CombinedOutput()
 	if err != nil {
 		return err
 	}
