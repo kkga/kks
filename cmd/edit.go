@@ -11,11 +11,9 @@ import (
 func NewEditCmd() *EditCmd {
 	c := &EditCmd{
 		Cmd: Cmd{
-			fs:         flag.NewFlagSet("edit", flag.ExitOnError),
-			alias:      []string{"e"},
-			usageStr:   "[options] [file] [+<line>[:<col]]",
-			sessionReq: true,
-			// TODO: create new session if not exists
+			fs:       flag.NewFlagSet("edit", flag.ExitOnError),
+			alias:    []string{"e"},
+			usageStr: "[options] [file] [+<line>[:<col]]",
 		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
@@ -34,23 +32,33 @@ func (c *EditCmd) Run() error {
 		return err
 	}
 
-	switch c.client {
+	switch c.session {
 	case "":
-		if err := kak.Connect(fp.Name, fp.Line, fp.Column, c.session); err != nil {
+		// if no session, just run kak
+		if err := kak.Run(fp.Name, fp.Line, fp.Column); err != nil {
 			return err
 		}
 	default:
-		sb := strings.Builder{}
-		sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
-		if fp.Line != 0 {
-			sb.WriteString(fmt.Sprintf(" %d", fp.Line))
-		}
-		if fp.Column != 0 {
-			sb.WriteString(fmt.Sprintf(" %d", fp.Column))
-		}
+		switch c.client {
+		case "":
+			// if no client, attach to session with new client
+			if err := kak.Connect(fp.Name, fp.Line, fp.Column, c.session); err != nil {
+				return err
+			}
+		default:
+			// if client set, send 'edit [file]' to client
+			sb := strings.Builder{}
+			sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
+			if fp.Line != 0 {
+				sb.WriteString(fmt.Sprintf(" %d", fp.Line))
+			}
+			if fp.Column != 0 {
+				sb.WriteString(fmt.Sprintf(" %d", fp.Column))
+			}
 
-		if err := kak.Send(sb.String(), "", c.session, c.client); err != nil {
-			return err
+			if err := kak.Send(sb.String(), "", c.session, c.client); err != nil {
+				return err
+			}
 		}
 	}
 
