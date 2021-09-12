@@ -12,7 +12,7 @@ your `$PATH`.
 
 ### Build from source
 
-Requires [Go](https://golang.org/) installed on your system..
+Requires [Go](https://golang.org/) installed on your system.
 
 Clone the repository and run `go build`, then copy the compiled binary somewhere
 in your `$PATH`.
