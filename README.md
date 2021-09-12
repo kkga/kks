@@ -33,7 +33,6 @@ eval %sh{ kks init }
 
 And use your terminal integration to connect
 [provided scipts](#provided-scripts), for example:
-
 `kks-connect terminal kks-files`
 
 ### Shell configuration example
