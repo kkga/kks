@@ -25,9 +25,16 @@ in `$PATH`, it's also possible to install without cloning the repository: run
 
 ### Kakoune configuration
 
+Add `kks-connect` command to Kakoune:
+
 ```kak
 eval %sh{ kks init }
 ```
+
+And use your terminal integration to connect
+[provided scipts](#provided-scripts), for example:
+
+`kks-connect terminal kks-files`
 
 ### Shell configuration example
 
