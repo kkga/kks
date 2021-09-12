@@ -29,6 +29,18 @@ in `$PATH`, it's also possible to install without cloning the repository: run
 eval %sh{ kks init }
 ```
 
+### Shell configuration example
+
+```sh
+export EDITOR=`kks edit`
+
+alias k='kks edit'
+alias ks='eval (kks-select)'
+alias kcd='cd (kks get %sh{pwd})'
+alias ka='kks attach'
+alias kl='kks list'
+```
+
 ### Usage
 
 ```
