@@ -30,11 +30,6 @@ func Root(args []string) error {
 
 	subcommand := os.Args[1]
 
-	// cmdCtx, err := NewCmdContext()
-	// if err != nil {
-	// 	return err
-	// }
-
 	for _, cmd := range cmds {
 		if cmd.Name() == subcommand || containsString(cmd.Alias(), subcommand) {
 			if err := cmd.Init(os.Args[2:]); err != nil {
@@ -44,7 +39,7 @@ func Root(args []string) error {
 		}
 	}
 
-	return fmt.Errorf("Unknown subcommand: %s", subcommand)
+	return fmt.Errorf("unknown subcommand: %s", subcommand)
 }
 
 func containsString(s []string, e string) bool {
