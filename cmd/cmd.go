@@ -4,11 +4,12 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 )
 
 type Runner interface {
-	Init([]string, CmdContext) error
+	Init([]string) error
 	Run() error
 	Name() string
 	Alias() []string
@@ -28,14 +29,22 @@ type Cmd struct {
 	bufferReq  bool
 }
 
+type EnvContext struct {
+	Session string `json:"session"`
+	Client  string `json:"client"`
+}
+
 func (c *Cmd) Run() error      { return nil }
 func (c *Cmd) Name() string    { return c.fs.Name() }
 func (c *Cmd) Alias() []string { return c.alias }
 
-func (c *Cmd) Init(args []string, cc CmdContext) error {
-	c.session, c.client = cc.Session, cc.Client
+func (c *Cmd) Init(args []string) error {
+	env := EnvContext{
+		Session: os.Getenv("KKS_SESSION"),
+		Client:  os.Getenv("KKS_CLIENT"),
+	}
 
-	c.fs.Usage = c.usage
+	c.session, c.client = env.Session, env.Client
 
 	if err := c.fs.Parse(args); err != nil {
 		return err
@@ -47,6 +56,8 @@ func (c *Cmd) Init(args []string, cc CmdContext) error {
 	if c.clientReq && c.client == "" {
 		return errors.New("no client in context")
 	}
+
+	c.fs.Usage = c.usage
 
 	return nil
 }

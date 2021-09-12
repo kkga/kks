@@ -30,14 +30,14 @@ func Root(args []string) error {
 
 	subcommand := os.Args[1]
 
-	cmdCtx, err := NewCmdContext()
-	if err != nil {
-		return err
-	}
+	// cmdCtx, err := NewCmdContext()
+	// if err != nil {
+	// 	return err
+	// }
 
 	for _, cmd := range cmds {
 		if cmd.Name() == subcommand || containsString(cmd.Alias(), subcommand) {
-			if err := cmd.Init(os.Args[2:], *cmdCtx); err != nil {
+			if err := cmd.Init(os.Args[2:]); err != nil {
 				return err
 			}
 			return cmd.Run()
