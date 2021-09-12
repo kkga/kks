@@ -7,14 +7,12 @@ import (
 )
 
 func NewEnvCmd() *EnvCmd {
-	c := &EnvCmd{
-		Cmd: Cmd{
-			fs:         flag.NewFlagSet("env", flag.ExitOnError),
-			alias:      []string{""},
-			usageStr:   "[options]",
-			sessionReq: true,
-		},
-	}
+	c := &EnvCmd{Cmd: Cmd{
+		fs:         flag.NewFlagSet("env", flag.ExitOnError),
+		alias:      []string{""},
+		usageStr:   "[options]",
+		sessionReq: true,
+	}}
 	c.fs.BoolVar(&c.json, "json", false, "json output")
 	return c
 }
@@ -39,8 +37,6 @@ func (c *EnvCmd) Run() error {
 	case false:
 		fmt.Printf("session: %s\n", c.session)
 		fmt.Printf("client: %s\n", c.client)
-		// fmt.Printf("workdir: %s\n", cc.WorkDir)
-		// fmt.Printf("buffer: %s\n", cc.Buffer)
 	}
 	return nil
 }

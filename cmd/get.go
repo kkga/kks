@@ -10,16 +10,14 @@ import (
 )
 
 func NewGetCmd() *GetCmd {
-	c := &GetCmd{
-		Cmd: Cmd{
-			fs:         flag.NewFlagSet("get", flag.ExitOnError),
-			alias:      []string{""},
-			usageStr:   "[options] (<%val{}> | <%opt{}> | <%reg{}> | <%sh{}>)",
-			sessionReq: true,
-			// TODO maybe actually just use flags for args
-			// or maybe create separate subcommands get-val, etc
-		},
-	}
+	c := &GetCmd{Cmd: Cmd{
+		fs:         flag.NewFlagSet("get", flag.ExitOnError),
+		alias:      []string{""},
+		usageStr:   "[options] (<%val{}> | <%opt{}> | <%reg{}> | <%sh{}>)",
+		sessionReq: true,
+		// TODO maybe actually just use flags for args
+		// or maybe create separate subcommands get-val, etc
+	}}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	c.fs.StringVar(&c.buffer, "b", "", "buffer")

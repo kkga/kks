@@ -9,13 +9,12 @@ import (
 )
 
 func NewEditCmd() *EditCmd {
-	c := &EditCmd{
-		Cmd: Cmd{
-			fs:       flag.NewFlagSet("edit", flag.ExitOnError),
-			alias:    []string{"e"},
-			usageStr: "[options] [file] [+<line>[:<col>]]",
-		},
-	}
+	c := &EditCmd{Cmd: Cmd{
+		fs:       flag.NewFlagSet("edit", flag.ExitOnError),
+		alias:    []string{"e"},
+		usageStr: "[options] [file] [+<line>[:<col>]]",
+	}}
+	// TODO add flag that allows creating new files (removes -existing)
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	return c
@@ -25,7 +24,6 @@ type EditCmd struct {
 	Cmd
 }
 
-// TODO add flag that allows creating new files (removes -existing)
 func (c *EditCmd) Run() error {
 	fp, err := NewFilepath(c.fs.Args())
 	if err != nil {

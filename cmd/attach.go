@@ -7,14 +7,12 @@ import (
 )
 
 func NewAttachCmd() *AttachCmd {
-	c := &AttachCmd{
-		Cmd: Cmd{
-			fs:         flag.NewFlagSet("attach", flag.ExitOnError),
-			alias:      []string{"a"},
-			usageStr:   "[options] [file] [+<line>[:<col]]",
-			sessionReq: true,
-		},
-	}
+	c := &AttachCmd{Cmd: Cmd{
+		fs:         flag.NewFlagSet("attach", flag.ExitOnError),
+		alias:      []string{"a"},
+		usageStr:   "[options] [file] [+<line>[:<col]]",
+		sessionReq: true,
+	}}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	return c
 }

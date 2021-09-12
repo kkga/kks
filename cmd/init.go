@@ -10,13 +10,11 @@ import (
 var initKak string
 
 func NewInitCmd() *InitCmd {
-	c := &InitCmd{
-		Cmd: Cmd{
-			fs:       flag.NewFlagSet("init", flag.ExitOnError),
-			alias:    []string{""},
-			usageStr: "",
-		},
-	}
+	c := &InitCmd{Cmd: Cmd{
+		fs:       flag.NewFlagSet("init", flag.ExitOnError),
+		alias:    []string{""},
+		usageStr: "",
+	}}
 	return c
 }
 

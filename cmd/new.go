@@ -9,13 +9,11 @@ import (
 )
 
 func NewNewCmd() *NewCmd {
-	c := &NewCmd{
-		Cmd: Cmd{
-			fs:       flag.NewFlagSet("new", flag.ExitOnError),
-			alias:    []string{"n"},
-			usageStr: "[name]",
-		},
-	}
+	c := &NewCmd{Cmd: Cmd{
+		fs:       flag.NewFlagSet("new", flag.ExitOnError),
+		alias:    []string{"n"},
+		usageStr: "[name]",
+	}}
 	return c
 }
 

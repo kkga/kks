@@ -9,15 +9,13 @@ import (
 )
 
 func NewCatCmd() *CatCmd {
-	c := &CatCmd{
-		Cmd: Cmd{
-			fs:         flag.NewFlagSet("cat", flag.ExitOnError),
-			alias:      []string{""},
-			usageStr:   "[options]",
-			sessionReq: true,
-			clientReq:  true,
-		},
-	}
+	c := &CatCmd{Cmd: Cmd{
+		fs:         flag.NewFlagSet("cat", flag.ExitOnError),
+		alias:      []string{""},
+		usageStr:   "[options]",
+		sessionReq: true,
+		clientReq:  true,
+	}}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	c.fs.StringVar(&c.buffer, "b", "", "buffer")
@@ -29,14 +27,6 @@ type CatCmd struct {
 }
 
 func (c *CatCmd) Run() error {
-	// if buf == "" {
-	// 	buffile, err := kak.Get("%val{buffile}", c.buffer, c.session, c.client)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	buf = buffile[0]
-	// }
-
 	f, err := os.CreateTemp("", "kks-tmp")
 	if err != nil {
 		return err
