@@ -43,14 +43,11 @@ func (c *ListCmd) Run() error {
 		b := strings.Builder{}
 		for _, s := range sessions {
 			if len(s.Clients) == 0 {
-				b.WriteString(fmt.Sprintf("%s\t%s\t%s\n", s.Name, "null", s.Dir))
+				b.WriteString(fmt.Sprintf("%s\t|\t\t|%s\n", s.Name, s.Dir))
 			} else {
 				for _, cl := range s.Clients {
 					client := cl
-					if client == "" {
-						client = "null"
-					}
-					b.WriteString(fmt.Sprintf("%s\t%s\t%s\n", s.Name, client, s.Dir))
+					b.WriteString(fmt.Sprintf("%s\t|%s\t|%s\n", s.Name, client, s.Dir))
 				}
 			}
 		}

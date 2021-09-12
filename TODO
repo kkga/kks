@@ -1,4 +1,5 @@
 - [ ] refactor Edit into smaller parts
+	- [ ] if no client set, use connect
 	- [ ] in edit without context, create new session and attach
 	- [ ] move session creation into separate command that handles `setsid`
 	- [ ] make default cmd run edit, like kak

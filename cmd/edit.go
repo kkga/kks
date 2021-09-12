@@ -15,6 +15,7 @@ func NewEditCmd() *EditCmd {
 			alias:      []string{"e"},
 			usageStr:   "[options] [file] [+<line>[:<col]]",
 			sessionReq: true,
+			// TODO: create new session if not exists
 		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")
@@ -28,12 +29,17 @@ type EditCmd struct {
 
 // TODO add flag that allows creating new files (removes -existing)
 func (c *EditCmd) Run() error {
-	if len(c.fs.Args()) > 0 {
-		fp, err := NewFilepath(c.fs.Args())
-		if err != nil {
+	fp, err := NewFilepath(c.fs.Args())
+	if err != nil {
+		return err
+	}
+
+	switch c.client {
+	case "":
+		if err := kak.Connect(fp.Name, fp.Line, fp.Column, c.session); err != nil {
 			return err
 		}
-		// TODO: create new session if not exists
+	default:
 		sb := strings.Builder{}
 		sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
 		if fp.Line != 0 {
@@ -43,7 +49,9 @@ func (c *EditCmd) Run() error {
 			sb.WriteString(fmt.Sprintf(" %d", fp.Column))
 		}
 
-		kak.Send(sb.String(), "", c.session, c.client)
+		if err := kak.Send(sb.String(), "", c.session, c.client); err != nil {
+			return err
+		}
 	}
 
 	return nil
