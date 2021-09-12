@@ -71,7 +71,10 @@ Use "kks <command> -h" for command usage.
 - [`kks-buffers`](./scripts/kks-buffers) -- pick buffers
 - [`kks-files`](./scripts/kks-files) -- pick files
 - [`kks-grep`](./scripts/kks-grep) -- search for pattern in working directory
+- [`kks-lf`](./scripts/kks-lf) -- open [lf] with current buffer selected
 - [`kks-lines`](./scripts/kks-lines) -- jump to line in buffer
 - [`kks-mru`](./scripts/kks-mru) -- pick recently opened file
 - [`kks-select`](./scripts/kks-select) -- select Kakoune session and client to
   set up environment
+
+[lf]: https://github.com/gokcehan/lf
