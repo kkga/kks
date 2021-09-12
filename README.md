@@ -7,7 +7,7 @@ Handy Kakoune companion.
 ### Download release build
 
 Download the compiled binary for your system from
-[Releases](https://github.com/kkga/kks/releases) page and put it somewherr in
+[Releases](https://github.com/kkga/kks/releases) page and put it somewhere in
 your `$PATH`.
 
 ### Build from source
@@ -25,15 +25,20 @@ in `$PATH`, it's also possible to install without cloning the repository: run
 
 ### Kakoune configuration
 
-Source `kks init` to add `kks-connect` command to Kakoune:
+Source `kks init` to add `kks-connect` command to Kakoune...
 
 ```kak
 eval %sh{ kks init }
 ```
 
-And use your terminal integration to connect
+... and use your terminal integration to connect
 [provided scipts](#provided-scripts), for example:
-`kks-connect terminal kks-files`
+`kks-connect terminal kks-files`.
+
+For more terminal integrations and for the (quite handy) `popup` command, see:
+
+- [alacritty.kak](https://github.com/alexherbo2/alacritty.kak)
+- [foot.kak](https://github.com/kkga/foot.kak)
 
 ### Shell configuration example
 
@@ -84,3 +89,10 @@ Use "kks <command> -h" for command usage.
   set up environment
 
 [lf]: https://github.com/gokcehan/lf
+
+---
+
+## Similar projects
+
+- [kakoune.cr](https://github.com/alexherbo2/kakoune.cr)
+- [krc](https://github.com/danr/kakoune-remote-control)
