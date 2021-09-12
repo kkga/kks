@@ -13,7 +13,7 @@ func NewEditCmd() *EditCmd {
 		Cmd: Cmd{
 			fs:       flag.NewFlagSet("edit", flag.ExitOnError),
 			alias:    []string{"e"},
-			usageStr: "[options] [file] [+<line>[:<col]]",
+			usageStr: "[options] [file] [+<line>[:<col>]]",
 		},
 	}
 	c.fs.StringVar(&c.session, "s", "", "session")

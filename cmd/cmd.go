@@ -44,6 +44,7 @@ func (c *Cmd) Init(args []string) error {
 		Client:  os.Getenv("KKS_CLIENT"),
 	}
 
+	c.fs.Usage = c.usage
 	c.session, c.client = env.Session, env.Client
 
 	if err := c.fs.Parse(args); err != nil {
@@ -56,8 +57,6 @@ func (c *Cmd) Init(args []string) error {
 	if c.clientReq && c.client == "" {
 		return errors.New("no client in context")
 	}
-
-	c.fs.Usage = c.usage
 
 	return nil
 }
