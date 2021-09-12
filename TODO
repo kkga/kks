@@ -1,18 +1,17 @@
+- [ ] add initial documentation
 - [ ] refactor Edit into smaller parts
 	- [x] if no client set, use connect
 	- [x] in edit without context, create new session and attach
 	- [x] move session creation into separate command that handles `setsid`
 	- [x] resolve relative path before sending to kak
 	- [ ] make default cmd run edit, like kak
+- [ ] need separate kak connect command for gui programs (wofi/rofi/etc)
 
 - maybe have describe sessions command
 
 - [x] refactor context init
 	- [x] construct context from env and args before running command
 	- [x] if cmd requires context, check for context in root before run
-
-- [ ] need separate kak connect command for gui programs (wofi/rofi/etc)
-
 - [x] kill cmd
 - [x] edit cmd needs line:col support
 - [x] grep cmd
@@ -25,5 +24,3 @@
 - [x] kks-files from non-workdir doesn't work (need to resolve path before cmd.Edit()?)
 - [x] add kks send commands in kks-select script to indicate highlighted client
 - [x] add '-a' flag to kill cmd for killing all sessions
-
-- https://www.digitalocean.com/community/tutorials/how-to-use-the-flag-package-in-go
