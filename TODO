@@ -1,4 +1,4 @@
-- [ ] add initial documentation
+- [x] add initial documentation
 - [ ] refactor Edit into smaller parts
 	- [x] if no client set, use connect
 	- [x] in edit without context, create new session and attach
@@ -6,6 +6,9 @@
 	- [x] resolve relative path before sending to kak
 	- [ ] make default cmd run edit, like kak
 - [ ] need separate kak connect command for gui programs (wofi/rofi/etc)
+
+- [ ] add configuration env var for automatic git-based sessions
+- [ ] add configuration env var for default session name
 
 - maybe have describe sessions command
 
