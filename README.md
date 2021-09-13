@@ -40,6 +40,19 @@ For more terminal integrations and for the (quite handy) `popup` command, see:
 - [alacritty.kak](https://github.com/alexherbo2/alacritty.kak)
 - [foot.kak](https://github.com/kkga/foot.kak)
 
+#### Kakoune mappings example
+
+```kak
+map global normal -docstring 'terminal'         <c-t> ': kks-connect terminal<ret>'
+map global normal -docstring 'files'            <c-f> ': kks-connect popup kks-files<ret>'
+map global normal -docstring 'buffers'          <c-b> ': kks-connect popup kks-buffers<ret>'
+map global normal -docstring 'files by content' <c-g> ': kks-connect popup kks-grep<ret>'
+map global normal -docstring 'lines in buffer'  <c-l> ': kks-connect popup kks-lines<ret>'
+map global normal -docstring 'recent files'     <c-r> ': kks-connect popup kks-mru<ret>'
+map global normal -docstring 'lf'               <c-h> ': kks-connect panel kks-lf<ret>'
+map global normal -docstring 'lazygit'          <c-v> ': kks-connect popup lazygit<ret>'
+```
+
 ### Shell configuration example
 
 ```sh
