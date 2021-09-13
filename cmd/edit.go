@@ -3,11 +3,10 @@ package cmd
 import (
 	"flag"
 	"fmt"
+	"os"
 	"os/exec"
 	"path"
 	"strings"
-
-	// "strings"
 
 	"github.com/kkga/kks/kak"
 )
@@ -34,22 +33,21 @@ func (c *EditCmd) Run() error {
 		return err
 	}
 
-	// TODO config env var
-	conf_gitdir_autosess := true
+	_, useGitDirSessions := os.LookupEnv("KKS_USE_GITDIR_SESSIONS")
 
-	gitdir_sess := struct {
+	gitdirSess := struct {
 		name   string
 		exists bool
 	}{"", false}
 
-	if conf_gitdir_autosess {
+	if useGitDirSessions {
 		gitOut, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
 		if err == nil {
-			gitdir_sess.name = strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
+			gitdirSess.name = strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
 			sessions, _ := kak.List()
 			for _, s := range sessions {
-				if s.Name == gitdir_sess.name {
-					gitdir_sess.exists = true
+				if s.Name == gitdirSess.name {
+					gitdirSess.exists = true
 				}
 			}
 		}
@@ -57,15 +55,15 @@ func (c *EditCmd) Run() error {
 
 	switch c.session {
 	case "":
-		if gitdir_sess.name != "" {
-			if !gitdir_sess.exists {
-				sessionName, err := kak.Create(gitdir_sess.name)
+		if gitdirSess.name != "" {
+			if !gitdirSess.exists {
+				sessionName, err := kak.Create(gitdirSess.name)
 				if err != nil {
 					return err
 				}
 				fmt.Println("git-dir session started:", sessionName)
 			}
-			if err := kak.Connect(fp.Name, fp.Line, fp.Column, gitdir_sess.name); err != nil {
+			if err := kak.Connect(fp.Name, fp.Line, fp.Column, gitdirSess.name); err != nil {
 				return err
 			}
 		} else {
