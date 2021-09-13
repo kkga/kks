@@ -1,4 +1,4 @@
-# KKS
+# kks
 
 Handy Kakoune companion.
 
@@ -21,7 +21,7 @@ If Go is [configured](https://golang.org/ref/mod#go-install) to install packages
 in `$PATH`, it's also possible to install without cloning the repository: run
 `go install github.com/kkga/kks@latest`.
 
-## Manual
+## How to use
 
 ### Kakoune configuration
 
@@ -89,6 +89,19 @@ ENVIRONMENT VARIABLES
 
 Use "kks <command> -h" for command usage.
 ```
+
+### kks configuration
+
+`kks` can be configured through environment variables.
+
+At the moment, there is a single configuration option:
+
+- `KKS_USE_GITDIR_SESSIONS` -- when this variable is set to any value and
+  `KKS_SESSION` is empty, `kks edit` will do the following:
+  - if the file is inside a git directory, `kks` will search for an existing
+    session based on git directory name and connect to it;
+  - if a session for the directory doesn't exist, `kks` will start a new session
+    and connect to it.
 
 ### Provided scripts
 
