@@ -18,4 +18,5 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+      - "^todo:"
       - "typo"
