@@ -34,60 +34,67 @@ func (c *EditCmd) Run() error {
 		return err
 	}
 
-	switch c.session {
-	case "":
-		gitdir, err := exec.Command("git", "rev-parse", "--show-toplevel").CombinedOutput()
-		// fmt.Println(path.Base(string(gitdir)))
+	// TODO config env var
+	conf_gitdir_autosess := true
+
+	gitdir_sess := struct {
+		name   string
+		exists bool
+	}{"", false}
+
+	if conf_gitdir_autosess {
+		gitOut, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
 		if err == nil {
+			gitdir_sess.name = strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
 			sessions, _ := kak.List()
-			gitdir_session := strings.ReplaceAll(path.Base(string(gitdir)), ".", "")
-			gitdir_session = strings.TrimSpace(gitdir_session)
 			for _, s := range sessions {
-				if s.Name == gitdir_session {
-					fmt.Println("Connect:", s.Name)
-					if err := kak.Connect(fp.Name, fp.Line, fp.Column, c.session); err != nil {
-						return err
-					}
-					return nil
+				if s.Name == gitdir_sess.name {
+					gitdir_sess.exists = true
 				}
 			}
-			fmt.Println("Create:", gitdir_session)
-			sessionName, err := kak.Create(gitdir_session)
-			if err != nil {
+		}
+	}
+
+	switch c.session {
+	case "":
+		if gitdir_sess.name != "" {
+			if !gitdir_sess.exists {
+				sessionName, err := kak.Create(gitdir_sess.name)
+				if err != nil {
+					return err
+				}
+				fmt.Println("git-dir session started:", sessionName)
+			}
+			if err := kak.Connect(fp.Name, fp.Line, fp.Column, gitdir_sess.name); err != nil {
 				return err
 			}
-			fmt.Println("session started:", sessionName)
-			if err := kak.Connect(fp.Name, fp.Line, fp.Column, sessionName); err != nil {
+		} else {
+			if err := kak.Run(fp.Name, fp.Line, fp.Column); err != nil {
 				return err
 			}
 		}
+	default:
+		switch c.client {
+		case "":
+			// if no client, attach to session with new client
+			if err := kak.Connect(fp.Name, fp.Line, fp.Column, c.session); err != nil {
+				return err
+			}
+		default:
+			// if client set, send 'edit [file]' to client
+			sb := strings.Builder{}
+			sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
+			if fp.Line != 0 {
+				sb.WriteString(fmt.Sprintf(" %d", fp.Line))
+			}
+			if fp.Column != 0 {
+				sb.WriteString(fmt.Sprintf(" %d", fp.Column))
+			}
 
-		// if no session, just run kak
-		// if err := kak.Run(fp.Name, fp.Line, fp.Column); err != nil {
-		// 	return err
-		// }
-		// default:
-		// switch c.client {
-		// case "":
-		// 	// if no client, attach to session with new client
-		// 	if err := kak.Connect(fp.Name, fp.Line, fp.Column, c.session); err != nil {
-		// 		return err
-		// 	}
-		// default:
-		// 	// if client set, send 'edit [file]' to client
-		// 	sb := strings.Builder{}
-		// 	sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
-		// 	if fp.Line != 0 {
-		// 		sb.WriteString(fmt.Sprintf(" %d", fp.Line))
-		// 	}
-		// 	if fp.Column != 0 {
-		// 		sb.WriteString(fmt.Sprintf(" %d", fp.Column))
-		// 	}
-
-		// 	if err := kak.Send(sb.String(), "", c.session, c.client); err != nil {
-		// 		return err
-		// 	}
-		// }
+			if err := kak.Send(sb.String(), "", c.session, c.client); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
