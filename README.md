@@ -96,12 +96,13 @@ Use "kks <command> -h" for command usage.
 
 At the moment, there is a single configuration option:
 
-- `KKS_USE_GITDIR_SESSIONS` -- when this variable is set to any value and
-  `KKS_SESSION` is empty, `kks edit` will do the following:
-  - if the file is inside a git directory, `kks` will search for an existing
-    session based on git directory name and connect to it;
-  - if a session for the directory doesn't exist, `kks` will start a new session
-    and connect to it.
+- `KKS_USE_GITDIR_SESSIONS`
+  - when set to any value and `KKS_SESSION` is empty, running `kks edit` will do
+    the following:
+    - if file is inside a git directory, `kks` will search for an existing
+      session based on top-level git directory name and connect to it;
+    - if a session for the directory doesn't exist, `kks` will start a new
+      session and connect to it.
 
 ### Provided scripts
 
