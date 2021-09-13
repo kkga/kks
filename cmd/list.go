@@ -41,7 +41,6 @@ func (c *ListCmd) Run() error {
 	case false:
 		w := new(tabwriter.Writer)
 		w.Init(os.Stdout, 0, 8, 1, '\t', 0)
-		defer w.Flush()
 
 		for _, s := range sessions {
 			if len(s.Clients) == 0 {
@@ -52,6 +51,8 @@ func (c *ListCmd) Run() error {
 				}
 			}
 		}
+
+		w.Flush()
 	}
 
 	return nil

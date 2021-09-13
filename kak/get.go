@@ -15,7 +15,6 @@ func Get(getStr, buf, session, client string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
 
 	// kak will output to file, so we create a chan for reading
 	ch := make(chan string)
@@ -36,6 +35,7 @@ func Get(getStr, buf, session, client string) ([]string, error) {
 		outStrs[i] = strings.Trim(val, "''")
 	}
 
+	f.Close()
 	return outStrs, nil
 }
 
@@ -63,11 +63,10 @@ func ReadTmp(f *os.File, c chan string) {
 			// if file written, read it and send to chan
 			if event.Op&fsnotify.Write == fsnotify.Write {
 				dat, err := os.ReadFile(f.Name())
+				defer os.Remove(f.Name())
 				if err != nil {
-					fmt.Println("errrrrr")
 					log.Fatal(err)
 				}
-				defer os.Remove(f.Name())
 				c <- string(dat)
 			}
 		case err, ok := <-watcher.Errors:

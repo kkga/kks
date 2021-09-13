@@ -14,14 +14,17 @@ func Send(kakCommand, buf, ses, cl string) error {
 	stdin, err := cmd.StdinPipe()
 
 	go func() {
-		defer stdin.Close()
 		io.WriteString(stdin, "evaluate-commands")
+
 		if buf != "" {
 			io.WriteString(stdin, fmt.Sprintf(" -buffer %s", buf))
 		} else if cl != "" {
 			io.WriteString(stdin, fmt.Sprintf(" -try-client %s", cl))
 		}
+
 		io.WriteString(stdin, fmt.Sprintf(" %s", kakCommand))
+
+		stdin.Close()
 	}()
 
 	_, err = cmd.CombinedOutput()

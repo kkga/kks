@@ -32,9 +32,6 @@ func (c *CatCmd) Run() error {
 		return err
 	}
 
-	defer os.Remove(f.Name())
-	defer f.Close()
-
 	ch := make(chan string)
 	go kak.ReadTmp(f, ch)
 
@@ -46,6 +43,9 @@ func (c *CatCmd) Run() error {
 	output := <-ch
 
 	fmt.Print(output)
+
+	f.Close()
+	os.Remove(f.Name())
 
 	return nil
 }
