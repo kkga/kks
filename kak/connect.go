@@ -18,7 +18,11 @@ func Connect(file string, line int, col int, sess string) error {
 
 	if file != "" {
 		kakExecArgs = append(kakExecArgs, file)
-		kakExecArgs = append(kakExecArgs, fmt.Sprintf("+%d:%d", line, col))
+
+		if line != 0 {
+			kakExecArgs = append(kakExecArgs, fmt.Sprintf("+%d:%d", line, col))
+		}
+
 	}
 
 	fmt.Println(kakExecArgs)
