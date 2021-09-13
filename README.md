@@ -32,13 +32,8 @@ eval %sh{ kks init }
 ```
 
 ... and use your terminal integration to connect
-[provided scipts](#provided-scripts), for example:
+[provided scripts](#provided-scripts), for example:
 `kks-connect terminal kks-files`.
-
-For more terminal integrations and for the (quite handy) `popup` command, see:
-
-- [alacritty.kak](https://github.com/alexherbo2/alacritty.kak)
-- [foot.kak](https://github.com/kkga/foot.kak)
 
 #### Kakoune mappings example
 
@@ -52,6 +47,11 @@ map global normal -docstring 'recent files'     <c-r> ': kks-connect popup kks-m
 map global normal -docstring 'lf'               <c-h> ': kks-connect panel kks-lf<ret>'
 map global normal -docstring 'lazygit'          <c-v> ': kks-connect popup lazygit<ret>'
 ```
+
+For more terminal integrations and for the (quite handy) `popup` command, see:
+
+- [alacritty.kak](https://github.com/alexherbo2/alacritty.kak)
+- [foot.kak](https://github.com/kkga/foot.kak)
 
 ### Shell configuration example
 
@@ -108,4 +108,4 @@ Use "kks <command> -h" for command usage.
 ## Similar projects
 
 - [kakoune.cr](https://github.com/alexherbo2/kakoune.cr)
-- [krc](https://github.com/danr/kakoune-remote-control)
+- [kakoune-remote-control](https://github.com/danr/kakoune-remote-control)
