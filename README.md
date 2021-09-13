@@ -4,7 +4,7 @@ Handy Kakoune companion.
 
 ## Installation
 
-### Download release build
+### Download release binary
 
 Download the compiled binary for your system from
 [Releases](https://github.com/kkga/kks/releases) page and put it somewhere in
