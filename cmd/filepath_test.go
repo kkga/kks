@@ -6,7 +6,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-// TODO: add tests for resolving paths
 func TestNewFilepath(t *testing.T) {
 	tests := []struct {
 		args []string
