@@ -9,6 +9,5 @@
 command kak -clear
 
 kks list |
-	column --table |
-	fzf -d '\|' --preview-window=down:0% --preview="kks send -a info; kks send -s {1} -c {2} info -markup '{2}@{+b}[{1}]'" |
-	awk -F '|' '{print "export KKS_SESSION=" $1 "; export KKS_CLIENT=" $2}'
+	fzf -d '\t*: *' --preview-window=down:0% --preview="kks send -a info; kks send -s {1} -c {2} info -markup '{2}@{+b}[{1}]'" |
+	awk -F '\t*: *' '{print "export KKS_SESSION=" $1 "; export KKS_CLIENT=" $2}'

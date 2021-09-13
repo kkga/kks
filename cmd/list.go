@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"strings"
+	"os"
+	"text/tabwriter"
 
 	"github.com/kkga/kks/kak"
 )
@@ -38,18 +39,19 @@ func (c *ListCmd) Run() error {
 		}
 		fmt.Println(string(j))
 	case false:
-		b := strings.Builder{}
+		w := new(tabwriter.Writer)
+		w.Init(os.Stdout, 0, 8, 1, '\t', 0)
+		defer w.Flush()
+
 		for _, s := range sessions {
 			if len(s.Clients) == 0 {
-				b.WriteString(fmt.Sprintf("%s\t|\t\t|%s\n", s.Name, s.Dir))
+				fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, " ", s.Dir)
 			} else {
 				for _, cl := range s.Clients {
-					client := cl
-					b.WriteString(fmt.Sprintf("%s\t|%s\t|%s\n", s.Name, client, s.Dir))
+					fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, cl, s.Dir)
 				}
 			}
 		}
-		fmt.Println(strings.TrimSpace(b.String()))
 	}
 
 	return nil
