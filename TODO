@@ -1,3 +1,5 @@
+- [x] don't pass `0` line/col to kak
+
 - [x] add initial documentation
 - [ ] refactor Edit into smaller parts
 	- [x] if no client set, use connect
