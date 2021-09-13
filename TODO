@@ -1,5 +1,7 @@
 - [x] don't pass `0` line/col to kak
 
+- add bindings for creating/deleting sessions in `kks-select`
+
 - [x] add initial documentation
 - [ ] refactor Edit into smaller parts
 	- [x] if no client set, use connect
