@@ -97,7 +97,7 @@ Use "kks <command> -h" for command usage.
 
 `kks` can be configured through environment variables.
 
-#### Automatic sessions based on git directory
+### Automatic sessions based on git directory
 
 ```
 export KKS_USE_GITDIR_SESSIONS=1
@@ -124,8 +124,6 @@ running `kks edit` will do the following:
 | [`kks-select`](./scripts/kks-select)   | select Kakoune session and client to set up environment |
 
 [lf]: https://github.com/gokcehan/lf
-
----
 
 ## Similar projects
 
