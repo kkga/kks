@@ -33,31 +33,36 @@ func (c *EditCmd) Run() error {
 		return err
 	}
 
-	_, useGitDirSessions := os.LookupEnv("KKS_USE_GITDIR_SESSIONS")
-	// defaultSession := os.Getenv("KKS_DEFAULT_SESSION")
-
-	var gitDirSess *gitDirSession
-
-	if useGitDirSessions {
-		_ = gitDirSess.Init()
-	}
-
 	switch c.session {
 	case "":
-		if gitdirSess.name != "" {
-			if !gitdirSess.exists {
-				sessionName, err := kak.Create(gitdirSess.name)
+		var gitDirName string
+		_, useGitDirSessions := os.LookupEnv("KKS_USE_GITDIR_SESSIONS")
+
+		if useGitDirSessions {
+			gitDirName = parseGitToplevel()
+		}
+
+		if gitDirName != "" {
+			if !sessionExists(gitDirName) {
+				sessionName, err := kak.Create(gitDirName)
 				if err != nil {
 					return err
 				}
 				fmt.Println("git-dir session started:", sessionName)
 			}
-			if err := kak.Connect(fp.Name, fp.Line, fp.Column, gitdirSess.name); err != nil {
+			if err := kak.Connect(fp.Name, fp.Line, fp.Column, gitDirName); err != nil {
 				return err
 			}
 		} else {
-			if err := kak.Run(fp.Name, fp.Line, fp.Column); err != nil {
-				return err
+			defaultSession := os.Getenv("KKS_DEFAULT_SESSION")
+			if defaultSession != "" && sessionExists(defaultSession) {
+				if err := kak.Connect(fp.Name, fp.Line, fp.Column, defaultSession); err != nil {
+					return err
+				}
+			} else {
+				if err := kak.Run(fp.Name, fp.Line, fp.Column); err != nil {
+					return err
+				}
 			}
 		}
 	default:
@@ -87,23 +92,20 @@ func (c *EditCmd) Run() error {
 	return nil
 }
 
-type gitDirSession struct {
-	name   string
-	exists bool
-}
-
-func (gs *gitDirSession) Init() error {
+func parseGitToplevel() string {
 	gitOut, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
 	if err != nil {
-		return err
+		return ""
 	}
-	gs.name = strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
+	return strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
+}
 
+func sessionExists(name string) bool {
 	sessions, _ := kak.List()
 	for _, s := range sessions {
-		if s.Name == gs.name {
-			gs.exists = true
+		if s.Name == name {
+			return true
 		}
 	}
-	return nil
+	return false
 }
