@@ -1,8 +1,10 @@
 - [x] don't pass `0` line/col to kak
 
-- [ ] add extra fzf bindings in kks select
-	- [ ] creating/deleting
-	- [ ] reset env (unset KKS_SESSION)
+- [ ] add key bindings to delete buffers in `kks-buffers`
+- [ ] add key bindings to create files in `kks-files`
+
+- [x] add extra fzf bindings in kks select
+	- [x] creating/deleting
 
 - [x] add initial documentation
 - [ ] refactor Edit into smaller parts
@@ -11,11 +13,12 @@
 	- [x] move session creation into separate command that handles `setsid`
 	- [x] resolve relative path before sending to kak
 	- [ ] ? make default cmd run edit, like kak (any sideeffects?)
+
 - [ ] need separate kak connect command for gui programs (wofi/rofi/etc)
 
 - [x] add configuration env var for automatic git-based sessions
-- [ ] add configuration env var for default session name
-	- [ ] `KKS_DEFAULT_SESSION=default`
+- [x] add configuration env var for default session name
+	- [x] `KKS_DEFAULT_SESSION=default`
 
 - [x] refactor context init
 	- [x] construct context from env and args before running command
