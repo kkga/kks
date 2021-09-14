@@ -8,7 +8,10 @@
 
 kks get %val[buflist] |
 	grep -F "$*" |
-	fzf --height 100% --prompt 'buf> ' --preview 'kks cat -b {} | highlight --line-range=1-100 --force -O ansi' |
+	fzf --height 100% --prompt 'buf> ' --preview 'kks cat -b {} | highlight --line-range=1-100 --force -O ansi' \
+		--header="[c-x] delete, [c-t] new scratch" \
+		--bind="ctrl-x:execute-silent(kks send -b {} delete-buffer)+reload(kks get %val[buflist])" \
+		--bind="ctrl-t:execute-silent(kks send edit -scratch {q})+reload(kks get %val[buflist])" |
 	while read -r name; do
 		kks send buffer "$name"
 	done
