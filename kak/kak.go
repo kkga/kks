@@ -5,12 +5,13 @@ import (
 	"strings"
 )
 
-type Session struct {
-	Name string
-	// clients []string
-	// dir     string
+type Context struct {
+	Session Session
+	Client  Client
+	Buffer  Buffer
 }
 
+type Session struct{ Name string }
 type Client struct{ Name string }
 type Buffer struct{ Name string }
 

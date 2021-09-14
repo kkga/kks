@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/kkga/kks/kak"
 )
 
 type Runner interface {
@@ -27,6 +29,8 @@ type Cmd struct {
 	sessionReq bool
 	clientReq  bool
 	bufferReq  bool
+
+	kakContext kak.Context
 }
 
 type EnvContext struct {
@@ -52,10 +56,19 @@ func (c *Cmd) Init(args []string) error {
 		return err
 	}
 
-	if c.sessionReq && c.session == "" {
+	c.kakContext = kak.Context{
+		Session: kak.Session{Name: c.session},
+		Client:  kak.Client{Name: c.client},
+		Buffer:  kak.Buffer{Name: c.buffer},
+	}
+
+	if c.sessionReq && c.kakContext.Session.Name == "" {
 		return errors.New("no session in context")
 	}
-	if c.clientReq && c.client == "" {
+	if c.clientReq && c.kakContext.Client.Name == "" {
+		return errors.New("no client in context")
+	}
+	if c.bufferReq && c.kakContext.Buffer.Name == "" {
 		return errors.New("no client in context")
 	}
 
