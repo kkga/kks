@@ -7,14 +7,14 @@ import (
 	"syscall"
 )
 
-func Connect(file string, line int, col int, sess string) error {
+func Connect(session Session, file string, line int, col int) error {
 	kakBinary, err := exec.LookPath("kak")
 	if err != nil {
 		return err
 	}
 
 	kakExecArgs := []string{kakBinary}
-	kakExecArgs = append(kakExecArgs, "-c", sess)
+	kakExecArgs = append(kakExecArgs, "-c", session.Name)
 
 	if file != "" {
 		kakExecArgs = append(kakExecArgs, file)

@@ -23,21 +23,29 @@ type KillCmd struct {
 }
 
 func (c *KillCmd) Run() error {
-	kakCmd := "kill"
+	sendCmd := "kill"
 
 	switch c.allSessions {
 	case false:
 		// TODO need to somehow trigger "no session" err
-		if err := kak.Send(kakCmd, "", c.session, ""); err != nil {
+		if err := kak.Send(
+			kak.Session{c.session},
+			kak.Client{c.client},
+			kak.Buffer{c.buffer},
+			sendCmd); err != nil {
 			return err
 		}
 	case true:
-		sessions, err := kak.List()
+		sessions, err := kak.Sessions()
 		if err != nil {
 			return err
 		}
-		for _, sess := range sessions {
-			if err := kak.Send(kakCmd, "", sess.Name, ""); err != nil {
+		for _, s := range sessions {
+			if err := kak.Send(
+				s,
+				kak.Client{c.client},
+				kak.Buffer{c.buffer},
+				sendCmd); err != nil {
 				return err
 			}
 		}

@@ -45,7 +45,8 @@ func (c *Cmd) Init(args []string) error {
 	}
 
 	c.fs.Usage = c.usage
-	c.session, c.client = env.Session, env.Client
+	c.session = env.Session
+	c.client = env.Client
 
 	if err := c.fs.Parse(args); err != nil {
 		return err

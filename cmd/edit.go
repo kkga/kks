@@ -43,20 +43,29 @@ func (c *EditCmd) Run() error {
 		}
 
 		if gitDirName != "" {
-			if !sessionExists(gitDirName) {
-				sessionName, err := kak.Create(gitDirName)
+			gitDirSession := kak.Session{Name: gitDirName}
+			exists, err := gitDirSession.Exists()
+			if err != nil {
+				return err
+			}
+			if !exists {
+				sessionName, err := kak.Create(gitDirSession.Name)
 				if err != nil {
 					return err
 				}
 				fmt.Println("git-dir session started:", sessionName)
 			}
-			if err := kak.Connect(fp.Name, fp.Line, fp.Column, gitDirName); err != nil {
+			if err := kak.Connect(gitDirSession, fp.Name, fp.Line, fp.Column); err != nil {
 				return err
 			}
 		} else {
-			defaultSession := os.Getenv("KKS_DEFAULT_SESSION")
-			if defaultSession != "" && sessionExists(defaultSession) {
-				if err := kak.Connect(fp.Name, fp.Line, fp.Column, defaultSession); err != nil {
+			defaultSession := kak.Session{Name: os.Getenv("KKS_DEFAULT_SESSION")}
+			exists, err := defaultSession.Exists()
+			if err != nil {
+				return err
+			}
+			if exists {
+				if err := kak.Connect(defaultSession, fp.Name, fp.Line, fp.Column); err != nil {
 					return err
 				}
 			} else {
@@ -66,10 +75,11 @@ func (c *EditCmd) Run() error {
 			}
 		}
 	default:
+		session := kak.Session{Name: c.session}
 		switch c.client {
 		case "":
 			// if no client, attach to session with new client
-			if err := kak.Connect(fp.Name, fp.Line, fp.Column, c.session); err != nil {
+			if err := kak.Connect(session, fp.Name, fp.Line, fp.Column); err != nil {
 				return err
 			}
 		default:
@@ -83,7 +93,11 @@ func (c *EditCmd) Run() error {
 				sb.WriteString(fmt.Sprintf(" %d", fp.Column))
 			}
 
-			if err := kak.Send(sb.String(), "", c.session, c.client); err != nil {
+			if err := kak.Send(
+				kak.Session{c.session},
+				kak.Client{c.client},
+				kak.Buffer{c.buffer},
+				sb.String()); err != nil {
 				return err
 			}
 		}
@@ -98,14 +112,4 @@ func parseGitToplevel() string {
 		return ""
 	}
 	return strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
-}
-
-func sessionExists(name string) bool {
-	sessions, _ := kak.List()
-	for _, s := range sessions {
-		if s.Name == name {
-			return true
-		}
-	}
-	return false
 }

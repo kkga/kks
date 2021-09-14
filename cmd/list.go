@@ -43,11 +43,11 @@ func (c *ListCmd) Run() error {
 		w.Init(os.Stdout, 0, 8, 1, '\t', 0)
 
 		for _, s := range sessions {
-			if len(s.Clients) == 0 {
-				fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, " ", s.Dir)
+			if len(s.Clients()) == 0 {
+				fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, " ", s.Dir())
 			} else {
-				for _, cl := range s.Clients {
-					fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, cl, s.Dir)
+				for _, cl := range s.Clients() {
+					fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, cl, s.Dir())
 				}
 			}
 		}

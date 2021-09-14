@@ -25,7 +25,7 @@ type NewCmd struct {
 func (c *NewCmd) Run() error {
 	c.name = c.fs.Arg(0)
 
-	sessions, err := kak.List()
+	sessions, err := kak.Sessions()
 	for _, s := range sessions {
 		if s.Name == c.name {
 			return errors.New(fmt.Sprintf("session already exists: %s", c.name))

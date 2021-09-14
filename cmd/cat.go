@@ -36,7 +36,12 @@ func (c *CatCmd) Run() error {
 	go kak.ReadTmp(f, ch)
 
 	sendCmd := fmt.Sprintf("write -force %s", f.Name())
-	if err := kak.Send(sendCmd, c.buffer, c.session, c.client); err != nil {
+
+	if err := kak.Send(
+		kak.Session{c.session},
+		kak.Client{c.client},
+		kak.Buffer{c.buffer},
+		sendCmd); err != nil {
 		return err
 	}
 
