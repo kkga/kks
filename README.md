@@ -111,6 +111,19 @@ running `kks edit` will do the following:
 - if a session for the directory doesn't exist, `kks` will start a new session
   and connect to it.
 
+### Default session
+
+```
+export KKS_DEFAULT_SESSION='mysession'
+```
+
+When context is not set (`KKS_SESSION` is empty), running `kks edit` will check
+for a session defined by `KKS_DEFAULT_SESSION` variable. If the session is
+running, `kks` will connect to it instead of starting a new session.
+
+`kks` will not start the default session if it's not running. You can use the
+autostarting mechanism of your desktop to start it with `kak -d -s mysession`.
+
 ## Provided scripts
 
 | script                                 | function                                                |
