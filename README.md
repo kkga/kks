@@ -35,6 +35,24 @@ eval %sh{ kks init }
 [provided scripts](#provided-scripts), for example:
 `kks-connect terminal kks-files`.
 
+### Shell configuration
+
+You probably want to set the `EDITOR` variable to `kks edit` so that connected
+programs work as intended:
+
+```sh
+export EDITOR='kks edit'
+```
+
+Possibly useful aliases:
+
+```
+alias k='kks edit'
+alias ks='eval (kks-select)'
+alias kcd='cd (kks get %sh{pwd})'
+alias ka='kks attach'
+```
+
 ### Kakoune mappings example
 
 ```kak
@@ -52,18 +70,6 @@ For more terminal integrations and for the (quite handy) `popup` command, see:
 
 - [alacritty.kak](https://github.com/alexherbo2/alacritty.kak)
 - [foot.kak](https://github.com/kkga/foot.kak)
-
-### Shell configuration example
-
-```sh
-export EDITOR=`kks edit`
-
-alias k='kks edit'
-alias ks='eval (kks-select)'
-alias kcd='cd (kks get %sh{pwd})'
-alias ka='kks attach'
-alias kl='kks list'
-```
 
 ## Commands
 
