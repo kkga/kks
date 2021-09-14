@@ -4,13 +4,13 @@ Handy Kakoune companion.
 
 ## Installation
 
-### Download release binary
+### From release binaries
 
 Download the compiled binary for your system from
 [Releases](https://github.com/kkga/kks/releases) page and put it somewhere in
 your `$PATH`.
 
-### Build from source
+### From source
 
 Requires [Go](https://golang.org/) installed on your system.
 
@@ -21,7 +21,7 @@ If Go is [configured](https://golang.org/ref/mod#go-install) to install packages
 in `$PATH`, it's also possible to install without cloning the repository: run
 `go install github.com/kkga/kks@latest`.
 
-## How to use
+## Kakoune and shell integration
 
 ### Kakoune configuration
 
@@ -35,7 +35,7 @@ eval %sh{ kks init }
 [provided scripts](#provided-scripts), for example:
 `kks-connect terminal kks-files`.
 
-#### Kakoune mappings example
+### Kakoune mappings example
 
 ```kak
 map global normal -docstring 'terminal'         <c-t> ': kks-connect terminal<ret>'
@@ -65,7 +65,10 @@ alias ka='kks attach'
 alias kl='kks list'
 ```
 
-### Usage
+## Commands
+
+This is the output of `kks -h`. Certain commands take additional flags, see
+`kks <command> -h` to learn more.
 
 ```
 USAGE
@@ -90,13 +93,17 @@ ENVIRONMENT VARIABLES
 Use "kks <command> -h" for command usage.
 ```
 
-### kks configuration
+## Configuration
 
 `kks` can be configured through environment variables.
 
-At the moment, there is a single configuration option:
+#### Automatic sessions based on git directory
 
-**`KKS_USE_GITDIR_SESSIONS`** When set to any value and `KKS_SESSION` is empty,
+```
+export KKS_USE_GITDIR_SESSIONS=1
+```
+
+When `KKS_USE_GITDIR_SESSIONS` is set to any value and `KKS_SESSION` is empty,
 running `kks edit` will do the following:
 
 - if file is inside a git directory, `kks` will search for an existing session
@@ -104,7 +111,7 @@ running `kks edit` will do the following:
 - if a session for the directory doesn't exist, `kks` will start a new session
   and connect to it.
 
-### Provided scripts
+## Provided scripts
 
 | script                                 | function                                                |
 | -------------------------------------- | ------------------------------------------------------- |
