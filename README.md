@@ -65,20 +65,6 @@ alias ka='kks attach'
 alias kl='kks list'
 ```
 
-### kks configuration
-
-`kks` can be configured through environment variables.
-
-At the moment, there is a single configuration option:
-
-- `KKS_USE_GITDIR_SESSIONS`
-  - when set to any value and `KKS_SESSION` is empty, running `kks edit` will do
-    the following:
-    - if file is inside a git directory, `kks` will search for an existing
-      session based on top-level git directory name and connect to it;
-    - if a session for the directory doesn't exist, `kks` will start a new
-      session and connect to it.
-
 ### Usage
 
 ```
@@ -104,16 +90,31 @@ ENVIRONMENT VARIABLES
 Use "kks <command> -h" for command usage.
 ```
 
+### kks configuration
+
+`kks` can be configured through environment variables.
+
+At the moment, there is a single configuration option:
+
+**`KKS_USE_GITDIR_SESSIONS`** When set to any value and `KKS_SESSION` is empty,
+running `kks edit` will do the following:
+
+- if file is inside a git directory, `kks` will search for an existing session
+  based on top-level git directory name and connect to it;
+- if a session for the directory doesn't exist, `kks` will start a new session
+  and connect to it.
+
 ### Provided scripts
 
-- [`kks-buffers`](./scripts/kks-buffers) -- pick buffers
-- [`kks-files`](./scripts/kks-files) -- pick files
-- [`kks-grep`](./scripts/kks-grep) -- search for pattern in working directory
-- [`kks-lf`](./scripts/kks-lf) -- open [lf] with current buffer selected
-- [`kks-lines`](./scripts/kks-lines) -- jump to line in buffer
-- [`kks-mru`](./scripts/kks-mru) -- pick recently opened file
-- [`kks-select`](./scripts/kks-select) -- select Kakoune session and client to
-  set up environment
+| script                                 | function                                                |
+| -------------------------------------- | ------------------------------------------------------- |
+| [`kks-buffers`](./scripts/kks-buffers) | pick buffers                                            |
+| [`kks-files`](./scripts/kks-files)     | pick files                                              |
+| [`kks-grep`](./scripts/kks-grep)       | search for pattern in working directory                 |
+| [`kks-lf`](./scripts/kks-lf)           | open [lf] with current buffer selected                  |
+| [`kks-lines`](./scripts/kks-lines)     | jump to line in buffer                                  |
+| [`kks-mru`](./scripts/kks-mru)         | pick recently opened file                               |
+| [`kks-select`](./scripts/kks-select)   | select Kakoune session and client to set up environment |
 
 [lf]: https://github.com/gokcehan/lf
 
