@@ -34,23 +34,12 @@ func (c *EditCmd) Run() error {
 	}
 
 	_, useGitDirSessions := os.LookupEnv("KKS_USE_GITDIR_SESSIONS")
+	// defaultSession := os.Getenv("KKS_DEFAULT_SESSION")
 
-	gitdirSess := struct {
-		name   string
-		exists bool
-	}{"", false}
+	var gitDirSess *gitDirSession
 
 	if useGitDirSessions {
-		gitOut, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
-		if err == nil {
-			gitdirSess.name = strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
-			sessions, _ := kak.List()
-			for _, s := range sessions {
-				if s.Name == gitdirSess.name {
-					gitdirSess.exists = true
-				}
-			}
-		}
+		_ = gitDirSess.Init()
 	}
 
 	switch c.session {
@@ -95,5 +84,26 @@ func (c *EditCmd) Run() error {
 		}
 	}
 
+	return nil
+}
+
+type gitDirSession struct {
+	name   string
+	exists bool
+}
+
+func (gs *gitDirSession) Init() error {
+	gitOut, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
+	if err != nil {
+		return err
+	}
+	gs.name = strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
+
+	sessions, _ := kak.List()
+	for _, s := range sessions {
+		if s.Name == gs.name {
+			gs.exists = true
+		}
+	}
 	return nil
 }
