@@ -2,6 +2,7 @@ package kak
 
 import (
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"strconv"
@@ -29,6 +30,30 @@ func NewFilepath(args []string) (fp *Filepath, err error) {
 	}
 
 	return
+}
+
+func (fp *Filepath) Dir() (dir string, err error) {
+	info, err := os.Stat(fp.Name)
+	if err != nil {
+		return "", err
+	}
+
+	if info.IsDir() {
+		dir = fp.Name
+	} else {
+		dir = path.Dir(fp.Name)
+	}
+
+	return
+}
+
+func (fp *Filepath) ParseGitDir() string {
+	dir, _ := fp.Dir()
+	gitOut, err := exec.Command("git", "-C", dir, "rev-parse", "--show-toplevel").Output()
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
 }
 
 func (fp *Filepath) parse() (absName string, line int, col int, err error) {

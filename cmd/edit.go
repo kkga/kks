@@ -4,8 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/exec"
-	"path"
 	"strings"
 
 	"github.com/kkga/kks/kak"
@@ -41,7 +39,7 @@ func (c *EditCmd) Run() error {
 		_, useGitDirSessions := os.LookupEnv("KKS_USE_GITDIR_SESSIONS")
 
 		if useGitDirSessions {
-			gitDirName = parseGitToplevel()
+			gitDirName = fp.ParseGitDir()
 		}
 
 		if gitDirName != "" {
@@ -113,12 +111,4 @@ func (c *EditCmd) Run() error {
 	}
 
 	return nil
-}
-
-func parseGitToplevel() string {
-	gitOut, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
-	if err != nil {
-		return ""
-	}
-	return strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
 }
