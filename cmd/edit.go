@@ -45,6 +45,7 @@ func (c *EditCmd) Run() error {
 		}
 
 		if gitDirName != "" {
+			// try gitdir-session
 			gitDirSession := kak.Session{Name: gitDirName}
 			exists, err := gitDirSession.Exists()
 			if err != nil {
@@ -73,13 +74,15 @@ func (c *EditCmd) Run() error {
 			}
 
 			if exists {
+				// try default session
 				kctx := &kak.Context{Session: defaultSession}
 				if err := kak.Connect(kctx, fp); err != nil {
 					return err
 				}
 
 			} else {
-				if err := kak.Run(fp); err != nil {
+				// if nothing: run one-off session
+				if err := kak.Run(&kak.Context{}, []string{}, fp); err != nil {
 					return err
 				}
 			}
