@@ -1,6 +1,7 @@
 package kak
 
 import (
+	"errors"
 	"os/exec"
 	"strings"
 )
@@ -63,4 +64,12 @@ func Sessions() (sessions []Session, err error) {
 	}
 
 	return sessions, nil
+}
+
+func kakExec() (kakExec string, err error) {
+	kakExec, err = exec.LookPath("kak")
+	if err != nil {
+		return "", errors.New("'kak' executable not found in $PATH")
+	}
+	return kakExec, nil
 }
