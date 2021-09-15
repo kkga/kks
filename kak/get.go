@@ -2,23 +2,24 @@ package kak
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 )
 
 func Get(kctx *Context, query string) ([]string, error) {
 	// create a tmp file for kak to echo the value
-	f, err := os.CreateTemp("", "kks-tmp")
+	tmp, err := ioutil.TempFile("", "kks-tmp")
 	if err != nil {
 		return nil, err
 	}
 
 	// kak will output to file, so we create a chan for reading
 	ch := make(chan string)
-	go ReadTmp(f, ch)
+	go ReadTmp(tmp, ch)
 
 	// tell kak to echo the requested state
-	sendCmd := fmt.Sprintf("echo -quoting kakoune -to-file %s %%{ %s }", f.Name(), query)
+	sendCmd := fmt.Sprintf("echo -quoting kakoune -to-file %s %%{ %s }", tmp.Name(), query)
 	if err := Send(kctx, sendCmd); err != nil {
 		return nil, err
 	}
@@ -32,6 +33,8 @@ func Get(kctx *Context, query string) ([]string, error) {
 		outStrs[i] = strings.Trim(val, "''")
 	}
 
-	f.Close()
+	tmp.Close()
+	os.Remove(tmp.Name())
+
 	return outStrs, nil
 }

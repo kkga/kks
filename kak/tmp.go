@@ -1,13 +1,14 @@
 package kak
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/fsnotify/fsnotify"
 )
 
-func ReadTmp(f *os.File, c chan string) {
+func ReadTmp(tmp *os.File, c chan string) {
 	// create a watcher
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -16,7 +17,7 @@ func ReadTmp(f *os.File, c chan string) {
 	defer watcher.Close()
 
 	// add file to watch
-	err = watcher.Add(f.Name())
+	err = watcher.Add(tmp.Name())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,14 +29,16 @@ func ReadTmp(f *os.File, c chan string) {
 			if !ok {
 				return
 			}
-			// if file written, read it and send to chan
+			// if file written, read it, send to chan and close/clean
 			if event.Op&fsnotify.Write == fsnotify.Write {
-				dat, err := os.ReadFile(f.Name())
-				defer os.Remove(f.Name())
+				dat, err := ioutil.ReadFile(tmp.Name())
 				if err != nil {
 					log.Fatal(err)
 				}
 				c <- string(dat)
+				watcher.Close()
+				tmp.Close()
+				os.Remove(tmp.Name())
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
