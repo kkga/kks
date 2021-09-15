@@ -35,11 +35,7 @@ func (c *GetCmd) Run() error {
 		return err
 	}
 
-	resp, err := kak.Get(
-		kak.Session{c.session},
-		kak.Client{c.client},
-		kak.Buffer{c.buffer},
-		query)
+	resp, err := kak.Get(c.kakContext, query)
 	if err != nil {
 		return err
 	}

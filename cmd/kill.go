@@ -28,11 +28,7 @@ func (c *KillCmd) Run() error {
 	switch c.allSessions {
 	case false:
 		// TODO need to somehow trigger "no session" err
-		if err := kak.Send(
-			kak.Session{c.session},
-			kak.Client{c.client},
-			kak.Buffer{c.buffer},
-			sendCmd); err != nil {
+		if err := kak.Send(c.kakContext, sendCmd); err != nil {
 			return err
 		}
 	case true:
@@ -41,11 +37,12 @@ func (c *KillCmd) Run() error {
 			return err
 		}
 		for _, s := range sessions {
-			if err := kak.Send(
-				s,
-				kak.Client{c.client},
-				kak.Buffer{c.buffer},
-				sendCmd); err != nil {
+			sessCtx := kak.Context{
+				Session: s,
+				Client:  c.kakContext.Client,
+				Buffer:  c.kakContext.Buffer,
+			}
+			if err := kak.Send(sessCtx, sendCmd); err != nil {
 				return err
 			}
 		}

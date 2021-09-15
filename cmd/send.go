@@ -36,19 +36,17 @@ func (c *SendCmd) Run() error {
 			return err
 		}
 		for _, s := range sessions {
-			for _, cl := range s.Clients() {
-				if err := kak.Send(s, cl, kak.Buffer{}, sendCmd); err != nil {
+			sessionCtx := kak.Context{Session: s}
+			for _, cl := range sessionCtx.Session.Clients() {
+				clientCtx := kak.Context{Session: s, Client: cl}
+				if err := kak.Send(clientCtx, sendCmd); err != nil {
 					return err
 				}
 			}
 		}
 	case false:
 		// TODO: need to trigger "session not set" error
-		if err := kak.Send(
-			kak.Session{c.session},
-			kak.Client{c.client},
-			kak.Buffer{c.buffer},
-			sendCmd); err != nil {
+		if err := kak.Send(c.kakContext, sendCmd); err != nil {
 			return err
 		}
 	}

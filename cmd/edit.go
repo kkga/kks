@@ -93,11 +93,7 @@ func (c *EditCmd) Run() error {
 				sb.WriteString(fmt.Sprintf(" %d", fp.Column))
 			}
 
-			if err := kak.Send(
-				kak.Session{c.session},
-				kak.Client{c.client},
-				kak.Buffer{c.buffer},
-				sb.String()); err != nil {
+			if err := kak.Send(c.kakContext, sb.String()); err != nil {
 				return err
 			}
 		}

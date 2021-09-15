@@ -9,7 +9,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-func Get(session Session, client Client, buffer Buffer, query string) ([]string, error) {
+func Get(kctx Context, query string) ([]string, error) {
 	// create a tmp file for kak to echo the value
 	f, err := os.CreateTemp("", "kks-tmp")
 	if err != nil {
@@ -22,7 +22,7 @@ func Get(session Session, client Client, buffer Buffer, query string) ([]string,
 
 	// tell kak to echo the requested state
 	sendCmd := fmt.Sprintf("echo -quoting kakoune -to-file %s %%{ %s }", f.Name(), query)
-	if err := Send(session, client, buffer, sendCmd); err != nil {
+	if err := Send(kctx, sendCmd); err != nil {
 		return nil, err
 	}
 
