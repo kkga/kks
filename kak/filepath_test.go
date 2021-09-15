@@ -1,4 +1,4 @@
-package cmd
+package kak
 
 import (
 	"testing"
@@ -13,7 +13,7 @@ func TestNewFilepath(t *testing.T) {
 	}{
 		{
 			[]string{"file"},
-			Filepath{Name: "/home/kkga/projects/kks/cmd/file",
+			Filepath{Name: "/home/kkga/projects/kks/kak/file",
 				Raw: []string{"file"}},
 		},
 		{

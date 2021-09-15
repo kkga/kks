@@ -23,12 +23,12 @@ type AttachCmd struct {
 }
 
 func (c *AttachCmd) Run() error {
-	fp, err := NewFilepath(c.fs.Args())
+	fp, err := kak.NewFilepath(c.fs.Args())
 	if err != nil {
 		return err
 	}
 
-	if err := kak.Connect(c.kakContext, fp.Name, fp.Line, fp.Column); err != nil {
+	if err := kak.Connect(c.kakContext, fp); err != nil {
 		return err
 	}
 

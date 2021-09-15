@@ -29,7 +29,7 @@ type EditCmd struct {
 }
 
 func (c *EditCmd) Run() error {
-	fp, err := NewFilepath(c.fs.Args())
+	fp, err := kak.NewFilepath(c.fs.Args())
 	if err != nil {
 		return err
 	}
@@ -59,9 +59,9 @@ func (c *EditCmd) Run() error {
 				fmt.Println("git-dir session started:", sessionName)
 			}
 
-			kctx := kak.Context{Session: gitDirSession}
+			kctx := &kak.Context{Session: gitDirSession}
 
-			if err := kak.Connect(kctx, fp.Name, fp.Line, fp.Column); err != nil {
+			if err := kak.Connect(kctx, fp); err != nil {
 				return err
 			}
 
@@ -73,8 +73,8 @@ func (c *EditCmd) Run() error {
 			}
 
 			if exists {
-				kctx := kak.Context{Session: defaultSession}
-				if err := kak.Connect(kctx, fp.Name, fp.Line, fp.Column); err != nil {
+				kctx := &kak.Context{Session: defaultSession}
+				if err := kak.Connect(kctx, fp); err != nil {
 					return err
 				}
 
@@ -89,7 +89,7 @@ func (c *EditCmd) Run() error {
 		switch c.kakContext.Client.Name {
 		case "":
 			// if no client, attach to session with new client
-			if err := kak.Connect(c.kakContext, fp.Name, fp.Line, fp.Column); err != nil {
+			if err := kak.Connect(c.kakContext, fp); err != nil {
 				return err
 			}
 		default:

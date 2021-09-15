@@ -39,7 +39,7 @@ func (c *SendCmd) Run() error {
 		for _, s := range sessions {
 			sessionCtx := kak.Context{Session: s}
 			for _, cl := range sessionCtx.Session.Clients() {
-				clientCtx := kak.Context{Session: s, Client: cl}
+				clientCtx := &kak.Context{Session: s, Client: cl}
 				if err := kak.Send(clientCtx, sendCmd); err != nil {
 					return err
 				}

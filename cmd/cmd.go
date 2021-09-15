@@ -31,7 +31,7 @@ type Cmd struct {
 	clientReq  bool
 	bufferReq  bool
 
-	kakContext kak.Context
+	kakContext *kak.Context
 }
 
 type EnvContext struct {
@@ -57,7 +57,7 @@ func (c *Cmd) Init(args []string) error {
 		return err
 	}
 
-	c.kakContext = kak.Context{
+	c.kakContext = &kak.Context{
 		Session: kak.Session{Name: c.session},
 		Client:  kak.Client{Name: c.client},
 		Buffer:  kak.Buffer{Name: c.buffer},

@@ -38,7 +38,7 @@ func (c *KillCmd) Run() error {
 			return err
 		}
 		for _, s := range sessions {
-			sessCtx := kak.Context{
+			sessCtx := &kak.Context{
 				Session: s,
 				Client:  c.kakContext.Client,
 				Buffer:  c.kakContext.Buffer,

@@ -30,7 +30,7 @@ func (s *Session) Exists() (bool, error) {
 }
 
 func (s *Session) Clients() (clients []Client) {
-	sessCtx := Context{Session: *s}
+	sessCtx := &Context{Session: *s}
 	cl, err := Get(sessCtx, "%val{client_list}")
 	if err != nil {
 		return []Client{}
@@ -44,7 +44,7 @@ func (s *Session) Clients() (clients []Client) {
 }
 
 func (s *Session) Dir() string {
-	sessCtx := Context{Session: *s}
+	sessCtx := &Context{Session: *s}
 	dir, err := Get(sessCtx, "%sh{pwd}")
 	if err != nil {
 		return ""

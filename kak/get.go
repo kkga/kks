@@ -9,7 +9,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-func Get(kctx Context, query string) ([]string, error) {
+func Get(kctx *Context, query string) ([]string, error) {
 	// create a tmp file for kak to echo the value
 	f, err := os.CreateTemp("", "kks-tmp")
 	if err != nil {
