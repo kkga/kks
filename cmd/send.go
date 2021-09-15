@@ -9,9 +9,10 @@ import (
 
 func NewSendCmd() *SendCmd {
 	c := &SendCmd{Cmd: Cmd{
-		fs:       flag.NewFlagSet("send", flag.ExitOnError),
-		alias:    []string{"s"},
-		usageStr: "[options] <command>",
+		fs:        flag.NewFlagSet("send", flag.ExitOnError),
+		alias:     []string{"s"},
+		shortDesc: "Send commands to Kakoune context.",
+		usageLine: "[options] <command>",
 	}}
 	c.fs.BoolVar(&c.allClients, "a", false, "send to all clients")
 	c.fs.StringVar(&c.session, "s", "", "session")

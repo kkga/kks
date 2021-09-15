@@ -13,7 +13,8 @@ func NewGetCmd() *GetCmd {
 	c := &GetCmd{Cmd: Cmd{
 		fs:         flag.NewFlagSet("get", flag.ExitOnError),
 		alias:      []string{""},
-		usageStr:   "[options] (<%val{}> | <%opt{}> | <%reg{}> | <%sh{}>)",
+		shortDesc:  "Get states from Kakoune context.",
+		usageLine:  "[options] (<%val{..}> | <%opt{..}> | <%reg{..}> | <%sh{..}>)",
 		sessionReq: true,
 		// TODO maybe actually just use flags for args
 		// or maybe create separate subcommands get-val, etc

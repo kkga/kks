@@ -10,7 +10,8 @@ func NewAttachCmd() *AttachCmd {
 	c := &AttachCmd{Cmd: Cmd{
 		fs:         flag.NewFlagSet("attach", flag.ExitOnError),
 		alias:      []string{"a"},
-		usageStr:   "[options] [file] [+<line>[:<col]]",
+		shortDesc:  "Attach to Kakoune session with a new client.",
+		usageLine:  "[options] [file] [+<line>[:<col]]",
 		sessionReq: true,
 	}}
 	c.fs.StringVar(&c.session, "s", "", "session")

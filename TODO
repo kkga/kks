@@ -1,6 +1,6 @@
 - [x] don't pass `0` line/col to kak
 
-- [ ] add key bindings to delete buffers in `kks-buffers`
+- [x] add key bindings to delete buffers in `kks-buffers`
 - [ ] add key bindings to create files in `kks-files`
 
 - [x] add extra fzf bindings in kks select

@@ -11,9 +11,10 @@ var initKak string
 
 func NewInitCmd() *InitCmd {
 	c := &InitCmd{Cmd: Cmd{
-		fs:       flag.NewFlagSet("init", flag.ExitOnError),
-		alias:    []string{""},
-		usageStr: "",
+		fs:        flag.NewFlagSet("init", flag.ExitOnError),
+		alias:     []string{""},
+		shortDesc: "Print Kakoune command definitions to stdout.",
+		usageLine: "",
 	}}
 	return c
 }

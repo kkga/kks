@@ -18,9 +18,10 @@ type Runner interface {
 }
 
 type Cmd struct {
-	fs       *flag.FlagSet
-	alias    []string
-	usageStr string
+	fs        *flag.FlagSet
+	alias     []string
+	shortDesc string
+	usageLine string
 
 	session string
 	client  string
@@ -76,9 +77,13 @@ func (c *Cmd) Init(args []string) error {
 }
 
 func (c *Cmd) usage() {
-	fmt.Printf("usage: kks %s %s\n\n", c.fs.Name(), c.usageStr)
+	fmt.Println(c.shortDesc)
+	fmt.Println()
 
-	if strings.Contains(c.usageStr, "[options]") {
+	fmt.Println("USAGE")
+	fmt.Printf("  kks %s %s\n\n", c.fs.Name(), c.usageLine)
+
+	if strings.Contains(c.usageLine, "[options]") {
 		fmt.Println("OPTIONS")
 		c.fs.PrintDefaults()
 	}

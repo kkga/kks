@@ -12,7 +12,8 @@ func NewCatCmd() *CatCmd {
 	c := &CatCmd{Cmd: Cmd{
 		fs:         flag.NewFlagSet("cat", flag.ExitOnError),
 		alias:      []string{""},
-		usageStr:   "[options]",
+		shortDesc:  "Print contents of a buffer to stdout.",
+		usageLine:  "[options]",
 		sessionReq: true,
 		clientReq:  true,
 	}}
