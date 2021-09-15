@@ -79,7 +79,7 @@ func (c *EditCmd) Run() error {
 				}
 
 			} else {
-				if err := kak.Run(fp.Name, fp.Line, fp.Column); err != nil {
+				if err := kak.Run(fp); err != nil {
 					return err
 				}
 			}
