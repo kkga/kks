@@ -52,7 +52,7 @@ func (c *EditCmd) Run() error {
 			}
 
 			if !exists {
-				sessionName, err := kak.Create(gitDirSession.Name)
+				sessionName, err := kak.Start(gitDirSession.Name)
 				if err != nil {
 					return err
 				}

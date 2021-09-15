@@ -33,7 +33,7 @@ func (c *NewCmd) Run() error {
 		}
 	}
 
-	sessionName, err := kak.Create(c.name)
+	sessionName, err := kak.Start(c.name)
 	if err != nil {
 		return err
 	}

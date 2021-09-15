@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func Create(name string) (sessionName string, err error) {
+func Start(name string) (sessionName string, err error) {
 	sessionName = name
 
 	if sessionName == "" {
