@@ -28,15 +28,15 @@ type CatCmd struct {
 }
 
 func (c *CatCmd) Run() error {
-	f, err := os.CreateTemp("", "kks-tmp")
+	tmp, err := os.CreateTemp("", "kks-tmp")
 	if err != nil {
 		return err
 	}
 
 	ch := make(chan string)
-	go kak.ReadTmp(f, ch)
+	go kak.ReadTmp(tmp, ch)
 
-	sendCmd := fmt.Sprintf("write -force %s", f.Name())
+	sendCmd := fmt.Sprintf("write -force %s", tmp.Name())
 
 	if err := kak.Send(c.kakContext, sendCmd); err != nil {
 		return err
@@ -46,8 +46,8 @@ func (c *CatCmd) Run() error {
 
 	fmt.Print(output)
 
-	f.Close()
-	os.Remove(f.Name())
+	tmp.Close()
+	os.Remove(tmp.Name())
 
 	return nil
 }
