@@ -19,4 +19,8 @@ ENVIRONMENT VARIABLES
   KKS_SESSION    Kakoune session
   KKS_CLIENT     Kakoune client
 
+FLAGS
+  -v             print version
+  -h             print help
+
 Use "kks <command> -h" for command usage.
