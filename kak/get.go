@@ -2,27 +2,25 @@ package kak
 
 import (
 	"fmt"
-	"log"
+	"io/ioutil"
 	"os"
 	"strings"
-
-	"github.com/fsnotify/fsnotify"
 )
 
-func Get(getStr, buf, session, client string) ([]string, error) {
+func Get(kctx *Context, query string) ([]string, error) {
 	// create a tmp file for kak to echo the value
-	f, err := os.CreateTemp("", "kks-tmp")
+	tmp, err := ioutil.TempFile("", "kks-tmp")
 	if err != nil {
 		return nil, err
 	}
 
 	// kak will output to file, so we create a chan for reading
 	ch := make(chan string)
-	go ReadTmp(f, ch)
+	go ReadTmp(tmp, ch)
 
 	// tell kak to echo the requested state
-	sendCmd := fmt.Sprintf("echo -quoting kakoune -to-file %s %%{ %s }", f.Name(), getStr)
-	if err := Send(sendCmd, buf, session, client); err != nil {
+	sendCmd := fmt.Sprintf("echo -quoting kakoune -to-file %s %%{ %s }", tmp.Name(), query)
+	if err := Send(kctx, sendCmd); err != nil {
 		return nil, err
 	}
 
@@ -35,45 +33,8 @@ func Get(getStr, buf, session, client string) ([]string, error) {
 		outStrs[i] = strings.Trim(val, "''")
 	}
 
-	f.Close()
+	tmp.Close()
+	os.Remove(tmp.Name())
+
 	return outStrs, nil
-}
-
-func ReadTmp(f *os.File, c chan string) {
-	// create a watcher
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer watcher.Close()
-
-	// add file to watch
-	err = watcher.Add(f.Name())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// while we don't get the value
-	for {
-		select {
-		case event, ok := <-watcher.Events:
-			if !ok {
-				return
-			}
-			// if file written, read it and send to chan
-			if event.Op&fsnotify.Write == fsnotify.Write {
-				dat, err := os.ReadFile(f.Name())
-				defer os.Remove(f.Name())
-				if err != nil {
-					log.Fatal(err)
-				}
-				c <- string(dat)
-			}
-		case err, ok := <-watcher.Errors:
-			if !ok {
-				return
-			}
-			log.Println("error:", err)
-		}
-	}
 }

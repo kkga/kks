@@ -12,7 +12,8 @@ func NewCatCmd() *CatCmd {
 	c := &CatCmd{Cmd: Cmd{
 		fs:         flag.NewFlagSet("cat", flag.ExitOnError),
 		alias:      []string{""},
-		usageStr:   "[options]",
+		shortDesc:  "Print contents of a buffer to stdout.",
+		usageLine:  "[options]",
 		sessionReq: true,
 		clientReq:  true,
 	}}
@@ -27,16 +28,17 @@ type CatCmd struct {
 }
 
 func (c *CatCmd) Run() error {
-	f, err := os.CreateTemp("", "kks-tmp")
+	tmp, err := os.CreateTemp("", "kks-tmp")
 	if err != nil {
 		return err
 	}
 
 	ch := make(chan string)
-	go kak.ReadTmp(f, ch)
+	go kak.ReadTmp(tmp, ch)
 
-	sendCmd := fmt.Sprintf("write -force %s", f.Name())
-	if err := kak.Send(sendCmd, c.buffer, c.session, c.client); err != nil {
+	sendCmd := fmt.Sprintf("write -force %s", tmp.Name())
+
+	if err := kak.Send(c.kakContext, sendCmd); err != nil {
 		return err
 	}
 
@@ -44,8 +46,8 @@ func (c *CatCmd) Run() error {
 
 	fmt.Print(output)
 
-	f.Close()
-	os.Remove(f.Name())
+	tmp.Close()
+	os.Remove(tmp.Name())
 
 	return nil
 }

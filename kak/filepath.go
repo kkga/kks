@@ -1,4 +1,4 @@
-package cmd
+package kak
 
 import (
 	"os"
@@ -9,10 +9,10 @@ import (
 )
 
 type Filepath struct {
-	Name   string   `json:"name"`
-	Line   int      `json:"line"`
-	Column int      `json:"column"`
-	Raw    []string `json:"raw"`
+	Name   string
+	Line   int
+	Column int
+	Raw    []string
 }
 
 func NewFilepath(args []string) (fp *Filepath, err error) {

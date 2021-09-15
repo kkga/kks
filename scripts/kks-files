@@ -5,10 +5,12 @@
 # requires:
 # - fd (https://github.com/sharkdp/fd)
 # - fzf (https://github.com/junegunn/fzf)
-# - highlight (faster than bat) (https://gitlab.com/saalen/highlight)
+# - highlight (faster than bat, change to your liking) (https://gitlab.com/saalen/highlight)
+
+preview_cmd="highlight --line-range=1-100 -t 4 --force -O ansi"
 
 fd --type file . "$@" |
-	fzf --multi --height 100% --prompt 'files> ' --preview 'highlight --line-range=1-100 --force -O ansi {}' |
+	fzf --multi --height 100% --prompt 'files> ' --preview "$preview_cmd {}" |
 	while read -r file; do
 		kks edit "$file"
 	done

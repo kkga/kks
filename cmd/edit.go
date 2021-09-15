@@ -13,9 +13,10 @@ import (
 
 func NewEditCmd() *EditCmd {
 	c := &EditCmd{Cmd: Cmd{
-		fs:       flag.NewFlagSet("edit", flag.ExitOnError),
-		alias:    []string{"e"},
-		usageStr: "[options] [file] [+<line>[:<col>]]",
+		fs:        flag.NewFlagSet("edit", flag.ExitOnError),
+		alias:     []string{"e"},
+		shortDesc: "Edit file. In session and client, if set.",
+		usageLine: "[options] [file] [+<line>[:<col>]]",
 	}}
 	// TODO add flag that allows creating new files (removes -existing)
 	c.fs.StringVar(&c.session, "s", "", "session")
@@ -28,12 +29,13 @@ type EditCmd struct {
 }
 
 func (c *EditCmd) Run() error {
-	fp, err := NewFilepath(c.fs.Args())
+	fp, err := kak.NewFilepath(c.fs.Args())
 	if err != nil {
 		return err
 	}
 
-	switch c.session {
+	switch c.kakContext.Session.Name {
+
 	case "":
 		var gitDirName string
 		_, useGitDirSessions := os.LookupEnv("KKS_USE_GITDIR_SESSIONS")
@@ -43,33 +45,51 @@ func (c *EditCmd) Run() error {
 		}
 
 		if gitDirName != "" {
-			if !sessionExists(gitDirName) {
-				sessionName, err := kak.Create(gitDirName)
+			gitDirSession := kak.Session{Name: gitDirName}
+			exists, err := gitDirSession.Exists()
+			if err != nil {
+				return err
+			}
+
+			if !exists {
+				sessionName, err := kak.Start(gitDirSession.Name)
 				if err != nil {
 					return err
 				}
 				fmt.Println("git-dir session started:", sessionName)
 			}
-			if err := kak.Connect(fp.Name, fp.Line, fp.Column, gitDirName); err != nil {
+
+			kctx := &kak.Context{Session: gitDirSession}
+
+			if err := kak.Connect(kctx, fp); err != nil {
 				return err
 			}
+
 		} else {
-			defaultSession := os.Getenv("KKS_DEFAULT_SESSION")
-			if defaultSession != "" && sessionExists(defaultSession) {
-				if err := kak.Connect(fp.Name, fp.Line, fp.Column, defaultSession); err != nil {
+			defaultSession := kak.Session{Name: os.Getenv("KKS_DEFAULT_SESSION")}
+			exists, err := defaultSession.Exists()
+			if err != nil {
+				return err
+			}
+
+			if exists {
+				kctx := &kak.Context{Session: defaultSession}
+				if err := kak.Connect(kctx, fp); err != nil {
 					return err
 				}
+
 			} else {
-				if err := kak.Run(fp.Name, fp.Line, fp.Column); err != nil {
+				if err := kak.Run(fp); err != nil {
 					return err
 				}
 			}
 		}
+
 	default:
-		switch c.client {
+		switch c.kakContext.Client.Name {
 		case "":
 			// if no client, attach to session with new client
-			if err := kak.Connect(fp.Name, fp.Line, fp.Column, c.session); err != nil {
+			if err := kak.Connect(c.kakContext, fp); err != nil {
 				return err
 			}
 		default:
@@ -83,7 +103,7 @@ func (c *EditCmd) Run() error {
 				sb.WriteString(fmt.Sprintf(" %d", fp.Column))
 			}
 
-			if err := kak.Send(sb.String(), "", c.session, c.client); err != nil {
+			if err := kak.Send(c.kakContext, sb.String()); err != nil {
 				return err
 			}
 		}
@@ -98,14 +118,4 @@ func parseGitToplevel() string {
 		return ""
 	}
 	return strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
-}
-
-func sessionExists(name string) bool {
-	sessions, _ := kak.List()
-	for _, s := range sessions {
-		if s.Name == name {
-			return true
-		}
-	}
-	return false
 }

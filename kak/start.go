@@ -5,9 +5,10 @@ import (
 	"math/rand"
 	"os/exec"
 	"strings"
+	"time"
 )
 
-func Create(name string) (sessionName string, err error) {
+func Start(name string) (sessionName string, err error) {
 	sessionName = name
 
 	if sessionName == "" {
@@ -24,7 +25,32 @@ func Create(name string) (sessionName string, err error) {
 		return "", err
 	}
 
+	// Ensure session exists before returning
+	ch := make(chan bool)
+	go waitForSession(ch, sessionName)
+
+	_ = <-ch
+
 	return
+}
+
+func waitForSession(ch chan bool, name string) error {
+out:
+	for {
+		sessions, err := Sessions()
+		if err != nil {
+			return err
+		}
+		for _, s := range sessions {
+			if s.Name == name {
+				ch <- true
+				break out
+
+			}
+		}
+		time.Sleep(time.Millisecond * 10)
+	}
+	return nil
 }
 
 func uniqName() (name string, err error) {

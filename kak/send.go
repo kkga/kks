@@ -6,8 +6,8 @@ import (
 	"os/exec"
 )
 
-func Send(kakCommand, buf, ses, cl string) error {
-	cmd := exec.Command("kak", "-p", ses)
+func Send(kctx *Context, command string) error {
+	cmd := exec.Command("kak", "-p", kctx.Session.Name)
 	// cmd.Stdout = os.Stdout
 	// cmd.Stderr = os.Stderr
 
@@ -16,13 +16,13 @@ func Send(kakCommand, buf, ses, cl string) error {
 	go func() {
 		io.WriteString(stdin, "evaluate-commands")
 
-		if buf != "" {
-			io.WriteString(stdin, fmt.Sprintf(" -buffer %s", buf))
-		} else if cl != "" {
-			io.WriteString(stdin, fmt.Sprintf(" -try-client %s", cl))
+		if kctx.Buffer.Name != "" {
+			io.WriteString(stdin, fmt.Sprintf(" -buffer %s", kctx.Buffer.Name))
+		} else if kctx.Client.Name != "" {
+			io.WriteString(stdin, fmt.Sprintf(" -try-client %s", kctx.Client.Name))
 		}
 
-		io.WriteString(stdin, fmt.Sprintf(" %s", kakCommand))
+		io.WriteString(stdin, fmt.Sprintf(" %s", command))
 
 		stdin.Close()
 	}()

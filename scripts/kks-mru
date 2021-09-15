@@ -15,5 +15,7 @@
 #     }
 # }
 
-(fzf --height 100% --prompt 'mru> ' --preview 'highlight --line-range=1-100 --force -O ansi {}' |
+preview_cmd="highlight --line-range=1-100 -t 4 --force -O ansi"
+
+(fzf --height 100% --prompt 'mru> ' --preview "$preview_cmd {}" |
 	xargs -r kks edit) < ~/.cache/kak-mru

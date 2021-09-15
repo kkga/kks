@@ -8,9 +8,10 @@ import (
 
 func NewKillCmd() *KillCmd {
 	c := &KillCmd{Cmd: Cmd{
-		fs:       flag.NewFlagSet("kill", flag.ExitOnError),
-		alias:    []string{""},
-		usageStr: "[options]",
+		fs:        flag.NewFlagSet("kill", flag.ExitOnError),
+		alias:     []string{""},
+		shortDesc: "Terminate Kakoune session.",
+		usageLine: "[options]",
 	}}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.BoolVar(&c.allSessions, "a", false, "all sessions")
@@ -23,21 +24,26 @@ type KillCmd struct {
 }
 
 func (c *KillCmd) Run() error {
-	kakCmd := "kill"
+	sendCmd := "kill"
 
 	switch c.allSessions {
 	case false:
 		// TODO need to somehow trigger "no session" err
-		if err := kak.Send(kakCmd, "", c.session, ""); err != nil {
+		if err := kak.Send(c.kakContext, sendCmd); err != nil {
 			return err
 		}
 	case true:
-		sessions, err := kak.List()
+		sessions, err := kak.Sessions()
 		if err != nil {
 			return err
 		}
-		for _, sess := range sessions {
-			if err := kak.Send(kakCmd, "", sess.Name, ""); err != nil {
+		for _, s := range sessions {
+			sessCtx := &kak.Context{
+				Session: s,
+				Client:  c.kakContext.Client,
+				Buffer:  c.kakContext.Buffer,
+			}
+			if err := kak.Send(sessCtx, sendCmd); err != nil {
 				return err
 			}
 		}

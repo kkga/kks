@@ -9,9 +9,10 @@ import (
 
 func NewSendCmd() *SendCmd {
 	c := &SendCmd{Cmd: Cmd{
-		fs:       flag.NewFlagSet("send", flag.ExitOnError),
-		alias:    []string{"s"},
-		usageStr: "[options] <command>",
+		fs:        flag.NewFlagSet("send", flag.ExitOnError),
+		alias:     []string{"s"},
+		shortDesc: "Send commands to Kakoune context.",
+		usageLine: "[options] <command>",
 	}}
 	c.fs.BoolVar(&c.allClients, "a", false, "send to all clients")
 	c.fs.StringVar(&c.session, "s", "", "session")
@@ -27,24 +28,26 @@ type SendCmd struct {
 
 func (c *SendCmd) Run() error {
 	// TODO probably need to do some shell escaping here
-	kakCmd := strings.Join(c.fs.Args(), " ")
+	sendCmd := strings.Join(c.fs.Args(), " ")
 
 	switch c.allClients {
 	case true:
-		sessions, err := kak.List()
+		sessions, err := kak.Sessions()
 		if err != nil {
 			return err
 		}
-		for _, sess := range sessions {
-			for _, cl := range sess.Clients {
-				if err := kak.Send(kakCmd, "", sess.Name, cl); err != nil {
+		for _, s := range sessions {
+			sessionCtx := kak.Context{Session: s}
+			for _, cl := range sessionCtx.Session.Clients() {
+				clientCtx := &kak.Context{Session: s, Client: cl}
+				if err := kak.Send(clientCtx, sendCmd); err != nil {
 					return err
 				}
 			}
 		}
 	case false:
 		// TODO: need to trigger "session not set" error
-		if err := kak.Send(kakCmd, c.buffer, c.session, c.client); err != nil {
+		if err := kak.Send(c.kakContext, sendCmd); err != nil {
 			return err
 		}
 	}

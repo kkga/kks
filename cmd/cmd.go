@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/kkga/kks/kak"
 )
 
 type Runner interface {
@@ -16,9 +18,10 @@ type Runner interface {
 }
 
 type Cmd struct {
-	fs       *flag.FlagSet
-	alias    []string
-	usageStr string
+	fs        *flag.FlagSet
+	alias     []string
+	shortDesc string
+	usageLine string
 
 	session string
 	client  string
@@ -27,6 +30,8 @@ type Cmd struct {
 	sessionReq bool
 	clientReq  bool
 	bufferReq  bool
+
+	kakContext *kak.Context
 }
 
 type EnvContext struct {
@@ -45,16 +50,26 @@ func (c *Cmd) Init(args []string) error {
 	}
 
 	c.fs.Usage = c.usage
-	c.session, c.client = env.Session, env.Client
+	c.session = env.Session
+	c.client = env.Client
 
 	if err := c.fs.Parse(args); err != nil {
 		return err
 	}
 
-	if c.sessionReq && c.session == "" {
+	c.kakContext = &kak.Context{
+		Session: kak.Session{Name: c.session},
+		Client:  kak.Client{Name: c.client},
+		Buffer:  kak.Buffer{Name: c.buffer},
+	}
+
+	if c.sessionReq && c.kakContext.Session.Name == "" {
 		return errors.New("no session in context")
 	}
-	if c.clientReq && c.client == "" {
+	if c.clientReq && c.kakContext.Client.Name == "" {
+		return errors.New("no client in context")
+	}
+	if c.bufferReq && c.kakContext.Buffer.Name == "" {
 		return errors.New("no client in context")
 	}
 
@@ -62,9 +77,13 @@ func (c *Cmd) Init(args []string) error {
 }
 
 func (c *Cmd) usage() {
-	fmt.Printf("usage: kks %s %s\n\n", c.fs.Name(), c.usageStr)
+	fmt.Println(c.shortDesc)
+	fmt.Println()
 
-	if strings.Contains(c.usageStr, "[options]") {
+	fmt.Println("USAGE")
+	fmt.Printf("  kks %s %s\n\n", c.fs.Name(), c.usageLine)
+
+	if strings.Contains(c.usageLine, "[options]") {
 		fmt.Println("OPTIONS")
 		c.fs.PrintDefaults()
 	}

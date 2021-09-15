@@ -10,7 +10,8 @@ func NewAttachCmd() *AttachCmd {
 	c := &AttachCmd{Cmd: Cmd{
 		fs:         flag.NewFlagSet("attach", flag.ExitOnError),
 		alias:      []string{"a"},
-		usageStr:   "[options] [file] [+<line>[:<col]]",
+		shortDesc:  "Attach to Kakoune session with a new client.",
+		usageLine:  "[options] [file] [+<line>[:<col]]",
 		sessionReq: true,
 	}}
 	c.fs.StringVar(&c.session, "s", "", "session")
@@ -22,12 +23,12 @@ type AttachCmd struct {
 }
 
 func (c *AttachCmd) Run() error {
-	fp, err := NewFilepath(c.fs.Args())
+	fp, err := kak.NewFilepath(c.fs.Args())
 	if err != nil {
 		return err
 	}
 
-	if err := kak.Connect(fp.Name, fp.Line, fp.Column, c.session); err != nil {
+	if err := kak.Connect(c.kakContext, fp); err != nil {
 		return err
 	}
 
