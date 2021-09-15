@@ -4,11 +4,13 @@
 #
 # requires:
 # - fzf (https://github.com/junegunn/fzf)
-# - highlight (faster than bat) (https://gitlab.com/saalen/highlight)
+# - highlight (faster than bat, change to your liking) (https://gitlab.com/saalen/highlight)
+
+preview_cmd="highlight --line-range=1-100 -t 4 --force -O ansi -"
 
 kks get %val[buflist] |
 	grep -F "$*" |
-	fzf --height 100% --prompt 'buf> ' --preview 'kks cat -b {} | highlight --line-range=1-100 --force -O ansi' \
+	fzf --height 100% --prompt 'buf> ' --preview "kks cat -b {} | $preview_cmd" \
 		--header="[c-x] delete, [c-t] new scratch" \
 		--bind="ctrl-x:execute-silent(kks send -b {} delete-buffer)+reload(kks get %val[buflist])" \
 		--bind="ctrl-t:execute-silent(kks send edit -scratch {q})+reload(kks get %val[buflist])" |
