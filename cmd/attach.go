@@ -27,9 +27,7 @@ func (c *AttachCmd) Run() error {
 		return err
 	}
 
-	s := kak.Session{Name: c.session}
-
-	if err := kak.Connect(s, fp.Name, fp.Line, fp.Column); err != nil {
+	if err := kak.Connect(c.kakContext, fp.Name, fp.Line, fp.Column); err != nil {
 		return err
 	}
 

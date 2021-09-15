@@ -33,7 +33,8 @@ func (c *EditCmd) Run() error {
 		return err
 	}
 
-	switch c.session {
+	switch c.kakContext.Session.Name {
+
 	case "":
 		var gitDirName string
 		_, useGitDirSessions := os.LookupEnv("KKS_USE_GITDIR_SESSIONS")
@@ -48,6 +49,7 @@ func (c *EditCmd) Run() error {
 			if err != nil {
 				return err
 			}
+
 			if !exists {
 				sessionName, err := kak.Create(gitDirSession.Name)
 				if err != nil {
@@ -55,31 +57,38 @@ func (c *EditCmd) Run() error {
 				}
 				fmt.Println("git-dir session started:", sessionName)
 			}
-			if err := kak.Connect(gitDirSession, fp.Name, fp.Line, fp.Column); err != nil {
+
+			kctx := kak.Context{Session: gitDirSession}
+
+			if err := kak.Connect(kctx, fp.Name, fp.Line, fp.Column); err != nil {
 				return err
 			}
+
 		} else {
 			defaultSession := kak.Session{Name: os.Getenv("KKS_DEFAULT_SESSION")}
 			exists, err := defaultSession.Exists()
 			if err != nil {
 				return err
 			}
+
 			if exists {
-				if err := kak.Connect(defaultSession, fp.Name, fp.Line, fp.Column); err != nil {
+				kctx := kak.Context{Session: defaultSession}
+				if err := kak.Connect(kctx, fp.Name, fp.Line, fp.Column); err != nil {
 					return err
 				}
+
 			} else {
 				if err := kak.Run(fp.Name, fp.Line, fp.Column); err != nil {
 					return err
 				}
 			}
 		}
+
 	default:
-		session := kak.Session{Name: c.session}
-		switch c.client {
+		switch c.kakContext.Client.Name {
 		case "":
 			// if no client, attach to session with new client
-			if err := kak.Connect(session, fp.Name, fp.Line, fp.Column); err != nil {
+			if err := kak.Connect(c.kakContext, fp.Name, fp.Line, fp.Column); err != nil {
 				return err
 			}
 		default:
