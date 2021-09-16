@@ -1,9 +1,10 @@
 package kak
 
 import (
+	"bufio"
+	"bytes"
 	"errors"
 	"os/exec"
-	"strings"
 )
 
 type Context struct {
@@ -12,9 +13,11 @@ type Context struct {
 	Buffer  Buffer
 }
 
-type Session struct{ Name string }
-type Client struct{ Name string }
-type Buffer struct{ Name string }
+type (
+	Client  struct{ Name string }
+	Session struct{ Name string }
+	Buffer  struct{ Name string }
+)
 
 func (s *Session) Exists() (exists bool, err error) {
 	sessions, err := Sessions()
@@ -45,8 +48,11 @@ func (s *Session) Clients() (clients []Client, err error) {
 
 func Sessions() (sessions []Session, err error) {
 	o, err := exec.Command("kak", "-l").Output()
-	for _, s := range strings.Split(strings.TrimSpace(string(o)), "\n") {
-		sessions = append(sessions, Session{s})
+	scanner := bufio.NewScanner(bytes.NewBuffer(o))
+	for scanner.Scan() {
+		if s := scanner.Text(); s != "" {
+			sessions = append(sessions, Session{s})
+		}
 	}
 	return
 }
