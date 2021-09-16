@@ -47,8 +47,8 @@ func (c *ListCmd) Run() error {
 			d, err := s.Dir()
 			sessions[i] = session{Name: s.Name, Clients: []string{}, Dir: d}
 
-			c, err := s.Clients()
-			for _, c := range c {
+			clients, err := s.Clients()
+			for _, c := range clients {
 				if c.Name != "" {
 					sessions[i].Clients = append(sessions[i].Clients, c.Name)
 				}
