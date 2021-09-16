@@ -35,7 +35,7 @@ func Start(name string) (sessionName string, err error) {
 }
 
 func waitForSession(ch chan bool, name string) error {
-out:
+Out:
 	for {
 		sessions, err := Sessions()
 		if err != nil {
@@ -44,7 +44,7 @@ out:
 		for _, s := range sessions {
 			if s.Name == name {
 				ch <- true
-				break out
+				break Out
 
 			}
 		}
@@ -63,7 +63,7 @@ func uniqName() (name string, err error) {
 	if err != nil {
 		return "", err
 	}
-out:
+Out:
 	for {
 		rand := fmt.Sprintf("kks-%d", rand.Intn(999-100)+100)
 		for i, s := range sessions {
@@ -71,7 +71,7 @@ out:
 				break
 			} else if i == len(sessions)-1 {
 				name = rand
-				break out
+				break Out
 			}
 		}
 	}
