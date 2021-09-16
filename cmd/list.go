@@ -41,11 +41,11 @@ func (c *ListCmd) Run() error {
 			Dir     string   `json:"dir"`
 		}
 
-		sessions := []session{}
+		sessions := make([]session, len(kakSessions))
 
 		for i, s := range kakSessions {
 			d, err := s.Dir()
-			sessions = append(sessions, session{Name: s.Name, Clients: []string{}, Dir: d})
+			sessions[i] = session{Name: s.Name, Clients: []string{}, Dir: d}
 
 			c, err := s.Clients()
 			for _, c := range c {
