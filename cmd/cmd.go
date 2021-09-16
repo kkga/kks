@@ -32,11 +32,16 @@ type Cmd struct {
 	bufferReq  bool
 
 	kakContext *kak.Context
+
+	defaultSession    string
+	useGitDirSessions bool
 }
 
 type EnvContext struct {
-	Session string `json:"session"`
-	Client  string `json:"client"`
+	Session           string `json:"session"`
+	Client            string `json:"client"`
+	defaultSession    string
+	useGitDirSessions bool
 }
 
 func (c *Cmd) Run() error      { return nil }
@@ -45,9 +50,15 @@ func (c *Cmd) Alias() []string { return c.alias }
 
 func (c *Cmd) Init(args []string) error {
 	env := EnvContext{
-		Session: os.Getenv("KKS_SESSION"),
-		Client:  os.Getenv("KKS_CLIENT"),
+		Session:        os.Getenv("KKS_SESSION"),
+		Client:         os.Getenv("KKS_CLIENT"),
+		defaultSession: os.Getenv("KKS_DEFAULT_SESSION"),
 	}
+
+	_, env.useGitDirSessions = os.LookupEnv("KKS_USE_GITDIR_SESSIONS")
+
+	c.useGitDirSessions = env.useGitDirSessions
+	c.defaultSession = env.defaultSession
 
 	c.fs.Usage = c.usage
 	c.session = env.Session
@@ -70,7 +81,7 @@ func (c *Cmd) Init(args []string) error {
 		return errors.New("no client in context")
 	}
 	if c.bufferReq && c.kakContext.Buffer.Name == "" {
-		return errors.New("no client in context")
+		return errors.New("no buffer in context")
 	}
 
 	return nil
