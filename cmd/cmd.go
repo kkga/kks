@@ -37,32 +37,29 @@ type Cmd struct {
 	useGitDirSessions bool
 }
 
-type EnvContext struct {
-	Session           string `json:"session"`
-	Client            string `json:"client"`
-	defaultSession    string
-	useGitDirSessions bool
-}
-
 func (c *Cmd) Run() error      { return nil }
 func (c *Cmd) Name() string    { return c.fs.Name() }
 func (c *Cmd) Alias() []string { return c.alias }
 
 func (c *Cmd) Init(args []string) error {
-	env := EnvContext{
-		Session:        os.Getenv("KKS_SESSION"),
-		Client:         os.Getenv("KKS_CLIENT"),
+	env := struct {
+		session           string
+		client            string
+		useGitDirSessions bool
+		defaultSession    string
+	}{
+		session:        os.Getenv("KKS_SESSION"),
+		client:         os.Getenv("KKS_CLIENT"),
 		defaultSession: os.Getenv("KKS_DEFAULT_SESSION"),
 	}
 
 	_, env.useGitDirSessions = os.LookupEnv("KKS_USE_GITDIR_SESSIONS")
 
+	c.fs.Usage = c.usage
+	c.session = env.session
+	c.client = env.client
 	c.useGitDirSessions = env.useGitDirSessions
 	c.defaultSession = env.defaultSession
-
-	c.fs.Usage = c.usage
-	c.session = env.Session
-	c.client = env.Client
 
 	if err := c.fs.Parse(args); err != nil {
 		return err
