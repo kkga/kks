@@ -111,10 +111,7 @@ func TestNewFilepath(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
-			got, err := NewFilepath(tt.args)
-			if err != nil {
-				t.Fatal("can't get Filepath: ", err)
-			}
+			got := NewFilepath(tt.args)
 			if !cmp.Equal(tt.want, *got) {
 				t.Errorf("Filepath mismatch:\n%s", cmp.Diff(tt.want, got))
 			}

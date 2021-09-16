@@ -16,54 +16,39 @@ type Session struct{ Name string }
 type Client struct{ Name string }
 type Buffer struct{ Name string }
 
-func (s *Session) Exists() (bool, error) {
+func (s *Session) Exists() (exists bool, err error) {
 	sessions, err := Sessions()
-	if err != nil {
-		return false, err
-	}
-
 	for _, session := range sessions {
 		if session.Name == s.Name {
-			return true, nil
+			exists = true
+			break
 		}
 	}
-	return false, nil
+	return
 }
 
-func (s *Session) Clients() (clients []Client) {
+func (s *Session) Dir() (dir string, err error) {
+	sessCtx := &Context{Session: *s}
+	v, err := Get(sessCtx, "%sh{pwd}")
+	dir = v[0]
+	return
+}
+
+func (s *Session) Clients() (clients []Client, err error) {
 	sessCtx := &Context{Session: *s}
 	cl, err := Get(sessCtx, "%val{client_list}")
-	if err != nil {
-		return []Client{}
-	}
-
 	for _, c := range cl {
 		clients = append(clients, Client{c})
 	}
-
-	return clients
-}
-
-func (s *Session) Dir() string {
-	sessCtx := &Context{Session: *s}
-	dir, err := Get(sessCtx, "%sh{pwd}")
-	if err != nil {
-		return ""
-	}
-	return dir[0]
+	return
 }
 
 func Sessions() (sessions []Session, err error) {
-	output, err := exec.Command("kak", "-l").Output()
-	if err != nil {
-		return nil, err
+	o, err := exec.Command("kak", "-l").Output()
+	for _, s := range strings.Split(strings.TrimSpace(string(o)), "\n") {
+		sessions = append(sessions, Session{s})
 	}
-
-	for _, s := range strings.Split(strings.TrimSpace(string(output)), "\n") {
-		sessions = append(sessions, Session{Name: s})
-	}
-
-	return sessions, nil
+	return
 }
 
 func kakExec() (kakExec string, err error) {
@@ -71,5 +56,5 @@ func kakExec() (kakExec string, err error) {
 	if err != nil {
 		return "", errors.New("'kak' executable not found in $PATH")
 	}
-	return kakExec, nil
+	return
 }

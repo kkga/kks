@@ -26,10 +26,7 @@ type EditCmd struct {
 }
 
 func (c *EditCmd) Run() error {
-	fp, err := kak.NewFilepath(c.fs.Args())
-	if err != nil {
-		return err
-	}
+	fp := kak.NewFilepath(c.fs.Args())
 
 	switch c.kakContext.Session.Name {
 

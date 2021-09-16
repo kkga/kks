@@ -16,20 +16,20 @@ type Filepath struct {
 	Raw    []string
 }
 
-func NewFilepath(args []string) (fp *Filepath, err error) {
-	fp = &Filepath{Raw: args}
+func NewFilepath(args []string) *Filepath {
+	fp := &Filepath{Raw: args}
 
 	if len(args) > 0 {
 		name, line, col, err := fp.parse()
 		if err != nil {
-			return nil, err
+			return nil
 		}
 		fp.Name = name
 		fp.Line = line
 		fp.Column = col
 	}
 
-	return
+	return fp
 }
 
 func (fp *Filepath) Dir() (dir string, err error) {

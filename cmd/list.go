@@ -44,11 +44,18 @@ func (c *ListCmd) Run() error {
 		sessions := []session{}
 
 		for i, s := range kakSessions {
-			sessions = append(sessions, session{Name: s.Name, Clients: []string{}, Dir: s.Dir()})
-			for _, c := range s.Clients() {
+			d, err := s.Dir()
+			sessions = append(sessions, session{Name: s.Name, Clients: []string{}, Dir: d})
+
+			c, err := s.Clients()
+			for _, c := range c {
 				if c.Name != "" {
 					sessions[i].Clients = append(sessions[i].Clients, c.Name)
 				}
+			}
+
+			if err != nil {
+				return err
 			}
 		}
 
@@ -64,13 +71,17 @@ func (c *ListCmd) Run() error {
 		w.Init(os.Stdout, 0, 8, 1, '\t', 0)
 
 		for _, s := range kakSessions {
-			if len(s.Clients()) == 0 {
-				fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, " ", s.Dir())
+			c, err := s.Clients()
+			d, err := s.Dir()
+			if len(c) == 0 {
+				fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, " ", d)
 			} else {
-				for _, cl := range s.Clients() {
-					clientCtx := kak.Context{Session: s, Client: cl}
-					fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, clientCtx.Client.Name, s.Dir())
+				for _, cl := range c {
+					fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, cl.Name, d)
 				}
+			}
+			if err != nil {
+				return err
 			}
 		}
 
