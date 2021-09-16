@@ -6,7 +6,10 @@
 # - ripgrep (https://github.com/BurntSushi/ripgrep)
 # - fzf (https://github.com/junegunn/fzf)
 
+history_file="$HOME/.cache/kks-grep-history"
+[ -f "$history_file" ] || touch "$history_file"
+
 rg --vimgrep '.+' "$@" |
-	fzf --height 100% --prompt 'grep> ' |
+	fzf --height 100% --prompt 'grep> ' --history="$history_file" |
 	awk -F':' '{print $1 " " "+" $2 ":" $3 }' |
 	xargs -r kks edit

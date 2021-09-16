@@ -1,4 +1,4 @@
-- [ ] !!! use file path for git parsing instead of cwd
+- [x] !!! use file path for git parsing instead of cwd
 
 - [x] add version flag
 - [x] don't pass `0` line/col to kak

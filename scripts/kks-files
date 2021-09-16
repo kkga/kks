@@ -8,9 +8,12 @@
 # - highlight (faster than bat, change to your liking) (https://gitlab.com/saalen/highlight)
 
 preview_cmd="highlight --line-range=1-100 -t 4 --force -O ansi"
+history_file="$HOME/.cache/kks-files-history"
+[ -f "$history_file" ] || touch "$history_file"
 
 fd --type file . "$@" |
-	fzf --multi --height 100% --prompt 'files> ' --preview "$preview_cmd {}" |
+	fzf --multi --height 100% --prompt 'files> ' \
+		--preview "$preview_cmd {}" --history="$history_file" |
 	while read -r file; do
 		kks edit "$file"
 	done
