@@ -3,7 +3,6 @@ package cmd
 import (
 	"flag"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/kkga/kks/kak"
@@ -35,54 +34,39 @@ func (c *EditCmd) Run() error {
 	switch c.kakContext.Session.Name {
 
 	case "":
-		var gitDirName string
-		_, useGitDirSessions := os.LookupEnv("KKS_USE_GITDIR_SESSIONS")
+		kctx := &kak.Context{}
 
-		if useGitDirSessions {
-			gitDirName = fp.ParseGitDir()
+		if c.useGitDirSessions {
+			kctx.Session = kak.Session{Name: fp.ParseGitDir()}
+
+			if kctx.Session.Name != "" {
+				if exists, _ := kctx.Session.Exists(); !exists {
+					sessionName, err := kak.Start(kctx.Session.Name)
+					if err != nil {
+						return err
+					}
+					fmt.Println("git-dir session started:", sessionName)
+				}
+			}
 		}
 
-		if gitDirName != "" {
-			// try gitdir-session
-			gitDirSession := kak.Session{Name: gitDirName}
-			exists, err := gitDirSession.Exists()
-			if err != nil {
-				return err
-			}
+		if kctx.Session.Name == "" {
+			kctx.Session = kak.Session{Name: c.defaultSession}
+		}
 
-			if !exists {
-				sessionName, err := kak.Start(gitDirSession.Name)
-				if err != nil {
-					return err
-				}
-				fmt.Println("git-dir session started:", sessionName)
-			}
+		sessionExists, err := kctx.Session.Exists()
+		if err != nil {
+			return err
+		}
 
-			kctx := &kak.Context{Session: gitDirSession}
-
+		switch sessionExists {
+		case true:
 			if err := kak.Connect(kctx, fp); err != nil {
 				return err
 			}
-
-		} else {
-			defaultSession := kak.Session{Name: os.Getenv("KKS_DEFAULT_SESSION")}
-			exists, err := defaultSession.Exists()
-			if err != nil {
+		case false:
+			if err := kak.Run(&kak.Context{}, []string{}, fp); err != nil {
 				return err
-			}
-
-			if exists {
-				// try default session
-				kctx := &kak.Context{Session: defaultSession}
-				if err := kak.Connect(kctx, fp); err != nil {
-					return err
-				}
-
-			} else {
-				// if nothing: run one-off session
-				if err := kak.Run(&kak.Context{}, []string{}, fp); err != nil {
-					return err
-				}
 			}
 		}
 
