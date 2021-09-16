@@ -37,7 +37,7 @@ eval %sh{ kks init }
 
 ### Shell configuration
 
-You probably want to set the `EDITOR` variable to `kks edit` so that connected
+You may want to set the `EDITOR` variable to `kks edit` so that connected
 programs work as intended:
 
 ```sh
