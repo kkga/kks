@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"os/exec"
-	"strings"
 	"time"
 )
 
@@ -12,7 +11,7 @@ func Start(name string) (sessionName string, err error) {
 	sessionName = name
 
 	if sessionName == "" {
-		sessionName, err = uniqName()
+		sessionName, err = uniqSessionName()
 		if err != nil {
 			return "", err
 		}
@@ -53,28 +52,25 @@ Out:
 	return nil
 }
 
-func uniqName() (name string, err error) {
-	s, err := exec.Command("kak", "-l").Output()
+func uniqSessionName() (name string, err error) {
+	sessions, err := Sessions()
 	if err != nil {
-		return "", err
-	}
-
-	sessions := strings.Split(strings.TrimSpace(string(s)), "\n")
-	if err != nil {
-		return "", err
+		return
 	}
 Out:
 	for {
-		rand := fmt.Sprintf("kks-%d", rand.Intn(999-100)+100)
-		for i, s := range sessions {
-			if s == rand {
-				break
-			} else if i == len(sessions)-1 {
-				name = rand
-				break Out
+		name = fmt.Sprintf("kks-%d", rand.Intn(999-100)+100)
+		if len(sessions) > 0 {
+			for i, s := range sessions {
+				if s.Name == name {
+					break
+				} else if i == len(sessions)-1 {
+					break Out
+				}
 			}
+		} else {
+			break Out
 		}
 	}
-
-	return name, nil
+	return
 }
