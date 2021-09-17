@@ -80,13 +80,12 @@ func findOrRunSession(c *EditCmd, fp *kak.Filepath) error {
 }
 
 func connectOrEditInClient(c *EditCmd, fp *kak.Filepath) error {
-	switch c.kctx.Client.Name {
-	case "":
+	if c.kctx.Client.Name == "" {
 		// if no client, attach to session with new client
 		if err := kak.Connect(c.kctx, fp); err != nil {
 			return err
 		}
-	default:
+	} else {
 		// if client set, send 'edit [file]' to client
 		sb := strings.Builder{}
 		sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))

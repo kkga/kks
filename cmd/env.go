@@ -24,8 +24,7 @@ type EnvCmd struct {
 }
 
 func (c *EnvCmd) Run() error {
-	switch c.json {
-	case true:
+	if c.json {
 		j, err := json.MarshalIndent(
 			map[string]string{
 				"session": c.session,
@@ -35,7 +34,7 @@ func (c *EnvCmd) Run() error {
 			return err
 		}
 		fmt.Println(string(j))
-	case false:
+	} else {
 		fmt.Printf("session: %s\n", c.session)
 		fmt.Printf("client: %s\n", c.client)
 	}

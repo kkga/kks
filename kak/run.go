@@ -20,7 +20,7 @@ func Run(kctx *Context, kakArgs []string, fp *Filepath) error {
 		case "-c":
 			kakExecArgs = append(kakExecArgs, "-c", kctx.Session.Name)
 		default:
-			return errors.New(fmt.Sprintf("unknown argument to Run: %s", a))
+			return errors.New(fmt.Sprintf("Unknown argument to Run: %s", a))
 		}
 	}
 

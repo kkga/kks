@@ -26,13 +26,7 @@ type KillCmd struct {
 func (c *KillCmd) Run() error {
 	sendCmd := "kill"
 
-	switch c.allSessions {
-	case false:
-		// TODO need to somehow trigger "no session" err
-		if err := kak.Send(c.kctx, sendCmd); err != nil {
-			return err
-		}
-	case true:
+	if c.allSessions {
 		sessions, err := kak.Sessions()
 		if err != nil {
 			return err
@@ -46,6 +40,11 @@ func (c *KillCmd) Run() error {
 			if err := kak.Send(sessCtx, sendCmd); err != nil {
 				return err
 			}
+		}
+	} else {
+		// TODO need to somehow trigger "no session" err
+		if err := kak.Send(c.kctx, sendCmd); err != nil {
+			return err
 		}
 	}
 

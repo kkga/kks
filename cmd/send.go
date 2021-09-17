@@ -30,13 +30,7 @@ func (c *SendCmd) Run() error {
 	// TODO probably need to do some shell escaping here
 	sendCmd := strings.Join(c.fs.Args(), " ")
 
-	switch c.allClients {
-	case false:
-		// TODO: need to trigger "session not set" error
-		if err := kak.Send(c.kctx, sendCmd); err != nil {
-			return err
-		}
-	case true:
+	if c.allClients {
 		sessions, err := kak.Sessions()
 		if err != nil {
 			return err
@@ -52,6 +46,11 @@ func (c *SendCmd) Run() error {
 			if err != nil {
 				return err
 			}
+		}
+	} else {
+		// TODO: need to trigger "session not set" error
+		if err := kak.Send(c.kctx, sendCmd); err != nil {
+			return err
 		}
 	}
 

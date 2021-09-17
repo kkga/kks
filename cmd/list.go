@@ -32,9 +32,7 @@ func (c *ListCmd) Run() error {
 		return err
 	}
 
-	switch c.json {
-
-	case true:
+	if c.json {
 		type session struct {
 			Name    string   `json:"name"`
 			Clients []string `json:"clients"`
@@ -65,8 +63,7 @@ func (c *ListCmd) Run() error {
 		}
 
 		fmt.Println(string(j))
-
-	case false:
+	} else {
 		w := new(tabwriter.Writer)
 		w.Init(os.Stdout, 0, 8, 1, '\t', 0)
 
