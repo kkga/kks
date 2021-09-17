@@ -28,68 +28,78 @@ type EditCmd struct {
 func (c *EditCmd) Run() error {
 	fp := kak.NewFilepath(c.fs.Args())
 
-	switch c.kakContext.Session.Name {
-
-	case "":
-		kctx := &kak.Context{}
-
-		if c.useGitDirSessions {
-			kctx.Session = kak.Session{Name: fp.ParseGitDir()}
-
-			if kctx.Session.Name != "" {
-				if exists, _ := kctx.Session.Exists(); !exists {
-					sessionName, err := kak.Start(kctx.Session.Name)
-					if err != nil {
-						return err
-					}
-					fmt.Println("git-dir session started:", sessionName)
-				}
-			}
-		}
-
-		if kctx.Session.Name == "" {
-			kctx.Session = kak.Session{Name: c.defaultSession}
-		}
-
-		sessionExists, err := kctx.Session.Exists()
-		if err != nil {
+	if c.kctx.Session.Name == "" {
+		if err := findOrRunSession(c, fp); err != nil {
 			return err
 		}
-
-		switch sessionExists {
-		case true:
-			if err := kak.Connect(kctx, fp); err != nil {
-				return err
-			}
-		case false:
-			if err := kak.Run(&kak.Context{}, []string{}, fp); err != nil {
-				return err
-			}
+	} else {
+		if err := connectOrEditInClient(c, fp); err != nil {
+			return err
 		}
+	}
+	return nil
+}
 
-	default:
-		switch c.kakContext.Client.Name {
-		case "":
-			// if no client, attach to session with new client
-			if err := kak.Connect(c.kakContext, fp); err != nil {
-				return err
-			}
-		default:
-			// if client set, send 'edit [file]' to client
-			sb := strings.Builder{}
-			sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
-			if fp.Line != 0 {
-				sb.WriteString(fmt.Sprintf(" %d", fp.Line))
-			}
-			if fp.Column != 0 {
-				sb.WriteString(fmt.Sprintf(" %d", fp.Column))
-			}
+func findOrRunSession(c *EditCmd, fp *kak.Filepath) error {
+	kctx := &kak.Context{}
 
-			if err := kak.Send(c.kakContext, sb.String()); err != nil {
-				return err
+	if c.useGitDirSessions {
+		kctx.Session = kak.Session{Name: fp.ParseGitDir()}
+
+		if kctx.Session.Name != "" {
+			if exists, _ := kctx.Session.Exists(); !exists {
+				sessionName, err := kak.Start(kctx.Session.Name)
+				if err != nil {
+					return err
+				}
+				fmt.Println("New session for git directory started:", sessionName)
 			}
 		}
 	}
 
+	if kctx.Session.Name == "" {
+		kctx.Session = kak.Session{Name: c.defaultSession}
+	}
+
+	sessionExists, err := kctx.Session.Exists()
+	if err != nil {
+		return err
+	}
+
+	if sessionExists {
+		if err := kak.Connect(kctx, fp); err != nil {
+			return err
+		}
+	} else {
+		if err := kak.Run(&kak.Context{}, []string{}, fp); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func connectOrEditInClient(c *EditCmd, fp *kak.Filepath) error {
+	switch c.kctx.Client.Name {
+	case "":
+		// if no client, attach to session with new client
+		if err := kak.Connect(c.kctx, fp); err != nil {
+			return err
+		}
+	default:
+		// if client set, send 'edit [file]' to client
+		sb := strings.Builder{}
+		sb.WriteString(fmt.Sprintf("edit -existing %s", fp.Name))
+		if fp.Line != 0 {
+			sb.WriteString(fmt.Sprintf(" %d", fp.Line))
+		}
+		if fp.Column != 0 {
+			sb.WriteString(fmt.Sprintf(" %d", fp.Column))
+		}
+
+		if err := kak.Send(c.kctx, sb.String()); err != nil {
+			return err
+		}
+	}
 	return nil
 }
