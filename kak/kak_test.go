@@ -21,8 +21,8 @@ func TestSessionDir(t *testing.T) {
 			"/home/kkga/downloads",
 		},
 		{
-			"/tmp/",
-			"/tmp",
+			"/etc/",
+			"/etc",
 		},
 	}
 	for i, tt := range tests {
