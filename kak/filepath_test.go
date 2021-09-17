@@ -6,7 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestDir(t *testing.T) {
+func TestFilepathDir(t *testing.T) {
 	tests := []struct {
 		fp   Filepath
 		want string
