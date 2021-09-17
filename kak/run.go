@@ -33,8 +33,6 @@ func Run(kctx *Context, kakArgs []string, fp *Filepath) error {
 
 	}
 
-	fmt.Println(kakExecArgs)
-
 	execErr := syscall.Exec(kakExec, kakExecArgs, os.Environ())
 	if execErr != nil {
 		return execErr
