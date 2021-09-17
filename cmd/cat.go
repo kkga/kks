@@ -38,7 +38,7 @@ func (c *CatCmd) Run() error {
 
 	sendCmd := fmt.Sprintf("write -force %s", tmp.Name())
 
-	if err := kak.Send(c.kakContext, sendCmd); err != nil {
+	if err := kak.Send(c.kctx, sendCmd); err != nil {
 		return err
 	}
 

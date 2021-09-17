@@ -33,7 +33,7 @@ func (c *SendCmd) Run() error {
 	switch c.allClients {
 	case false:
 		// TODO: need to trigger "session not set" error
-		if err := kak.Send(c.kakContext, sendCmd); err != nil {
+		if err := kak.Send(c.kctx, sendCmd); err != nil {
 			return err
 		}
 	case true:

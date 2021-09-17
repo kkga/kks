@@ -36,7 +36,7 @@ func (c *GetCmd) Run() error {
 		return err
 	}
 
-	resp, err := kak.Get(c.kakContext, query)
+	resp, err := kak.Get(c.kctx, query)
 	if err != nil {
 		return err
 	}

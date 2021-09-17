@@ -31,7 +31,7 @@ type Cmd struct {
 	clientReq  bool
 	bufferReq  bool
 
-	kakContext *kak.Context
+	kctx *kak.Context
 
 	defaultSession    string
 	useGitDirSessions bool
@@ -65,20 +65,20 @@ func (c *Cmd) Init(args []string) error {
 		return err
 	}
 
-	c.kakContext = &kak.Context{
+	c.kctx = &kak.Context{
 		Session: kak.Session{Name: c.session},
 		Client:  kak.Client{Name: c.client},
 		Buffer:  kak.Buffer{Name: c.buffer},
 	}
 
-	if c.sessionReq && c.kakContext.Session.Name == "" {
-		return errors.New("no session in context")
+	if c.sessionReq && c.kctx.Session.Name == "" {
+		return errors.New("No session in context")
 	}
-	if c.clientReq && c.kakContext.Client.Name == "" {
-		return errors.New("no client in context")
+	if c.clientReq && c.kctx.Client.Name == "" {
+		return errors.New("No client in context")
 	}
-	if c.bufferReq && c.kakContext.Buffer.Name == "" {
-		return errors.New("no buffer in context")
+	if c.bufferReq && c.kctx.Buffer.Name == "" {
+		return errors.New("No buffer in context")
 	}
 
 	return nil
