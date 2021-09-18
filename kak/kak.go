@@ -47,7 +47,14 @@ func (s *Session) Clients() (clients []Client, err error) {
 }
 
 func Sessions() (sessions []Session, err error) {
-	o, err := exec.Command("kak", "-l").Output()
+	kakExec, err := kakExec()
+	if err != nil {
+		return
+	}
+
+	err = clearSessions()
+	o, err := exec.Command(kakExec, "-l").Output()
+
 	scanner := bufio.NewScanner(bytes.NewBuffer(o))
 	for scanner.Scan() {
 		if s := scanner.Text(); s != "" {
@@ -55,6 +62,18 @@ func Sessions() (sessions []Session, err error) {
 		}
 	}
 	return
+}
+
+func clearSessions() error {
+	kakExec, err := kakExec()
+	if err != nil {
+		return err
+	}
+	err = exec.Command(kakExec, "-clear").Run()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func kakExec() (kakExec string, err error) {
