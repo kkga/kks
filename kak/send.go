@@ -7,7 +7,11 @@ import (
 )
 
 func Send(kctx *Context, command string) error {
-	cmd := exec.Command("kak", "-p", kctx.Session.Name)
+	kakExec, err := kakExec()
+	if err != nil {
+		return err
+	}
+	cmd := exec.Command(kakExec, "-p", kctx.Session.Name)
 	// cmd.Stdout = os.Stdout
 	// cmd.Stderr = os.Stderr
 

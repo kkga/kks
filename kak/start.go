@@ -17,7 +17,12 @@ func Start(name string) (sessionName string, err error) {
 		}
 	}
 
-	cmd := exec.Command("kak", "-s", sessionName, "-d")
+	kakExec, err := kakExec()
+	if err != nil {
+		return
+	}
+
+	cmd := exec.Command(kakExec, "-s", sessionName, "-d")
 
 	err = cmd.Start()
 	if err != nil {
