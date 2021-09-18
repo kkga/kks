@@ -7,6 +7,7 @@
 # - fzf (https://github.com/junegunn/fzf)
 
 history_file="$HOME/.cache/kks-grep-history"
+
 [ -f "$history_file" ] || touch "$history_file"
 
 rg --vimgrep '.+' "$@" |
