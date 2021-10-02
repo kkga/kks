@@ -1,3 +1,5 @@
+- [ ] add note about using 'kks edit' as EDITOR
+	- make a wrapper shell script "kks-edit" that exec 'kks edit $@'
 - [x] !!! use file path for git parsing instead of cwd
 
 - [x] add version flag
