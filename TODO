@@ -1,3 +1,4 @@
+- [ ] add command to reset environment to kks-select script
 - [x] !!! use file path for git parsing instead of cwd
 
 - [x] add version flag
