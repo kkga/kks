@@ -1,4 +1,5 @@
 - [ ] add command to reset environment to kks-select script
+	- turns out there's no way in fzf to output some arbitrary line of text?
 - [ ] add note about using 'kks edit' as EDITOR
 	- make a wrapper shell script "kks-edit" that exec 'kks edit $@'
 - [x] !!! use file path for git parsing instead of cwd
