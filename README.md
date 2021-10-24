@@ -47,10 +47,11 @@ export EDITOR='kks edit'
 Possibly useful aliases:
 
 ```
-alias k='kks edit'
-alias ks='eval (kks-select)'
-alias kcd='cd (kks get %sh{pwd})'
-alias ka='kks attach'
+alias k="kks edit"
+alias ks="eval $(kks-select)"
+alias ka="kks attach"
+alias kkd="kks kill; unset KKS_SESSION KKS_CLIENT" # kill+detach
+alias kcd="cd $(kks get %sh{pwd})"
 ```
 
 ### Kakoune mappings example
