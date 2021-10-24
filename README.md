@@ -1,5 +1,7 @@
 # kks
 
+[![Hits-of-Code](https://hitsofcode.com/github/kkga/kks?branch=main)](https://hitsofcode.com/github/kkga/kks?branch=main/view)
+
 Handy Kakoune companion.
 
 ## Installation
