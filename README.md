@@ -1,6 +1,6 @@
 # kks
 
-[![Hits-of-Code](https://hitsofcode.com/github/kkga/kks?branch=main)](https://hitsofcode.com/github/kkga/kks?branch=main/view)
+[![Hits-of-Code](https://hitsofcode.com/github/kkga/kks?branch=main)](https://hitsofcode.com)
 
 Handy Kakoune companion.
 
