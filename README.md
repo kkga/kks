@@ -46,7 +46,7 @@ export EDITOR='kks edit'
 
 Possibly useful aliases:
 
-```
+```sh
 alias k="kks edit"
 alias ks="eval $(kks-select)"
 alias ka="kks attach"
