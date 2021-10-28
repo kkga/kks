@@ -5,5 +5,5 @@
 # requires:
 # - lf (https://github.com/gokcehan/lf)
 
-kks get '%val[buffile]' |
+kks get '%val{buffile}' |
 	xargs -I {} lf -command "set nopreview; set ratios 1; select {}"
