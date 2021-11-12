@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -18,7 +19,12 @@ func main() {
 		os.Exit(0)
 	}
 
-	if err := cmd.Root(os.Args[1:]); err != nil {
+	err := cmd.Root(os.Args[1:])
+
+	if err != nil && errors.Is(err, cmd.UnknownSubcommand) {
+		err = cmd.External(os.Args[1:], err)
+	}
+	if err != nil {
 		log.Fatal(err)
 	}
 }
