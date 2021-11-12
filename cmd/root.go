@@ -2,12 +2,15 @@ package cmd
 
 import (
 	_ "embed"
+	"errors"
 	"fmt"
 	"os"
 )
 
 //go:embed embed/help
 var helpTxt string
+
+var UnknownSubcommand = errors.New("unknown subcommand")
 
 func Root(args []string) error {
 	if len(args) < 1 || args[0] == "-h" || args[0] == "--help" {
@@ -39,7 +42,7 @@ func Root(args []string) error {
 		}
 	}
 
-	return fmt.Errorf("unknown subcommand: %s", subcommand)
+	return fmt.Errorf("can't run %s: %w", subcommand, UnknownSubcommand)
 }
 
 func containsString(s []string, e string) bool {

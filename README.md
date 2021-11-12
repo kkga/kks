@@ -102,6 +102,12 @@ ENVIRONMENT VARIABLES
 Use "kks <command> -h" for command usage.
 ```
 
+### Unknown command
+
+When unknown command is run, `kks` will try to find an executable named
+`kks-<command>` in `$PATH`. If the executable is found, `kks` will run it
+with all arguments that were provided to the unknown command.
+ 
 ## Configuration
 
 `kks` can be configured through environment variables.
