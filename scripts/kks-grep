@@ -11,7 +11,7 @@ history_file="$HOME/.cache/kks-grep-history"
 
 [ -f "$history_file" ] || touch "$history_file"
 
-rg --vimgrep '.+' "$@" |
+SHELL=sh rg --vimgrep '.+' "$@" |
 	fzf -d ':' --height 100% --prompt 'grep> ' --history="$history_file" \
 		--preview='range="$(echo {2}-5 | bc | sed "s/^-.*/0/"):$(echo {2}+20 | bc)"; bat -r "$range" -n --color always -H {2} {1}' |
 	awk -F':' '{print $1 " " "+" $2 ":" $3 }' |
