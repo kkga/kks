@@ -23,6 +23,11 @@ If Go is [configured](https://golang.org/ref/mod#go-install) to install packages
 in `$PATH`, it's also possible to install without cloning the repository: run
 `go install github.com/kkga/kks@latest`.
 
+### AUR
+
+`kks` is packaged in the Arch User Repository:
+https://aur.archlinux.org/packages/kks/
+
 ## Kakoune and shell integration
 
 ### Kakoune configuration
@@ -105,9 +110,9 @@ Use "kks <command> -h" for command usage.
 ### Unknown command
 
 When unknown command is run, `kks` will try to find an executable named
-`kks-<command>` in `$PATH`. If the executable is found, `kks` will run it
-with all arguments that were provided to the unknown command.
- 
+`kks-<command>` in `$PATH`. If the executable is found, `kks` will run it with
+all arguments that were provided to the unknown command.
+
 ## Configuration
 
 `kks` can be configured through environment variables.
