@@ -10,7 +10,7 @@ COMMANDS
   attach, a      attach to session
   kill           kill session
   ls             list sessions and clients
-  get            get %{val}, %{opt} and friends
+  get            get %val{..}, %opt{..} and friends
   cat            print buffer content
   env            print env
   init           print Kakoune definitions
