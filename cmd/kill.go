@@ -37,13 +37,13 @@ func (c *KillCmd) Run() error {
 				Client:  c.kctx.Client,
 				Buffer:  c.kctx.Buffer,
 			}
-			if err := kak.Send(sessCtx, sendCmd); err != nil {
+			if err := kak.Send(sessCtx, sendCmd, nil); err != nil {
 				return err
 			}
 		}
 	} else {
-		// TODO need to somehow trigger "no session" err
-		if err := kak.Send(c.kctx, sendCmd); err != nil {
+		// TODO check for context session
+		if err := kak.Send(c.kctx, sendCmd, nil); err != nil {
 			return err
 		}
 	}

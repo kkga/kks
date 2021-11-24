@@ -96,7 +96,7 @@ func connectOrEditInClient(c *EditCmd, fp *kak.Filepath) error {
 			sb.WriteString(fmt.Sprintf(" %d", fp.Column))
 		}
 
-		if err := kak.Send(c.kctx, sb.String()); err != nil {
+		if err := kak.Send(c.kctx, sb.String(), nil); err != nil {
 			return err
 		}
 	}

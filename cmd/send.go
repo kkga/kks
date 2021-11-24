@@ -27,7 +27,6 @@ type SendCmd struct {
 }
 
 func (c *SendCmd) Run() error {
-	// TODO probably need to do some shell escaping here
 	sendCmd := strings.Join(c.fs.Args(), " ")
 
 	if c.allClients {
@@ -39,7 +38,7 @@ func (c *SendCmd) Run() error {
 			clients, err := s.Clients()
 			for _, c := range clients {
 				clientCtx := &kak.Context{Session: s, Client: c}
-				if err := kak.Send(clientCtx, sendCmd); err != nil {
+				if err := kak.Send(clientCtx, sendCmd, nil); err != nil {
 					return err
 				}
 			}
@@ -48,8 +47,8 @@ func (c *SendCmd) Run() error {
 			}
 		}
 	} else {
-		// TODO: need to trigger "session not set" error
-		if err := kak.Send(c.kctx, sendCmd); err != nil {
+		// TODO check for context session
+		if err := kak.Send(c.kctx, sendCmd, nil); err != nil {
 			return err
 		}
 	}
