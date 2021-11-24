@@ -16,17 +16,17 @@ func NewGetCmd() *GetCmd {
 		shortDesc:  "Get states from Kakoune context.",
 		usageLine:  "[options] (<%val{..}> | <%opt{..}> | <%reg{..}> | <%sh{..}>)",
 		sessionReq: true,
-		// TODO maybe actually just use flags for args
-		// or maybe create separate subcommands get-val, etc
 	}}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	c.fs.StringVar(&c.buffer, "b", "", "buffer")
+	c.fs.BoolVar(&c.raw, "R", false, "raw output")
 	return c
 }
 
 type GetCmd struct {
 	Cmd
+	raw bool
 }
 
 func (c *GetCmd) Run() error {
@@ -41,7 +41,17 @@ func (c *GetCmd) Run() error {
 		return err
 	}
 
-	fmt.Println(strings.Join(resp, "\n"))
+	if c.raw {
+		fmt.Println(resp)
+	} else {
+		ss := strings.Split(resp, "' '")
+		for i, val := range ss {
+			ss[i] = strings.Trim(val, "'")
+		}
+
+		fmt.Println(strings.Join(ss, "\n"))
+
+	}
 
 	return nil
 }
