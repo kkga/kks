@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-func Get(kctx *Context, query string) ([]string, error) {
+func Get(kctx *Context, query string) (string, error) {
 	// create a tmp file for kak to echo the value
 	tmp, err := ioutil.TempFile("", "kks-tmp")
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	// kak will output to file, so we create a chan for reading
@@ -19,22 +19,20 @@ func Get(kctx *Context, query string) ([]string, error) {
 	go ReadTmp(tmp, ch)
 
 	// tell kak to echo the requested state
-	sendCmd := fmt.Sprintf("echo -quoting kakoune -to-file %s %%{ %s }", tmp.Name(), query)
-	if err := Send(kctx, sendCmd); err != nil {
-		return nil, err
+	// the '__kakEcho__' is there to ensure that file gets written even if kak's echo is empty
+	sendCmd := fmt.Sprintf("echo -quoting kakoune -to-file %s %%{ __kakEcho__ %s }", tmp.Name(), query)
+	if err := Send(kctx, sendCmd, tmp); err != nil {
+		return "", err
 	}
 
 	// wait until tmp file is populated and read
 	output := <-ch
 
-	// trim kakoune quoting from output
-	outStrs := strings.Split(output, " ")
-	for i, val := range outStrs {
-		outStrs[i] = strings.Trim(val, "''")
-	}
+	output = strings.TrimPrefix(output, "'__kakEcho__'")
+	output = strings.TrimSpace(output)
 
 	tmp.Close()
 	os.Remove(tmp.Name())
 
-	return outStrs, nil
+	return output, nil
 }

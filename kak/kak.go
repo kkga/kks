@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"errors"
 	"os/exec"
+	"strings"
 )
 
 type Context struct {
@@ -32,17 +33,31 @@ func (s *Session) Exists() (exists bool, err error) {
 
 func (s *Session) Dir() (dir string, err error) {
 	sessCtx := &Context{Session: *s}
-	v, err := Get(sessCtx, "%sh{pwd}")
-	dir = v[0]
+	resp, err := Get(sessCtx, "%sh{pwd}")
+	if err != nil {
+		return "", err
+	}
+
+	dir = strings.Trim(resp, "'")
 	return
 }
 
 func (s *Session) Clients() (clients []Client, err error) {
 	sessCtx := &Context{Session: *s}
-	cl, err := Get(sessCtx, "%val{client_list}")
-	for _, c := range cl {
+	resp, err := Get(sessCtx, "%val{client_list}")
+	if err != nil {
+		return nil, err
+	}
+
+	ss := strings.Split(resp, "' '")
+	for i, val := range ss {
+		ss[i] = strings.Trim(val, "'")
+	}
+
+	for _, c := range ss {
 		clients = append(clients, Client{c})
 	}
+
 	return
 }
 
