@@ -16,7 +16,7 @@ snapshot:
 changelog:
   filters:
     exclude:
-      - "^docs"
+      - "^doc"
       - "^test"
       - "^todo"
       - "^minor"
