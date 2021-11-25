@@ -52,7 +52,7 @@ func findOrRunSession(c *EditCmd, fp *kak.Filepath) error {
 				if err != nil {
 					return err
 				}
-				fmt.Println("New session for git directory started:", sessionName)
+				fmt.Println("new session for git directory started:", sessionName)
 			}
 		}
 	}
