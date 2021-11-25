@@ -14,7 +14,7 @@ func NewSendCmd() *SendCmd {
 		shortDesc: "Send commands to Kakoune context.",
 		usageLine: "[options] <command>",
 	}}
-	c.fs.BoolVar(&c.all, "a", false, "send to all sessions and clients")
+	c.fs.BoolVar(&c.all, "a", false, "all sessions and clients")
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	c.fs.StringVar(&c.buffer, "b", "", "buffer")
