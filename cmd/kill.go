@@ -13,20 +13,20 @@ func NewKillCmd() *KillCmd {
 		shortDesc: "Terminate Kakoune session.",
 		usageLine: "[options]",
 	}}
+	c.fs.BoolVar(&c.all, "a", false, "all sessions")
 	c.fs.StringVar(&c.session, "s", "", "session")
-	c.fs.BoolVar(&c.allSessions, "a", false, "all sessions")
 	return c
 }
 
 type KillCmd struct {
 	Cmd
-	allSessions bool
+	all bool
 }
 
 func (c *KillCmd) Run() error {
 	sendCmd := "kill"
 
-	if c.allSessions {
+	if c.all {
 		sessions, err := kak.Sessions()
 		if err != nil {
 			return err
@@ -42,7 +42,9 @@ func (c *KillCmd) Run() error {
 			}
 		}
 	} else {
-		// TODO check for context session
+		if c.kctx.Session.Name == "" {
+			return noSessionErr
+		}
 		if err := kak.Send(c.kctx, sendCmd, nil); err != nil {
 			return err
 		}
