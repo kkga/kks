@@ -17,35 +17,35 @@ func Send(kctx *Context, kakCommand string, errOutFile *os.File) error {
 	stdin, err := cmd.StdinPipe()
 
 	go func() {
-		// kak try
-		io.WriteString(stdin, "try %{ ")
-		io.WriteString(stdin, "eval ")
+		// wrap Kakoune command in try-catch
+
+		// try
+		io.WriteString(stdin, "try %{")
+		io.WriteString(stdin, " eval")
 		if kctx.Buffer.Name != "" {
-			io.WriteString(stdin, fmt.Sprintf("-buffer %s ", kctx.Buffer.Name))
+			io.WriteString(stdin, fmt.Sprintf(" -buffer %s", kctx.Buffer.Name))
 		} else if kctx.Client.Name != "" {
-			io.WriteString(stdin, fmt.Sprintf("-try-client %s ", kctx.Client.Name))
+			io.WriteString(stdin, fmt.Sprintf(" -try-client %s", kctx.Client.Name))
 		}
+		io.WriteString(stdin, fmt.Sprintf(" %s", kakCommand))
+		io.WriteString(stdin, " }")
 
-		io.WriteString(stdin, fmt.Sprintf("%s ", kakCommand))
-		io.WriteString(stdin, "}")
-
-		// kak catch
-		io.WriteString(stdin, "catch %{ ")
-		io.WriteString(stdin, "echo -debug kks: %val{error} ")
-		io.WriteString(stdin, "\n")
+		// catch
+		io.WriteString(stdin, " catch %{")
+		// echo error to Kakoune's debug buffer
+		io.WriteString(stdin, " echo -debug kks: %val{error}\n")
 		if errOutFile != nil {
 			// write a prefixed error to tmp file so that we can parse it in runner and decide what to do
-			io.WriteString(stdin, fmt.Sprintf("echo -to-file %s __kak_error__ %%val{error} ", errOutFile.Name()))
+			io.WriteString(stdin, fmt.Sprintf(" echo -to-file %s %s %%val{error}", errOutFile.Name(), EchoErrPrefix))
 			io.WriteString(stdin, "\n")
 		}
-		io.WriteString(stdin, "eval ")
-		if kctx.Buffer.Name != "" {
-			io.WriteString(stdin, fmt.Sprintf("-buffer %s ", kctx.Buffer.Name))
-		} else if kctx.Client.Name != "" {
-			io.WriteString(stdin, fmt.Sprintf("-try-client %s ", kctx.Client.Name))
+		// echo error in client
+		io.WriteString(stdin, " eval")
+		if kctx.Client.Name != "" {
+			io.WriteString(stdin, fmt.Sprintf(" -try-client %s", kctx.Client.Name))
 		}
-		io.WriteString(stdin, "%{ echo -markup {Error}kks: %val{error} } ")
-		io.WriteString(stdin, "}")
+		io.WriteString(stdin, " %{ echo -markup {Error}kks: %val{error} }")
+		io.WriteString(stdin, " }")
 
 		stdin.Close()
 	}()
