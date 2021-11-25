@@ -101,8 +101,14 @@ COMMANDS
   init           print Kakoune definitions
 
 ENVIRONMENT VARIABLES
-  KKS_SESSION    Kakoune session
-  KKS_CLIENT     Kakoune client
+  KKS_SESSION
+      Kakoune session
+  KKS_CLIENT
+      Kakoune client
+  KKS_DEFAULT_SESSION
+      Session to try when KKS_SESSION is empty
+  KKS_USE_GITDIR_SESSIONS
+      If set, use git root dir name for creating/connecting to session
 
 Use "kks <command> -h" for command usage.
 ```
