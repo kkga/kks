@@ -9,6 +9,8 @@ import (
 	"github.com/kkga/kks/kak"
 )
 
+const kakEchoErrPrefix = "__kak_error__"
+
 func NewGetCmd() *GetCmd {
 	c := &GetCmd{Cmd: Cmd{
 		fs:         flag.NewFlagSet("get", flag.ExitOnError),
@@ -49,8 +51,8 @@ func (c *GetCmd) Run() error {
 		return err
 	}
 
-	if strings.HasPrefix(resp, "__kak_error__") {
-		kakOutErr := strings.TrimPrefix(resp, "__kak_error__")
+	if strings.HasPrefix(resp, kakEchoErrPrefix) {
+		kakOutErr := strings.TrimPrefix(resp, kakEchoErrPrefix)
 		kakOutErr = strings.TrimSpace(kakOutErr)
 		return &kakErr{kakOutErr}
 	}
@@ -64,7 +66,6 @@ func (c *GetCmd) Run() error {
 		}
 
 		fmt.Println(strings.Join(ss, "\n"))
-
 	}
 
 	return nil
