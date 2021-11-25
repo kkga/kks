@@ -41,6 +41,10 @@ func (c *Cmd) Run() error      { return nil }
 func (c *Cmd) Name() string    { return c.fs.Name() }
 func (c *Cmd) Alias() []string { return c.alias }
 
+var noSessionErr = errors.New("no session in context")
+var noClientErr = errors.New("no client in context")
+var noBufferErr = errors.New("no buffer in context")
+
 func (c *Cmd) Init(args []string) error {
 	env := struct {
 		session           string
@@ -72,13 +76,13 @@ func (c *Cmd) Init(args []string) error {
 	}
 
 	if c.sessionReq && c.kctx.Session.Name == "" {
-		return errors.New("No session in context")
+		return noSessionErr
 	}
 	if c.clientReq && c.kctx.Client.Name == "" {
-		return errors.New("No client in context")
+		return noClientErr
 	}
 	if c.bufferReq && c.kctx.Buffer.Name == "" {
-		return errors.New("No buffer in context")
+		return noBufferErr
 	}
 
 	return nil

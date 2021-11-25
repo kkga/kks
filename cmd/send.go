@@ -14,7 +14,7 @@ func NewSendCmd() *SendCmd {
 		shortDesc: "Send commands to Kakoune context.",
 		usageLine: "[options] <command>",
 	}}
-	c.fs.BoolVar(&c.allClients, "a", false, "send to all clients")
+	c.fs.BoolVar(&c.all, "a", false, "send to all sessions and clients")
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	c.fs.StringVar(&c.buffer, "b", "", "buffer")
@@ -23,13 +23,13 @@ func NewSendCmd() *SendCmd {
 
 type SendCmd struct {
 	Cmd
-	allClients bool
+	all bool
 }
 
 func (c *SendCmd) Run() error {
 	sendCmd := strings.Join(c.fs.Args(), " ")
 
-	if c.allClients {
+	if c.all {
 		sessions, err := kak.Sessions()
 		if err != nil {
 			return err
@@ -47,7 +47,9 @@ func (c *SendCmd) Run() error {
 			}
 		}
 	} else {
-		// TODO check for context session
+		if c.kctx.Session.Name == "" {
+			return noSessionErr
+		}
 		if err := kak.Send(c.kctx, sendCmd, nil); err != nil {
 			return err
 		}
