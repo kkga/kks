@@ -16,7 +16,9 @@ snapshot:
 changelog:
   filters:
     exclude:
-      - "^docs:"
-      - "^test:"
-      - "^todo:"
+      - "^docs"
+      - "^test"
+      - "^todo"
+      - "^minor"
+      - "^WIP"
       - "typo"
