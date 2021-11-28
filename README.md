@@ -157,8 +157,9 @@ autostarting mechanism of your desktop to start it with `kak -d -s mysession`.
 | [`kks-buffers`](./scripts/kks-buffers)       | pick buffers                                            |
 | [`kks-fifo`](./scripts/kks-fifo)             | pipe stdin to Kakoune fifo buffer                       |
 | [`kks-files`](./scripts/kks-files)           | pick files                                              |
+| [`kks-filetypes`](./scripts/kks-filetypes)   | pick and set filetype in current buffer                 |
 | [`kks-grep`](./scripts/kks-grep)             | search for pattern in working directory                 |
-| [`kks-lf`](./scripts/kks-lf)                 | open [lf] with current buffer selected                  |
+| [`kks-lf`](./scripts/kks-lf)                 | open [lf] with current buffer file selected             |
 | [`kks-lines`](./scripts/kks-lines)           | jump to line in buffer                                  |
 | [`kks-md-heading`](./scripts/kks-md-heading) | jump to markdown heading                                |
 | [`kks-mru`](./scripts/kks-mru)               | pick recently opened file                               |

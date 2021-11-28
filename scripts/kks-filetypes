@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# pick filetype from Kakoune's runtime dir and set in current buffer
+#
+# requires:
+# - fzf (https://github.com/junegunn/fzf)
+
+ft_dir="$(kks get %val[runtime])/rc/filetype"
+
+find "$ft_dir"/*.kak -printf "%f\n" |
+	sed 's/.kak$//' |
+	fzf --height 100% --prompt 'filetypes> ' |
+	xargs -I {} kks send 'set buffer filetype {}'
