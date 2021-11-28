@@ -66,6 +66,11 @@ map global pick l       -docstring 'lines in buffer'  ': kks-connect terminal-po
 map global pick r       -docstring 'recent files'     ': kks-connect terminal-popup kks-mru<ret>'
 ```
 
+For more terminal integrations and for the (quite handy) `popup` command, see:
+
+- [alacritty.kak](https://github.com/alexherbo2/alacritty.kak)
+- [foot.kak](https://github.com/kkga/foot.kak)
+
 ### Shell configuration
 
 You may want to set the `EDITOR` variable to `kks edit` so that connected
@@ -84,11 +89,6 @@ alias ka="kks attach"
 alias kkd="kks kill; unset KKS_SESSION KKS_CLIENT" # kill+detach
 alias kcd="cd $(kks get %sh{pwd})"
 ```
-
-For more terminal integrations and for the (quite handy) `popup` command, see:
-
-- [alacritty.kak](https://github.com/alexherbo2/alacritty.kak)
-- [foot.kak](https://github.com/kkga/foot.kak)
 
 ## Commands
 
