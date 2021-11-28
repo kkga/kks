@@ -40,6 +40,32 @@ eval %sh{ kks init }
 [provided scripts](#provided-scripts), for example:
 `kks-connect terminal kks-files`.
 
+### Kakoune mappings example
+
+```kak
+map global normal -docstring 'terminal'         <c-t> ': kks-connect terminal<ret>'
+map global normal -docstring 'files'            <c-f> ': kks-connect terminal-popup kks-files<ret>'
+map global normal -docstring 'buffers'          <c-b> ': kks-connect terminal-popup kks-buffers<ret>'
+map global normal -docstring 'files by content' <c-g> ': kks-connect terminal-popup kks-grep<ret>'
+map global normal -docstring 'lines in buffer'  <c-l> ': kks-connect terminal-popup kks-lines<ret>'
+map global normal -docstring 'recent files'     <c-r> ': kks-connect terminal-popup kks-mru<ret>'
+map global normal -docstring 'vcs client'       <c-v> ': kks-connect terminal-popup lazygit<ret>'
+map global normal -docstring 'file browser'     <c-h> ': kks-connect terminal-panel kks-lf<ret>'
+```
+
+Or, if you prefer having a dedicated user mode:
+
+```kak
+declare-user-mode pick
+map global normal <c-p> -docstring 'pick mode'        ': enter-user-mode pick<ret>'
+map global pick f       -docstring 'files'            ': kks-connect terminal-popup kks-files<ret>'
+map global pick F       -docstring 'filetypes'        ': kks-connect terminal-popup kks-filetypes<ret>'
+map global pick b       -docstring 'buffers'          ': kks-connect terminal-popup kks-buffers<ret>'
+map global pick g       -docstring 'files by content' ': kks-connect terminal-popup kks-grep<ret>'
+map global pick l       -docstring 'lines in buffer'  ': kks-connect terminal-popup kks-lines<ret>'
+map global pick r       -docstring 'recent files'     ': kks-connect terminal-popup kks-mru<ret>'
+```
+
 ### Shell configuration
 
 You may want to set the `EDITOR` variable to `kks edit` so that connected
@@ -57,19 +83,6 @@ alias ks="eval $(kks-select)"
 alias ka="kks attach"
 alias kkd="kks kill; unset KKS_SESSION KKS_CLIENT" # kill+detach
 alias kcd="cd $(kks get %sh{pwd})"
-```
-
-### Kakoune mappings example
-
-```kak
-map global normal -docstring 'terminal'         <c-t> ': kks-connect terminal<ret>'
-map global normal -docstring 'files'            <c-f> ': kks-connect popup kks-files<ret>'
-map global normal -docstring 'buffers'          <c-b> ': kks-connect popup kks-buffers<ret>'
-map global normal -docstring 'files by content' <c-g> ': kks-connect popup kks-grep<ret>'
-map global normal -docstring 'lines in buffer'  <c-l> ': kks-connect popup kks-lines<ret>'
-map global normal -docstring 'recent files'     <c-r> ': kks-connect popup kks-mru<ret>'
-map global normal -docstring 'lf'               <c-h> ': kks-connect panel kks-lf<ret>'
-map global normal -docstring 'lazygit'          <c-v> ': kks-connect popup lazygit<ret>'
 ```
 
 For more terminal integrations and for the (quite handy) `popup` command, see:
