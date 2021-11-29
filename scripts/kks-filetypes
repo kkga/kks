@@ -7,7 +7,6 @@
 
 ft_dir="$(kks get %val[runtime])/rc/filetype"
 
-find "$ft_dir"/*.kak -printf "%f\n" |
-	sed 's/.kak$//' |
+find "$ft_dir"/*.kak -type f -exec basename -s .kak {} \; |
 	fzf --height 100% --prompt 'filetypes> ' |
 	xargs -I {} kks send 'set buffer filetype {}'
