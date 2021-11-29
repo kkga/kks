@@ -59,11 +59,12 @@ Or, if you prefer having a dedicated user mode:
 declare-user-mode pick
 map global normal <c-p> -docstring 'pick mode'        ': enter-user-mode pick<ret>'
 map global pick f       -docstring 'files'            ': kks-connect terminal-popup kks-files<ret>'
-map global pick F       -docstring 'filetypes'        ': kks-connect terminal-popup kks-filetypes<ret>'
+map global pick g       -docstring 'git files'        ': kks-connect terminal-popup kks-git-files<ret>'
 map global pick b       -docstring 'buffers'          ': kks-connect terminal-popup kks-buffers<ret>'
-map global pick g       -docstring 'files by content' ': kks-connect terminal-popup kks-grep<ret>'
+map global pick /       -docstring 'files by content' ': kks-connect terminal-popup kks-grep<ret>'
 map global pick l       -docstring 'lines in buffer'  ': kks-connect terminal-popup kks-lines<ret>'
 map global pick r       -docstring 'recent files'     ': kks-connect terminal-popup kks-mru<ret>'
+map global pick F       -docstring 'filetypes'        ': kks-connect terminal-popup kks-filetypes<ret>'
 ```
 
 For more terminal integrations and for the (quite handy) `popup` command, see:
@@ -169,6 +170,7 @@ autostarting mechanism of your desktop to start it with `kak -d -s mysession`.
 | [`kks-fifo`](./scripts/kks-fifo)             | pipe stdin to Kakoune fifo buffer                       |
 | [`kks-files`](./scripts/kks-files)           | pick files                                              |
 | [`kks-filetypes`](./scripts/kks-filetypes)   | pick and set filetype in current buffer                 |
+| [`kks-git-files`](./scripts/kks-git-files)   | pick files from `git ls-files`                          |
 | [`kks-grep`](./scripts/kks-grep)             | search for pattern in working directory                 |
 | [`kks-lf`](./scripts/kks-lf)                 | open [lf] with current buffer file selected             |
 | [`kks-lines`](./scripts/kks-lines)           | jump to line in buffer                                  |
