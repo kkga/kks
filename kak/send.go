@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func Send(kctx *Context, kakCommand string, errOutFile *os.File) error {
@@ -15,39 +16,44 @@ func Send(kctx *Context, kakCommand string, errOutFile *os.File) error {
 	cmd := exec.Command(kakExec, "-p", kctx.Session.Name)
 
 	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return err
+	}
+
+	var sb strings.Builder
+
+	// wrap Kakoune command in try-catch
+	// try
+	sb.WriteString("try %{")
+	sb.WriteString(" eval")
+	if kctx.Buffer.Name != "" {
+		sb.WriteString(fmt.Sprintf(" -buffer %s", kctx.Buffer.Name))
+	} else if kctx.Client.Name != "" {
+		sb.WriteString(fmt.Sprintf(" -try-client %s", kctx.Client.Name))
+	}
+	sb.WriteString(fmt.Sprintf(" %s", kakCommand))
+	sb.WriteString(" }")
+
+	// catch
+	sb.WriteString(" catch %{")
+	// echo error to Kakoune's debug buffer
+	sb.WriteString(" echo -debug kks: %val{error}\n")
+	if errOutFile != nil {
+		// write a prefixed error to tmp file so that we can parse it in runner and decide what to do
+		sb.WriteString(fmt.Sprintf(" echo -to-file %s %s %%val{error}", errOutFile.Name(), EchoErrPrefix))
+		sb.WriteString("\n")
+	}
+	// echo error in client
+	sb.WriteString(" eval")
+	if kctx.Client.Name != "" {
+		sb.WriteString(fmt.Sprintf(" -try-client %s", kctx.Client.Name))
+	}
+	sb.WriteString(" %{ echo -markup {Error}kks: %val{error} }")
+	sb.WriteString(" }")
 
 	go func() {
-		// wrap Kakoune command in try-catch
-
-		// try
-		io.WriteString(stdin, "try %{")
-		io.WriteString(stdin, " eval")
-		if kctx.Buffer.Name != "" {
-			io.WriteString(stdin, fmt.Sprintf(" -buffer %s", kctx.Buffer.Name))
-		} else if kctx.Client.Name != "" {
-			io.WriteString(stdin, fmt.Sprintf(" -try-client %s", kctx.Client.Name))
-		}
-		io.WriteString(stdin, fmt.Sprintf(" %s", kakCommand))
-		io.WriteString(stdin, " }")
-
-		// catch
-		io.WriteString(stdin, " catch %{")
-		// echo error to Kakoune's debug buffer
-		io.WriteString(stdin, " echo -debug kks: %val{error}\n")
-		if errOutFile != nil {
-			// write a prefixed error to tmp file so that we can parse it in runner and decide what to do
-			io.WriteString(stdin, fmt.Sprintf(" echo -to-file %s %s %%val{error}", errOutFile.Name(), EchoErrPrefix))
-			io.WriteString(stdin, "\n")
-		}
-		// echo error in client
-		io.WriteString(stdin, " eval")
-		if kctx.Client.Name != "" {
-			io.WriteString(stdin, fmt.Sprintf(" -try-client %s", kctx.Client.Name))
-		}
-		io.WriteString(stdin, " %{ echo -markup {Error}kks: %val{error} }")
-		io.WriteString(stdin, " }")
-
-		stdin.Close()
+		defer stdin.Close()
+		io.WriteString(stdin, sb.String()) //nolint
 	}()
 
 	_, err = cmd.CombinedOutput()
