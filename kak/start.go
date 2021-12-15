@@ -31,9 +31,11 @@ func Start(name string) (sessionName string, err error) {
 
 	// Ensure session exists before returning
 	ch := make(chan bool)
-	go waitForSession(ch, sessionName)
+	go func() {
+		err = waitForSession(ch, sessionName)
+	}()
 
-	_ = <-ch
+	<-ch
 
 	return
 }
