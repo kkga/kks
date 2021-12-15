@@ -35,7 +35,9 @@ func TestSessionDir(t *testing.T) {
 			kctx := &Context{}
 			kctx.Session = Session{testSession}
 
-			defer Send(kctx, "kill", nil)
+			defer func() {
+				err = Send(kctx, "kill", nil)
+			}()
 
 			if err := Send(kctx, fmt.Sprintf("cd %s", tt.kakdir), nil); err != nil {
 				t.Fatal(err)
@@ -76,7 +78,10 @@ func TestSessionExists(t *testing.T) {
 			}
 			kctx := &Context{}
 			kctx.Session = tt.session
-			defer Send(kctx, "kill", nil)
+
+			defer func() {
+				err = Send(kctx, "kill", nil)
+			}()
 
 			got, err := kctx.Session.Exists()
 			if err != nil {

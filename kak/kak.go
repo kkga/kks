@@ -68,6 +68,10 @@ func Sessions() (sessions []Session, err error) {
 	}
 
 	err = clearSessions()
+	if err != nil {
+		return
+	}
+
 	o, err := exec.Command(kakExec, "-l").Output()
 
 	scanner := bufio.NewScanner(bytes.NewBuffer(o))
@@ -76,6 +80,7 @@ func Sessions() (sessions []Session, err error) {
 			sessions = append(sessions, Session{s})
 		}
 	}
+
 	return
 }
 
@@ -84,10 +89,12 @@ func clearSessions() error {
 	if err != nil {
 		return err
 	}
+
 	err = exec.Command(kakExec, "-clear").Run()
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -96,5 +103,6 @@ func kakExec() (kakExec string, err error) {
 	if err != nil {
 		return "", errors.New("'kak' executable not found in $PATH")
 	}
+
 	return
 }
