@@ -43,17 +43,20 @@ func (c *ListCmd) Run() error {
 
 		for i, s := range kakSessions {
 			d, err := s.Dir()
+			if err != nil {
+				return err
+			}
+
 			sessions[i] = session{Name: s.Name, Clients: []string{}, Dir: d}
 
 			clients, err := s.Clients()
+			if err != nil {
+				return err
+			}
 			for _, c := range clients {
 				if c.Name != "" {
 					sessions[i].Clients = append(sessions[i].Clients, c.Name)
 				}
-			}
-
-			if err != nil {
-				return err
 			}
 		}
 
@@ -69,16 +72,21 @@ func (c *ListCmd) Run() error {
 
 		for _, s := range kakSessions {
 			c, err := s.Clients()
+			if err != nil {
+				return err
+			}
+
 			d, err := s.Dir()
+			if err != nil {
+				return err
+			}
+
 			if len(c) == 0 {
 				fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, " ", d)
 			} else {
 				for _, cl := range c {
 					fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, cl.Name, d)
 				}
-			}
-			if err != nil {
-				return err
 			}
 		}
 
