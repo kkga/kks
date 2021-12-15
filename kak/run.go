@@ -1,7 +1,6 @@
 package kak
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"syscall"
@@ -20,7 +19,7 @@ func Run(kctx *Context, kakArgs []string, fp *Filepath) error {
 		case "-c":
 			kakExecArgs = append(kakExecArgs, "-c", kctx.Session.Name)
 		default:
-			return errors.New(fmt.Sprintf("Unknown argument to Run: %s", a))
+			return fmt.Errorf("Unknown argument to Run: %s", a)
 		}
 	}
 

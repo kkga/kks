@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 
@@ -27,9 +26,13 @@ func (c *NewCmd) Run() error {
 	c.name = c.fs.Arg(0)
 
 	sessions, err := kak.Sessions()
+	if err != nil {
+		return err
+	}
+
 	for _, s := range sessions {
 		if s.Name == c.name {
-			return errors.New(fmt.Sprintf("session already exists: %s", c.name))
+			return fmt.Errorf("session already exists: %s", c.name)
 		}
 	}
 
