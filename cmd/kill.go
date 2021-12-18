@@ -43,7 +43,7 @@ func (c *KillCmd) Run() error {
 		}
 	} else {
 		if c.kctx.Session.Name == "" {
-			return noSessionErr
+			return errNoSession
 		}
 		if err := kak.Send(c.kctx, sendCmd, nil); err != nil {
 			return err
