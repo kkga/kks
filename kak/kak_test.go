@@ -51,7 +51,6 @@ func TestSessionDir(t *testing.T) {
 			if !cmp.Equal(tt.want, got) {
 				t.Errorf("Sessiond.Dir() mismatch:\n%s", cmp.Diff(tt.want, got))
 			}
-
 		})
 	}
 }
@@ -91,7 +90,6 @@ func TestSessionExists(t *testing.T) {
 			if !cmp.Equal(true, got) {
 				t.Errorf("Sessiond.Dir() mismatch:\n%s", cmp.Diff(true, got))
 			}
-
 		})
 	}
 }

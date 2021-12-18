@@ -56,7 +56,7 @@ func (fp *Filepath) ParseGitDir() string {
 	return strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
 }
 
-func (fp *Filepath) parse() (absName string, line int, col int, err error) {
+func (fp *Filepath) parse() (absName string, line, col int, err error) {
 	r := fp.Raw
 
 	rawName := r[0]
