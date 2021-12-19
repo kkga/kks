@@ -10,7 +10,7 @@ import (
 //go:embed embed/help
 var helpTxt string
 
-var UnknownSubcommand = errors.New("unknown subcommand")
+var ErrUnknownSubcommand = errors.New("unknown subcommand")
 
 func Root(args []string) error {
 	if len(args) < 1 || args[0] == "-h" || args[0] == "--help" {
@@ -42,7 +42,7 @@ func Root(args []string) error {
 		}
 	}
 
-	return fmt.Errorf("can't run %s: %w", subcommand, UnknownSubcommand)
+	return fmt.Errorf("can't run %s: %w", subcommand, ErrUnknownSubcommand)
 }
 
 func containsString(s []string, e string) bool {

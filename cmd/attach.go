@@ -8,11 +8,11 @@ import (
 
 func NewAttachCmd() *AttachCmd {
 	c := &AttachCmd{Cmd: Cmd{
-		fs:         flag.NewFlagSet("attach", flag.ExitOnError),
-		alias:      []string{"a"},
-		shortDesc:  "Attach to Kakoune session with a new client.",
-		usageLine:  "[options] [file] [+<line>[:<col]]",
-		sessionReq: true,
+		fs:              flag.NewFlagSet("attach", flag.ExitOnError),
+		aliases:         []string{"a"},
+		description:     "Attach to Kakoune session with a new client.",
+		usageLine:       "[options] [file] [+<line>[:<col]]",
+		sessionRequired: true,
 	}}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	return c

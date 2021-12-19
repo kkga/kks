@@ -9,10 +9,10 @@ import (
 
 func NewNewCmd() *NewCmd {
 	c := &NewCmd{Cmd: Cmd{
-		fs:        flag.NewFlagSet("new", flag.ExitOnError),
-		alias:     []string{"n"},
-		shortDesc: "Start new headless Kakoune session.",
-		usageLine: "[<name>]",
+		fs:          flag.NewFlagSet("new", flag.ExitOnError),
+		aliases:     []string{"n"},
+		description: "Start new headless Kakoune session.",
+		usageLine:   "[<name>]",
 	}}
 	return c
 }

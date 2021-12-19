@@ -18,18 +18,18 @@ type Runner interface {
 }
 
 type Cmd struct {
-	fs        *flag.FlagSet
-	alias     []string
-	shortDesc string
-	usageLine string
+	fs          *flag.FlagSet
+	aliases     []string
+	description string
+	usageLine   string
 
 	session string
 	client  string
 	buffer  string
 
-	sessionReq bool
-	clientReq  bool
-	bufferReq  bool
+	sessionRequired bool
+	clientRequired  bool
+	bufferRequired  bool
 
 	kctx *kak.Context
 
@@ -39,7 +39,7 @@ type Cmd struct {
 
 func (c *Cmd) Run() error      { return nil }
 func (c *Cmd) Name() string    { return c.fs.Name() }
-func (c *Cmd) Alias() []string { return c.alias }
+func (c *Cmd) Alias() []string { return c.aliases }
 
 var (
 	errNoSession = errors.New("no session in context")
@@ -77,13 +77,13 @@ func (c *Cmd) Init(args []string) error {
 		Buffer:  kak.Buffer{Name: c.buffer},
 	}
 
-	if c.sessionReq && c.kctx.Session.Name == "" {
+	if c.sessionRequired && c.kctx.Session.Name == "" {
 		return errNoSession
 	}
-	if c.clientReq && c.kctx.Client.Name == "" {
+	if c.clientRequired && c.kctx.Client.Name == "" {
 		return errNoClient
 	}
-	if c.bufferReq && c.kctx.Buffer.Name == "" {
+	if c.bufferRequired && c.kctx.Buffer.Name == "" {
 		return errNoBuffer
 	}
 
@@ -91,7 +91,7 @@ func (c *Cmd) Init(args []string) error {
 }
 
 func (c *Cmd) usage() {
-	fmt.Println(c.shortDesc)
+	fmt.Println(c.description)
 	fmt.Println()
 
 	fmt.Println("USAGE")

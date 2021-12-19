@@ -10,12 +10,11 @@ import (
 
 func NewEditCmd() *EditCmd {
 	c := &EditCmd{Cmd: Cmd{
-		fs:        flag.NewFlagSet("edit", flag.ExitOnError),
-		alias:     []string{"e"},
-		shortDesc: "Edit file. In session and client, if set.",
-		usageLine: "[options] [file] [+<line>[:<col>]]",
+		fs:          flag.NewFlagSet("edit", flag.ExitOnError),
+		aliases:     []string{"e"},
+		description: "Edit file. In session and client, if set.",
+		usageLine:   "[options] [file] [+<line>[:<col>]]",
 	}}
-	// TODO add flag that allows creating new files (removes -existing)
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")
 	return c
