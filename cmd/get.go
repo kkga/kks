@@ -11,11 +11,11 @@ import (
 
 func NewGetCmd() *GetCmd {
 	c := &GetCmd{Cmd: Cmd{
-		fs:         flag.NewFlagSet("get", flag.ExitOnError),
-		alias:      []string{""},
-		shortDesc:  "Get states from Kakoune context.",
-		usageLine:  "[options] (<%val{..}> | <%opt{..}> | <%reg{..}> | <%sh{..}>)",
-		sessionReq: true,
+		fs:              flag.NewFlagSet("get", flag.ExitOnError),
+		aliases:         []string{""},
+		description:     "Get states from Kakoune context.",
+		usageLine:       "[options] (<%val{..}> | <%opt{..}> | <%reg{..}> | <%sh{..}>)",
+		sessionRequired: true,
 	}}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")

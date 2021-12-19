@@ -21,7 +21,7 @@ func main() {
 
 	err := cmd.Root(os.Args[1:])
 
-	if err != nil && errors.Is(err, cmd.UnknownSubcommand) {
+	if err != nil && errors.Is(err, cmd.ErrUnknownSubcommand) {
 		err = cmd.External(os.Args[1:], err)
 	}
 	if err != nil {

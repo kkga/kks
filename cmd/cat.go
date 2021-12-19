@@ -10,12 +10,12 @@ import (
 
 func NewCatCmd() *CatCmd {
 	c := &CatCmd{Cmd: Cmd{
-		fs:         flag.NewFlagSet("cat", flag.ExitOnError),
-		alias:      []string{""},
-		shortDesc:  "Print contents of a buffer to stdout.",
-		usageLine:  "[options]",
-		sessionReq: true,
-		clientReq:  true,
+		fs:              flag.NewFlagSet("cat", flag.ExitOnError),
+		aliases:         []string{""},
+		description:     "Print contents of a buffer to stdout.",
+		usageLine:       "[options]",
+		sessionRequired: true,
+		clientRequired:  true,
 	}}
 	c.fs.StringVar(&c.session, "s", "", "session")
 	c.fs.StringVar(&c.client, "c", "", "client")

@@ -8,10 +8,10 @@ import (
 
 func NewKillCmd() *KillCmd {
 	c := &KillCmd{Cmd: Cmd{
-		fs:        flag.NewFlagSet("kill", flag.ExitOnError),
-		alias:     []string{""},
-		shortDesc: "Terminate Kakoune session.",
-		usageLine: "[options]",
+		fs:          flag.NewFlagSet("kill", flag.ExitOnError),
+		aliases:     []string{""},
+		description: "Terminate Kakoune session.",
+		usageLine:   "[options]",
 	}}
 	c.fs.BoolVar(&c.all, "a", false, "all sessions")
 	c.fs.StringVar(&c.session, "s", "", "session")

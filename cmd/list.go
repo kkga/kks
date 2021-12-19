@@ -12,10 +12,10 @@ import (
 
 func NewListCmd() *ListCmd {
 	c := &ListCmd{Cmd: Cmd{
-		fs:        flag.NewFlagSet("list", flag.ExitOnError),
-		alias:     []string{"ls", "l"},
-		shortDesc: "List Kakoune sessions and clients.",
-		usageLine: "[options]",
+		fs:          flag.NewFlagSet("list", flag.ExitOnError),
+		aliases:     []string{"ls", "l"},
+		description: "List Kakoune sessions and clients.",
+		usageLine:   "[options]",
 	}}
 	c.fs.BoolVar(&c.json, "json", false, "json output")
 	return c

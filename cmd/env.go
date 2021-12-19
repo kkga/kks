@@ -8,11 +8,11 @@ import (
 
 func NewEnvCmd() *EnvCmd {
 	c := &EnvCmd{Cmd: Cmd{
-		fs:         flag.NewFlagSet("env", flag.ExitOnError),
-		alias:      []string{""},
-		shortDesc:  "Print current Kakoune context set by environment to stdout.",
-		usageLine:  "[options]",
-		sessionReq: true,
+		fs:              flag.NewFlagSet("env", flag.ExitOnError),
+		aliases:         []string{""},
+		description:     "Print current Kakoune context set by environment to stdout.",
+		usageLine:       "[options]",
+		sessionRequired: true,
 	}}
 	c.fs.BoolVar(&c.json, "json", false, "json output")
 	return c
