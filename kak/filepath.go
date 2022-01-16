@@ -53,7 +53,9 @@ func (fp *Filepath) ParseGitDir() string {
 	if err != nil {
 		return ""
 	}
-	return strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-"))
+
+	sessName := strings.Trim(strings.TrimSpace(strings.ReplaceAll(path.Base(string(gitOut)), ".", "-")), "-")
+	return sessName
 }
 
 func (fp *Filepath) parse() (absName string, line, col int, err error) {
