@@ -46,7 +46,7 @@ eval %sh{ kks init }
 map global normal -docstring 'terminal'         <c-t> ': kks-connect terminal<ret>'
 map global normal -docstring 'files'            <c-f> ': kks-connect terminal-popup kks-files<ret>'
 map global normal -docstring 'buffers'          <c-b> ': kks-connect terminal-popup kks-buffers<ret>'
-map global normal -docstring 'files by content' <c-g> ': kks-connect terminal-popup kks-grep<ret>'
+map global normal -docstring 'live grep'        <c-g> ': kks-connect terminal-popup kks-grep<ret>'
 map global normal -docstring 'lines in buffer'  <c-l> ': kks-connect terminal-popup kks-lines<ret>'
 map global normal -docstring 'recent files'     <c-r> ': kks-connect terminal-popup kks-mru<ret>'
 map global normal -docstring 'vcs client'       <c-v> ': kks-connect terminal-popup lazygit<ret>'
@@ -59,12 +59,13 @@ Or, if you prefer having a dedicated user mode:
 declare-user-mode pick
 map global normal <c-p> -docstring 'pick mode'        ': enter-user-mode pick<ret>'
 map global pick f       -docstring 'files'            ': kks-connect terminal-popup kks-files<ret>'
+map global pick F       -docstring 'files (all)'      ': kks-connect terminal-popup kks-files -HI<ret>'
 map global pick g       -docstring 'git files'        ': kks-connect terminal-popup kks-git-files<ret>'
 map global pick b       -docstring 'buffers'          ': kks-connect terminal-popup kks-buffers<ret>'
-map global pick /       -docstring 'files by content' ': kks-connect terminal-popup kks-grep<ret>'
+map global pick /       -docstring 'live grep'        ': kks-connect terminal-popup kks-grep<ret>'
 map global pick l       -docstring 'lines in buffer'  ': kks-connect terminal-popup kks-lines<ret>'
 map global pick r       -docstring 'recent files'     ': kks-connect terminal-popup kks-mru<ret>'
-map global pick F       -docstring 'filetypes'        ': kks-connect terminal-popup kks-filetypes<ret>'
+map global pick <a-f>   -docstring 'filetypes'        ': kks-connect terminal-popup kks-filetypes<ret>'
 ```
 
 For more terminal integrations and for the (quite handy) `popup` command, see:
