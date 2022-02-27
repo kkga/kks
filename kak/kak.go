@@ -67,7 +67,7 @@ func Sessions() (sessions []Session, err error) {
 		return
 	}
 
-	err = clearSessions()
+	err = exec.Command(kakExec, "-clear").Run()
 	if err != nil {
 		return
 	}
@@ -81,21 +81,7 @@ func Sessions() (sessions []Session, err error) {
 		}
 	}
 
-	return
-}
-
-func clearSessions() error {
-	kakExec, err := kakExec()
-	if err != nil {
-		return err
-	}
-
-	err = exec.Command(kakExec, "-clear").Run()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return sessions, scanner.Err()
 }
 
 func kakExec() (kakExec string, err error) {
