@@ -81,7 +81,7 @@ func Sessions() (sessions []Session, err error) {
 		}
 	}
 
-	return
+	return sessions, scanner.Err()
 }
 
 func clearSessions() error {
