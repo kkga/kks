@@ -1,7 +1,6 @@
 package kak
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -31,7 +30,7 @@ func ReadTmp(tmp *os.File, c chan string) {
 			}
 			// if file written, read it, send to chan and close/clean
 			if event.Op&fsnotify.Write == fsnotify.Write {
-				dat, err := ioutil.ReadFile(tmp.Name())
+				dat, err := os.ReadFile(tmp.Name())
 				if err != nil {
 					log.Fatal(err)
 				}

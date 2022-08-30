@@ -2,7 +2,6 @@ package kak
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -15,7 +14,7 @@ const EchoErrPrefix = "__kak_error__"
 
 func Get(kctx *Context, query string) (string, error) {
 	// create a tmp file for kak to echo the value
-	tmp, err := ioutil.TempFile("", "kks-tmp")
+	tmp, err := os.CreateTemp("", "kks-tmp")
 	if err != nil {
 		return "", err
 	}
