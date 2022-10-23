@@ -11,7 +11,7 @@ history_file="$HOME/.cache/kks-files-history"
 
 [ -f "$history_file" ] || touch "$history_file"
 
-git ls-files . "$@" |
+git ls-files --full-name "$(git rev-parse --show-toplevel)" "$@" |
 	fzf --multi --height 100% --prompt 'files> ' \
 		--preview "$preview_cmd {}" --history="$history_file" |
 	while read -r file; do
