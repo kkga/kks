@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/kkga/kks/kak"
@@ -54,8 +55,9 @@ func NewCmdGet() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&flags.session, "session", "s", "", "session")
-	cmd.Flags().StringVarP(&flags.client, "client", "c", "", "client")
+	cmd.Flags().StringVarP(&flags.session, "session", "s", os.Getenv("KKS_SESSION"), "session")
+	cmd.RegisterFlagCompletionFunc("session", SessionCompletionFunc)
+	cmd.Flags().StringVarP(&flags.client, "client", "c", os.Getenv("KKS_CLIENT"), "client")
 	cmd.Flags().StringVarP(&flags.buffer, "buffer", "b", "", "buffer")
 	cmd.Flags().BoolVarP(&flags.raw, "raw", "R", false, "raw output")
 

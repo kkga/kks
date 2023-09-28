@@ -19,6 +19,17 @@ func NewCmdCat() *cobra.Command {
 		Use:   "cat",
 		Short: "Print contents of a buffer to stdout.",
 		Args:  cobra.NoArgs,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if flags.session == "" {
+				return fmt.Errorf("no session specified")
+			}
+
+			if flags.client == "" {
+				return fmt.Errorf("no client specified")
+			}
+
+			return nil
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			tmp, err := os.CreateTemp("", "kks-tmp")
 			if err != nil {
@@ -46,10 +57,9 @@ func NewCmdCat() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&flags.session, "session", "s", os.Getenv("KKS_SESSION"), "session")
-	cmd.MarkFlagRequired("session")
+	cmd.RegisterFlagCompletionFunc("session", SessionCompletionFunc)
 	cmd.Flags().StringVarP(&flags.client, "client", "c", os.Getenv("KKS_CLIENT"), "client")
-	cmd.MarkFlagRequired("client")
-	cmd.Flags().StringVarP(&flags.buffer, "buffer", "b", os.Getenv("KKS_BUFFER"), "buffer")
+	cmd.Flags().StringVarP(&flags.buffer, "buffer", "b", "", "buffer")
 
 	return cmd
 }

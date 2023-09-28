@@ -45,6 +45,7 @@ func NewCmdKill() *cobra.Command {
 
 	cmd.Flags().BoolVarP(&flags.all, "all", "a", false, "all sessions")
 	cmd.Flags().StringVarP(&flags.session, "session", "s", "", "session")
+	cmd.RegisterFlagCompletionFunc("session", SessionCompletionFunc)
 
 	return cmd
 }

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/kkga/kks/kak"
@@ -13,11 +14,16 @@ func NewCmdAttach() *cobra.Command {
 	}{}
 
 	cmd := &cobra.Command{
-		Use:   "attach",
+		Use:   "attach [file] [+<line>[:<col]]",
 		Short: "Attach to Kakoune session with a new client.",
-		Args:  cobra.MinimumNArgs(1),
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if flags.session == "" {
+				return fmt.Errorf("no session specified")
+			}
+			return nil
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fp := kak.NewFilepath(args[1:])
+			fp := kak.NewFilepath(args)
 
 			if err := kak.Connect(flags.session, fp); err != nil {
 				return err
@@ -27,7 +33,7 @@ func NewCmdAttach() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&flags.session, "session", "s", os.Getenv("KKS_SESSION"), "session")
-	cmd.MarkFlagRequired("session")
+	cmd.Flags().StringVarP(&flags.session, "session", "s", os.Getenv("KKS_SESSION"), "session name")
+	cmd.RegisterFlagCompletionFunc("session", SessionCompletionFunc)
 	return cmd
 }

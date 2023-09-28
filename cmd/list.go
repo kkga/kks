@@ -89,6 +89,6 @@ func NewCmdList() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolP("json", "j", false, "json output")
+	cmd.Flags().BoolVarP(&flags.json, "json", "j", false, "output as json")
 	return cmd
 }
