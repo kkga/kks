@@ -1,5 +1,5 @@
 package kak
 
-func Connect(kctx *Context, fp *Filepath) error {
-	return Run(kctx, []string{"-c"}, fp)
+func Connect(session string, fp *Filepath) error {
+	return Run(session, []string{"-c"}, fp)
 }

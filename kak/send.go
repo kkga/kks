@@ -8,12 +8,12 @@ import (
 	"strings"
 )
 
-func Send(kctx *Context, kakCommand string, errOutFile *os.File) error {
+func Send(session string, client string, buffer string, kakCommand string, errOutFile *os.File) error {
 	kakExec, err := kakExec()
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command(kakExec, "-p", kctx.Session.Name)
+	cmd := exec.Command(kakExec, "-p", string(session))
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -26,10 +26,10 @@ func Send(kctx *Context, kakCommand string, errOutFile *os.File) error {
 	// try
 	sb.WriteString("try %{")
 	sb.WriteString(" eval")
-	if kctx.Buffer.Name != "" {
-		sb.WriteString(fmt.Sprintf(" -buffer %s", kctx.Buffer.Name))
-	} else if kctx.Client.Name != "" {
-		sb.WriteString(fmt.Sprintf(" -try-client %s", kctx.Client.Name))
+	if buffer != "" {
+		sb.WriteString(fmt.Sprintf(" -buffer %s", buffer))
+	} else if client != "" {
+		sb.WriteString(fmt.Sprintf(" -try-client %s", client))
 	}
 	sb.WriteString(fmt.Sprintf(" %s", kakCommand))
 	sb.WriteString(" }")
@@ -45,8 +45,8 @@ func Send(kctx *Context, kakCommand string, errOutFile *os.File) error {
 	}
 	// echo error in client
 	sb.WriteString(" eval")
-	if kctx.Client.Name != "" {
-		sb.WriteString(fmt.Sprintf(" -try-client %s", kctx.Client.Name))
+	if client != "" {
+		sb.WriteString(fmt.Sprintf(" -try-client %s", client))
 	}
 	sb.WriteString(" %{ echo -markup {Error}kks: %val{error} }")
 	sb.WriteString(" }")

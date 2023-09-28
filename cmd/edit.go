@@ -1,53 +1,53 @@
 package cmd
 
 import (
-	"flag"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/kkga/kks/kak"
+	"github.com/spf13/cobra"
 )
 
-func NewEditCmd() *EditCmd {
-	c := &EditCmd{Cmd: Cmd{
-		fs:          flag.NewFlagSet("edit", flag.ExitOnError),
-		aliases:     []string{"e"},
-		description: "Edit file. In session and client, if set.",
-		usageLine:   "[options] [file] [+<line>[:<col>]]",
-	}}
-	c.fs.StringVar(&c.session, "s", "", "session")
-	c.fs.StringVar(&c.client, "c", "", "client")
-	return c
-}
+func NewCmdEdit() *cobra.Command {
+	flags := struct {
+		session string
+		client  string
+	}{}
 
-type EditCmd struct {
-	Cmd
-}
+	cmd := &cobra.Command{
+		Use:   "edit",
+		Short: "Edit file. In session and client, if set.",
+		Args:  cobra.MaximumNArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fp := kak.NewFilepath(args)
 
-func (c *EditCmd) Run() error {
-	fp := kak.NewFilepath(c.fs.Args())
-
-	if c.kctx.Session.Name == "" {
-		if err := findOrRunSession(c, fp); err != nil {
-			return err
-		}
-	} else {
-		if err := connectOrEditInClient(c, fp); err != nil {
-			return err
-		}
+			if flags.session == "" {
+				if err := findOrRunSession(flags.session, fp); err != nil {
+					return err
+				}
+			} else {
+				if err := connectOrEditInClient(flags.session, flags.client, fp); err != nil {
+					return err
+				}
+			}
+			return nil
+		},
 	}
-	return nil
+
+	cmd.Flags().StringVarP(&flags.session, "session", "s", os.Getenv("KKS_SESSION"), "session")
+	cmd.Flags().StringVarP(&flags.client, "client", "c", os.Getenv("KKS_CLIENT"), "client")
+
+	return cmd
+
 }
 
-func findOrRunSession(c *EditCmd, fp *kak.Filepath) error {
-	kctx := &kak.Context{}
-
-	if c.useGitDirSessions {
-		kctx.Session = kak.Session{Name: fp.ParseGitDir()}
-
-		if kctx.Session.Name != "" {
-			if exists, _ := kctx.Session.Exists(); !exists {
-				sessionName, err := kak.Start(kctx.Session.Name)
+func findOrRunSession(session string, fp *kak.Filepath) error {
+	if _, ok := os.LookupEnv("KKS_USE_GITDIR_SESSIONS"); ok {
+		session = fp.ParseGitDir()
+		if session != "" {
+			if exists, _ := kak.SessionExists(session); !exists {
+				sessionName, err := kak.Start(session)
 				if err != nil {
 					return err
 				}
@@ -56,21 +56,21 @@ func findOrRunSession(c *EditCmd, fp *kak.Filepath) error {
 		}
 	}
 
-	if kctx.Session.Name == "" {
-		kctx.Session = kak.Session{Name: c.defaultSession}
+	if session == "" {
+		session = os.Getenv("KKS_DEFAULT_SESSION")
 	}
 
-	sessionExists, err := kctx.Session.Exists()
+	sessionExists, err := kak.SessionExists(session)
 	if err != nil {
 		return err
 	}
 
 	if sessionExists {
-		if err := kak.Connect(kctx, fp); err != nil {
+		if err := kak.Connect(session, fp); err != nil {
 			return err
 		}
 	} else {
-		if err := kak.Run(&kak.Context{}, []string{}, fp); err != nil {
+		if err := kak.Run(session, []string{}, fp); err != nil {
 			return err
 		}
 	}
@@ -78,10 +78,10 @@ func findOrRunSession(c *EditCmd, fp *kak.Filepath) error {
 	return nil
 }
 
-func connectOrEditInClient(c *EditCmd, fp *kak.Filepath) error {
-	if c.kctx.Client.Name == "" {
+func connectOrEditInClient(session string, client string, fp *kak.Filepath) error {
+	if client == "" {
 		// if no client, attach to session with new client
-		if err := kak.Connect(c.kctx, fp); err != nil {
+		if err := kak.Connect(session, fp); err != nil {
 			return err
 		}
 	} else {
@@ -95,7 +95,7 @@ func connectOrEditInClient(c *EditCmd, fp *kak.Filepath) error {
 			sb.WriteString(fmt.Sprintf(" %d", fp.Column))
 		}
 
-		if err := kak.Send(c.kctx, sb.String(), nil); err != nil {
+		if err := kak.Send(session, client, "", sb.String(), nil); err != nil {
 			return err
 		}
 	}
