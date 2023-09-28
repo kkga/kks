@@ -16,8 +16,9 @@ func NewCmdList() *cobra.Command {
 	}{}
 
 	cmd := &cobra.Command{
-		Use:   "list",
-		Short: "List Kakoune sessions and clients.",
+		Use:     "list",
+		Aliases: []string{"ls"},
+		Short:   "List Kakoune sessions and clients.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			kakSessions, err := kak.Sessions()
 			if err != nil {
