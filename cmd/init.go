@@ -2,30 +2,21 @@ package cmd
 
 import (
 	_ "embed"
-	"flag"
 	"fmt"
+
+	"github.com/spf13/cobra"
 )
 
 //go:embed embed/init.kak
 var initKak string
 
-func NewInitCmd() *InitCmd {
-	c := &InitCmd{Cmd: Cmd{
-		fs:          flag.NewFlagSet("init", flag.ExitOnError),
-		aliases:     []string{""},
-		description: "Print Kakoune command definitions to stdout.",
-		usageLine:   "",
-	}}
-	return c
-}
-
-type InitCmd struct {
-	Cmd
-}
-
-func (c *InitCmd) Run() error {
-	if _, err := fmt.Print(initKak); err != nil {
-		return err
+func NewCmdInit() *cobra.Command {
+	return &cobra.Command{
+		Use:   "init",
+		Short: "Print Kakoune command definitions to stdout.",
+		Args:  cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Print(initKak)
+		},
 	}
-	return nil
 }

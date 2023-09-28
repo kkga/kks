@@ -2,96 +2,94 @@ package cmd
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"os"
 	"text/tabwriter"
 
 	"github.com/kkga/kks/kak"
+	"github.com/spf13/cobra"
 )
 
-func NewListCmd() *ListCmd {
-	c := &ListCmd{Cmd: Cmd{
-		fs:          flag.NewFlagSet("list", flag.ExitOnError),
-		aliases:     []string{"ls", "l"},
-		description: "List Kakoune sessions and clients.",
-		usageLine:   "[options]",
-	}}
-	c.fs.BoolVar(&c.json, "json", false, "json output")
-	return c
-}
+func NewCmdList() *cobra.Command {
+	flags := struct {
+		json bool
+	}{}
 
-type ListCmd struct {
-	Cmd
-	json bool
-}
-
-func (c *ListCmd) Run() error {
-	kakSessions, err := kak.Sessions()
-	if err != nil {
-		return err
-	}
-
-	if c.json {
-		type session struct {
-			Name    string   `json:"name"`
-			Clients []string `json:"clients"`
-			Dir     string   `json:"dir"`
-		}
-
-		sessions := make([]session, len(kakSessions))
-
-		for i, s := range kakSessions {
-			d, err := s.Dir()
+	cmd := &cobra.Command{
+		Use:     "list",
+		Aliases: []string{"ls"},
+		Short:   "List Kakoune sessions and clients.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			kakSessions, err := kak.Sessions()
 			if err != nil {
 				return err
 			}
 
-			sessions[i] = session{Name: s.Name, Clients: []string{}, Dir: d}
-
-			clients, err := s.Clients()
-			if err != nil {
-				return err
-			}
-			for _, c := range clients {
-				if c.Name != "" {
-					sessions[i].Clients = append(sessions[i].Clients, c.Name)
+			if flags.json {
+				type session struct {
+					Name    string   `json:"name"`
+					Clients []string `json:"clients"`
+					Dir     string   `json:"dir"`
 				}
-			}
-		}
 
-		j, err := json.MarshalIndent(sessions, "", "  ")
-		if err != nil {
-			return err
-		}
+				sessions := make([]session, len(kakSessions))
 
-		fmt.Println(string(j))
-	} else {
-		w := new(tabwriter.Writer)
-		w.Init(os.Stdout, 0, 8, 1, '\t', 0)
+				for i, s := range kakSessions {
+					d, err := kak.SessionDir(s)
+					if err != nil {
+						return err
+					}
 
-		for _, s := range kakSessions {
-			c, err := s.Clients()
-			if err != nil {
-				return err
-			}
+					sessions[i] = session{Name: s, Clients: []string{}, Dir: d}
 
-			d, err := s.Dir()
-			if err != nil {
-				return err
-			}
+					clients, err := kak.SessionClients(s)
+					if err != nil {
+						return err
+					}
+					for _, c := range clients {
+						if c != "" {
+							sessions[i].Clients = append(sessions[i].Clients, c)
+						}
+					}
+				}
 
-			if len(c) == 0 {
-				fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, " ", d)
+				j, err := json.MarshalIndent(sessions, "", "  ")
+				if err != nil {
+					return err
+				}
+
+				fmt.Println(string(j))
 			} else {
-				for _, cl := range c {
-					fmt.Fprintf(w, "%s\t: %s\t: %s\n", s.Name, cl.Name, d)
-				}
-			}
-		}
+				w := new(tabwriter.Writer)
+				w.Init(os.Stdout, 0, 8, 1, '\t', 0)
 
-		w.Flush()
+				for _, s := range kakSessions {
+					c, err := kak.SessionClients(s)
+					if err != nil {
+						return err
+					}
+
+					d, err := kak.SessionDir(s)
+					if err != nil {
+						return err
+					}
+
+					if len(c) == 0 {
+						fmt.Fprintf(w, "%s\t: %s\t: %s\n", s, " ", d)
+					} else {
+						for _, cl := range c {
+							fmt.Fprintf(w, "%s\t: %s\t: %s\n", s, cl, d)
+						}
+					}
+				}
+
+				w.Flush()
+			}
+
+			return nil
+		},
 	}
 
-	return nil
+	cmd.Flags().BoolVarP(&flags.json, "json", "j", false, "output as json")
+	return cmd
 }

@@ -1,33 +1,39 @@
 package cmd
 
 import (
-	"flag"
+	"fmt"
+	"os"
 
 	"github.com/kkga/kks/kak"
+	"github.com/spf13/cobra"
 )
 
-func NewAttachCmd() *AttachCmd {
-	c := &AttachCmd{Cmd: Cmd{
-		fs:              flag.NewFlagSet("attach", flag.ExitOnError),
-		aliases:         []string{"a"},
-		description:     "Attach to Kakoune session with a new client.",
-		usageLine:       "[options] [file] [+<line>[:<col]]",
-		sessionRequired: true,
-	}}
-	c.fs.StringVar(&c.session, "s", "", "session")
-	return c
-}
+func NewCmdAttach() *cobra.Command {
+	flags := struct {
+		session string
+	}{}
 
-type AttachCmd struct {
-	Cmd
-}
+	cmd := &cobra.Command{
+		Use:   "attach [file] [+<line>[:<col]]",
+		Short: "Attach to Kakoune session with a new client.",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if flags.session == "" {
+				return fmt.Errorf("no session specified")
+			}
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fp := kak.NewFilepath(args)
 
-func (c *AttachCmd) Run() error {
-	fp := kak.NewFilepath(c.fs.Args())
+			if err := kak.Connect(flags.session, fp); err != nil {
+				return err
+			}
 
-	if err := kak.Connect(c.kctx, fp); err != nil {
-		return err
+			return nil
+		},
 	}
 
-	return nil
+	cmd.Flags().StringVarP(&flags.session, "session", "s", os.Getenv("KKS_SESSION"), "session name")
+	cmd.RegisterFlagCompletionFunc("session", SessionCompletionFunc)
+	return cmd
 }

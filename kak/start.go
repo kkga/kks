@@ -7,9 +7,7 @@ import (
 	"time"
 )
 
-func Start(name string) (sessionName string, err error) {
-	sessionName = name
-
+func Start(session string) (sessionName string, err error) {
 	if sessionName == "" {
 		sessionName, err = uniqSessionName()
 		if err != nil {
@@ -48,7 +46,7 @@ Out:
 			return err
 		}
 		for _, s := range sessions {
-			if s.Name == name {
+			if s == name {
 				ch <- true
 				break Out
 
@@ -69,7 +67,7 @@ Out:
 		name = fmt.Sprintf("kks-%d", rand.Intn(999-100)+100)
 		if len(sessions) > 0 {
 			for i, s := range sessions {
-				if s.Name == name {
+				if s == name {
 					break
 				} else if i == len(sessions)-1 {
 					break Out

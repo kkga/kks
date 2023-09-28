@@ -8,22 +8,10 @@ import (
 	"strings"
 )
 
-type Context struct {
-	Session Session
-	Client  Client
-	Buffer  Buffer
-}
-
-type (
-	Client  struct{ Name string }
-	Session struct{ Name string }
-	Buffer  struct{ Name string }
-)
-
-func (s *Session) Exists() (exists bool, err error) {
+func SessionExists(session string) (exists bool, err error) {
 	sessions, err := Sessions()
-	for _, session := range sessions {
-		if session.Name == s.Name {
+	for _, s := range sessions {
+		if s == session {
 			exists = true
 			break
 		}
@@ -31,9 +19,8 @@ func (s *Session) Exists() (exists bool, err error) {
 	return
 }
 
-func (s *Session) Dir() (dir string, err error) {
-	sessCtx := &Context{Session: *s}
-	resp, err := Get(sessCtx, "%sh{pwd}")
+func SessionDir(session string) (dir string, err error) {
+	resp, err := Get(session, "", "", "%sh{pwd}")
 	if err != nil {
 		return "", err
 	}
@@ -42,26 +29,21 @@ func (s *Session) Dir() (dir string, err error) {
 	return
 }
 
-func (s *Session) Clients() (clients []Client, err error) {
-	sessCtx := &Context{Session: *s}
-	resp, err := Get(sessCtx, "%val{client_list}")
+func SessionClients(session string) (clients []string, err error) {
+	resp, err := Get(session, "", "", "%val{client_list}")
 	if err != nil {
 		return nil, err
 	}
 
 	ss := strings.Split(resp, "' '")
-	for i, val := range ss {
-		ss[i] = strings.Trim(val, "'")
-	}
-
-	for _, c := range ss {
-		clients = append(clients, Client{c})
+	for _, val := range ss {
+		clients = append(clients, strings.Trim(val, "'"))
 	}
 
 	return
 }
 
-func Sessions() (sessions []Session, err error) {
+func Sessions() (sessions []string, err error) {
 	kakExec, err := kakExec()
 	if err != nil {
 		return
@@ -77,7 +59,7 @@ func Sessions() (sessions []Session, err error) {
 	scanner := bufio.NewScanner(bytes.NewBuffer(o))
 	for scanner.Scan() {
 		if s := scanner.Text(); s != "" {
-			sessions = append(sessions, Session{s})
+			sessions = append(sessions, s)
 		}
 	}
 

@@ -1,54 +1,51 @@
 package cmd
 
 import (
-	"flag"
+	"fmt"
 
 	"github.com/kkga/kks/kak"
+	"github.com/spf13/cobra"
 )
 
-func NewKillCmd() *KillCmd {
-	c := &KillCmd{Cmd: Cmd{
-		fs:          flag.NewFlagSet("kill", flag.ExitOnError),
-		aliases:     []string{""},
-		description: "Terminate Kakoune session.",
-		usageLine:   "[options]",
-	}}
-	c.fs.BoolVar(&c.all, "a", false, "all sessions")
-	c.fs.StringVar(&c.session, "s", "", "session")
-	return c
-}
+func NewCmdKill() *cobra.Command {
+	flags := struct {
+		all     bool
+		session string
+	}{}
 
-type KillCmd struct {
-	Cmd
-	all bool
-}
+	cmd := &cobra.Command{
+		Use:   "kill",
+		Short: "Terminate Kakoune session.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			sendCmd := "kill"
 
-func (c *KillCmd) Run() error {
-	sendCmd := "kill"
-
-	if c.all {
-		sessions, err := kak.Sessions()
-		if err != nil {
-			return err
-		}
-		for _, s := range sessions {
-			sessCtx := &kak.Context{
-				Session: s,
-				Client:  c.kctx.Client,
-				Buffer:  c.kctx.Buffer,
+			if flags.all {
+				sessions, err := kak.Sessions()
+				if err != nil {
+					return err
+				}
+				for _, s := range sessions {
+					if err := kak.Send(s, "", "", sendCmd, nil); err != nil {
+						return err
+					}
+				}
+			} else {
+				if flags.session == "" {
+					return fmt.Errorf("no session specified")
+				}
+				if err := kak.Send(flags.session, "", "", sendCmd, nil); err != nil {
+					return err
+				}
 			}
-			if err := kak.Send(sessCtx, sendCmd, nil); err != nil {
-				return err
-			}
-		}
-	} else {
-		if c.kctx.Session.Name == "" {
-			return errNoSession
-		}
-		if err := kak.Send(c.kctx, sendCmd, nil); err != nil {
-			return err
-		}
+
+			return nil
+		},
 	}
 
-	return nil
+	cmd.Flags().BoolVarP(&flags.all, "all", "a", false, "all sessions")
+	cmd.Flags().StringVarP(&flags.session, "session", "s", "", "session")
+	cmd.RegisterFlagCompletionFunc("session", SessionCompletionFunc)
+
+	return cmd
 }

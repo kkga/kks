@@ -6,7 +6,7 @@ import (
 	"syscall"
 )
 
-func Run(kctx *Context, kakArgs []string, fp *Filepath) error {
+func Run(session string, kakArgs []string, fp *Filepath) error {
 	kakExec, err := kakExec()
 	if err != nil {
 		return err
@@ -17,9 +17,9 @@ func Run(kctx *Context, kakArgs []string, fp *Filepath) error {
 	for _, a := range kakArgs {
 		switch a {
 		case "-c":
-			kakExecArgs = append(kakExecArgs, "-c", kctx.Session.Name)
+			kakExecArgs = append(kakExecArgs, "-c", session)
 		default:
-			return fmt.Errorf("Unknown argument to Run: %s", a)
+			return fmt.Errorf("unknown argument to Run: %s", a)
 		}
 	}
 

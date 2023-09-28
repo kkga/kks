@@ -32,18 +32,15 @@ func TestSessionDir(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			kctx := &Context{}
-			kctx.Session = Session{testSession}
-
 			defer func() {
-				err = Send(kctx, "kill", nil)
+				err = Send(testSession, "", "", "kill", nil)
 			}()
 
-			if err := Send(kctx, fmt.Sprintf("cd %s", tt.kakdir), nil); err != nil {
+			if err := Send(testSession, "", "", fmt.Sprintf("cd %s", tt.kakdir), nil); err != nil {
 				t.Fatal(err)
 			}
 
-			got, err := kctx.Session.Dir()
+			got, err := SessionDir(testSession)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -56,33 +53,23 @@ func TestSessionDir(t *testing.T) {
 }
 
 func TestSessionExists(t *testing.T) {
-	tests := []struct {
-		session Session
-	}{
-		{
-			Session{"kks-test-hey"},
-		},
-		{
-			Session{"kks-test-yo"},
-		},
-		{
-			Session{"kks-wassup12348fkqwer-qw"},
-		},
+	sessions := []string{
+		"kks-test-hey",
+		"kks-test-yo",
+		"kks-wassup12348fkqwer-qw",
 	}
-	for _, tt := range tests {
+	for _, session := range sessions {
 		t.Run("", func(t *testing.T) {
-			_, err := Start(tt.session.Name)
+			_, err := Start(session)
 			if err != nil {
 				t.Fatal(err)
 			}
-			kctx := &Context{}
-			kctx.Session = tt.session
 
 			defer func() {
-				err = Send(kctx, "kill", nil)
+				err = Send(session, "", "", "kill", nil)
 			}()
 
-			got, err := kctx.Session.Exists()
+			got, err := SessionExists(session)
 			if err != nil {
 				t.Fatal(err)
 			}

@@ -1,47 +1,50 @@
 package cmd
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/kkga/kks/kak"
+	"github.com/spf13/cobra"
 )
 
-func NewNewCmd() *NewCmd {
-	c := &NewCmd{Cmd: Cmd{
-		fs:          flag.NewFlagSet("new", flag.ExitOnError),
-		aliases:     []string{"n"},
-		description: "Start new headless Kakoune session.",
-		usageLine:   "[<name>]",
-	}}
-	return c
-}
+func NewCmdNew() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "new <name>",
+		Short: "Start new headless Kakoune session.",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) == 0 {
+				return nil
+			}
 
-type NewCmd struct {
-	Cmd
-	name string
-}
+			sessions, err := kak.Sessions()
+			if err != nil {
+				return err
+			}
 
-func (c *NewCmd) Run() error {
-	c.name = c.fs.Arg(0)
+			for _, s := range sessions {
+				if s == args[0] {
+					return fmt.Errorf("session already exists: %s", args[0])
+				}
+			}
 
-	sessions, err := kak.Sessions()
-	if err != nil {
-		return err
+			return nil
+		},
+		Args: cobra.MaximumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			var sessionName string
+			if len(args) > 0 {
+				sessionName = args[0]
+			}
+
+			sessionName, err := kak.Start(sessionName)
+			if err != nil {
+				return err
+			}
+
+			fmt.Println("session started:", sessionName)
+
+			return nil
+		},
 	}
-
-	for _, s := range sessions {
-		if s.Name == c.name {
-			return fmt.Errorf("session already exists: %s", c.name)
-		}
-	}
-
-	sessionName, err := kak.Start(c.name)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("session started:", sessionName)
-
-	return nil
+	return cmd
 }

@@ -1,53 +1,65 @@
 package cmd
 
 import (
-	"flag"
 	"fmt"
 	"os"
 
 	"github.com/kkga/kks/kak"
+	"github.com/spf13/cobra"
 )
 
-func NewCatCmd() *CatCmd {
-	c := &CatCmd{Cmd: Cmd{
-		fs:              flag.NewFlagSet("cat", flag.ExitOnError),
-		aliases:         []string{""},
-		description:     "Print contents of a buffer to stdout.",
-		usageLine:       "[options]",
-		sessionRequired: true,
-		clientRequired:  true,
-	}}
-	c.fs.StringVar(&c.session, "s", "", "session")
-	c.fs.StringVar(&c.client, "c", "", "client")
-	c.fs.StringVar(&c.buffer, "b", "", "buffer")
-	return c
-}
+func NewCmdCat() *cobra.Command {
+	flags := struct {
+		session string
+		client  string
+		buffer  string
+	}{}
 
-type CatCmd struct {
-	Cmd
-}
+	cmd := &cobra.Command{
+		Use:   "cat",
+		Short: "Print contents of a buffer to stdout.",
+		Args:  cobra.NoArgs,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if flags.session == "" {
+				return fmt.Errorf("no session specified")
+			}
 
-func (c *CatCmd) Run() error {
-	tmp, err := os.CreateTemp("", "kks-tmp")
-	if err != nil {
-		return err
+			if flags.client == "" {
+				return fmt.Errorf("no client specified")
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			tmp, err := os.CreateTemp("", "kks-tmp")
+			if err != nil {
+				return err
+			}
+
+			ch := make(chan string)
+			go kak.ReadTmp(tmp, ch)
+
+			sendCmd := fmt.Sprintf("write -force %s", tmp.Name())
+
+			if err := kak.Send(flags.session, flags.client, flags.buffer, sendCmd, nil); err != nil {
+				return err
+			}
+
+			output := <-ch
+
+			fmt.Print(output)
+
+			tmp.Close()
+			os.Remove(tmp.Name())
+
+			return nil
+		},
 	}
 
-	ch := make(chan string)
-	go kak.ReadTmp(tmp, ch)
+	cmd.Flags().StringVarP(&flags.session, "session", "s", os.Getenv("KKS_SESSION"), "session")
+	cmd.RegisterFlagCompletionFunc("session", SessionCompletionFunc)
+	cmd.Flags().StringVarP(&flags.client, "client", "c", os.Getenv("KKS_CLIENT"), "client")
+	cmd.Flags().StringVarP(&flags.buffer, "buffer", "b", "", "buffer")
 
-	sendCmd := fmt.Sprintf("write -force %s", tmp.Name())
-
-	if err := kak.Send(c.kctx, sendCmd, nil); err != nil {
-		return err
-	}
-
-	output := <-ch
-
-	fmt.Print(output)
-
-	tmp.Close()
-	os.Remove(tmp.Name())
-
-	return nil
+	return cmd
 }

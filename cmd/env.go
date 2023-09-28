@@ -2,41 +2,60 @@ package cmd
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
+	"os"
+
+	"github.com/spf13/cobra"
 )
 
-func NewEnvCmd() *EnvCmd {
-	c := &EnvCmd{Cmd: Cmd{
-		fs:              flag.NewFlagSet("env", flag.ExitOnError),
-		aliases:         []string{""},
-		description:     "Print current Kakoune context set by environment to stdout.",
-		usageLine:       "[options]",
-		sessionRequired: true,
-	}}
-	c.fs.BoolVar(&c.json, "json", false, "json output")
-	return c
+type env struct {
+	Session string `json:"session"`
+	Client  string `json:"client,omitempty"`
 }
 
-type EnvCmd struct {
-	Cmd
-	json bool
-}
+func NewCmdEnv() *cobra.Command {
+	flags := struct {
+		json bool
+	}{}
+	cmd := &cobra.Command{
+		Use:   "env",
+		Short: "Print current Kakoune context set by environment to stdout.",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if os.Getenv("KKS_SESSION") == "" {
+				return fmt.Errorf("no session in env")
+			}
 
-func (c *EnvCmd) Run() error {
-	if c.json {
-		j, err := json.MarshalIndent(
-			map[string]string{
-				"session": c.session,
-				"client":  c.client,
-			}, "", "  ")
-		if err != nil {
-			return err
-		}
-		fmt.Println(string(j))
-	} else {
-		fmt.Printf("session: %s\n", c.session)
-		fmt.Printf("client: %s\n", c.client)
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			session := os.Getenv("KKS_SESSION")
+			client := os.Getenv("KKS_CLIENT")
+
+			if flags.json {
+				env := env{
+					Session: session,
+					Client:  client,
+				}
+
+				encoder := json.NewEncoder(os.Stdout)
+				encoder.SetIndent("", "  ")
+				if err := encoder.Encode(env); err != nil {
+					return err
+				}
+
+				return nil
+			}
+
+			fmt.Printf("session: %s\n", session)
+			if client != "" {
+				fmt.Printf("client: %s\n", client)
+			}
+
+			return nil
+		},
 	}
-	return nil
+
+	cmd.Flags().BoolVar(&flags.json, "json", false, "json output")
+
+	return cmd
 }
